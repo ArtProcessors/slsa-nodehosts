@@ -1,0 +1,119 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "MemberPlayProjectorPowerExtended": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "MemberPlayProjectorMutingExtended": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Muting"
+            },
+            "MemberSingProjectorPowerExtended": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "MemberSingProjectorMutingExtended": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Muting"
+            },
+            "MemberPlayAmpPowerExtended": {
+                "node": "LTL-SING-AMP",
+                "action": "ZONEASetSource"
+            },
+            "MemberPlayAmpMutingExtended": {
+                "node": "LTL-SING-AMP",
+                "action": "ZONEAMUTE"
+            },
+            "MemberSingAmpPowerExtended": {},
+            "MemberSingAmpMutingExtended": {}
+        },
+        "events": {
+            "MemberPlayProjectorStatus": {
+                "node": "Play Projector",
+                "event": "Status"
+            },
+            "MemberSingProjectorStatus": {
+                "node": "Sing Projector",
+                "event": "Status"
+            },
+            "MemberPlayProjectorPower": {
+                "node": "Play Projector",
+                "event": "Power"
+            },
+            "MemberPlayProjectorMuting": {
+                "node": "Play Projector",
+                "event": "Muting"
+            },
+            "MemberSingProjectorPower": {
+                "node": "Sing Projector",
+                "event": "Power"
+            },
+            "MemberSingProjectorMuting": {
+                "node": "Sing Projector",
+                "event": "Muting"
+            },
+            "MemberPlayAmpPower": {
+                "node": "Play Amp",
+                "event": "Power"
+            },
+            "MemberPlayAmpMuting": {
+                "node": "Play Amp",
+                "event": "Muting"
+            },
+            "MemberPlayAmpStatus": {
+                "node": "Play Amp",
+                "event": "Status"
+            },
+            "MemberSingAmpPower": {
+                "node": "Sing Amp",
+                "event": "Power"
+            },
+            "MemberSingAmpMuting": {
+                "node": "Sing Amp",
+                "event": "Muting"
+            },
+            "MemberSingAmpStatus": {
+                "node": "Sing Amp",
+                "event": "Status"
+            }
+        }
+    },
+    "paramValues": {
+        "members": [
+            {
+                "name": "Play Projector",
+                "isGroup": true,
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Signal Only"},
+                "_$visible": true
+            },
+            {
+                "name": "Sing Projector",
+                "isGroup": true,
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Signal Only"},
+                "_$visible": true
+            },
+            {
+                "name": "Play Amp",
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Action & Signal"},
+                "isGroup": true,
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing Amp",
+                "isGroup": true,
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Action & Signal"},
+                "_$visible": true
+            }
+        ],
+        "_$visible": true
+    }
+}

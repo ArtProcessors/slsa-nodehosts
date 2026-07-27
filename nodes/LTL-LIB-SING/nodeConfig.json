@@ -1,0 +1,136 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "MemberSingProjectorPower": {
+                "node": "LTL-SING-PJ",
+                "action": "Power"
+            },
+            "MemberSingAmpPower": {
+                "node": "LTL-SING-AMP",
+                "action": "Power"
+            },
+            "MemberSingAmpMuting": {
+                "node": "LTL-SING-AMP",
+                "action": "ZONEAMUTE"
+            },
+            "MemberSingVideoSwitcherPower": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input1"
+            },
+            "MemberSingVideoSwitcherMuting": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1AudioMute"
+            },
+            "MemberSingPCPower": {
+                "node": "LTL-SING-PC-WOL",
+                "action": "Power"
+            },
+            "MemberSingRackPDU01Power": {"node": "LTL-SING-RACKPDU01"},
+            "MemberSingRackPDU02Power": {
+                "node": "LTL-SING-RACKPDU02",
+                "action": "Power"
+            }
+        },
+        "events": {
+            "MemberSingProjectorPower": {
+                "node": "Sing Projector",
+                "event": "Power"
+            },
+            "MemberSingProjectorStatus": {
+                "node": "Sing Projector",
+                "event": "Status"
+            },
+            "MemberSingAmpPower": {
+                "node": "Sing Amp",
+                "event": "Power"
+            },
+            "MemberSingAmpMuting": {
+                "node": "Sing Amp",
+                "event": "Muting"
+            },
+            "MemberSingAmpStatus": {
+                "node": "Sing Amp",
+                "event": "Status"
+            },
+            "MemberSingVideoSwitcherPower": {
+                "node": "Sing Video Switcher",
+                "event": "Power"
+            },
+            "MemberSingVideoSwitcherMuting": {
+                "node": "Sing Video Switcher",
+                "event": "Muting"
+            },
+            "MemberSingVideoSwitcherStatus": {
+                "node": "Sing Video Switcher",
+                "event": "Status"
+            },
+            "MemberSingPCPower": {
+                "node": "Sing PC",
+                "event": "Power"
+            },
+            "MemberSingPCStatus": {
+                "node": "Sing PC",
+                "event": "Status"
+            },
+            "MemberSingRackPDU01Power": {
+                "node": "Sing Rack PDU01",
+                "event": "Power"
+            },
+            "MemberSingRackPDU01Status": {
+                "node": "Sing Rack PDU01",
+                "event": "Status"
+            },
+            "MemberSingRackPDU02Power": {
+                "node": "Sing Rack PDU02",
+                "event": "Power"
+            },
+            "MemberSingRackPDU02Status": {
+                "node": "Sing Rack PDU02",
+                "event": "Status"
+            }
+        }
+    },
+    "paramValues": {
+        "members": [
+            {
+                "name": "Sing Projector",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing Amp",
+                "hasStatus": true,
+                "power": {"mode": "Signal Only"},
+                "muting": {"mode": "Action & Signal"},
+                "_$visible": true
+            },
+            {
+                "name": "Sing Video Switcher",
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing PC",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing Rack PDU01",
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "_$visible": true
+            },
+            {
+                "name": "Sing Rack PDU02",
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "_$visible": true
+            }
+        ],
+        "_$visible": true
+    }
+}

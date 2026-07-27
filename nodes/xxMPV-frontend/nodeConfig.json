@@ -1,0 +1,135 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "Play": {
+                "node": "xxMPV-dev",
+                "action": "Play"
+            },
+            "PauseToggle": {
+                "node": "xxMPV-dev",
+                "action": "PauseToggle"
+            },
+            "Previous": {
+                "node": "xxMPV-dev",
+                "action": "Previous"
+            },
+            "Next": {
+                "node": "xxMPV-dev",
+                "action": "Next"
+            },
+            "Stop": {
+                "node": "xxMPV-dev",
+                "action": "Stop"
+            },
+            "LoopToggle": {
+                "node": "xxMPV-dev",
+                "action": "LoopToggle"
+            },
+            "LoopSet": {
+                "node": "xxMPV-dev",
+                "action": "LoopSet"
+            },
+            "PlayFile": {
+                "node": "xxMPV-dev",
+                "action": "PlayFile"
+            },
+            "SetSelection": {
+                "node": "xxMPV-dev",
+                "action": "SetSelection"
+            },
+            "ToggleSelection": {
+                "node": "xxMPV-dev",
+                "action": "ToggleSelection"
+            },
+            "SetPosition": {
+                "node": "xxMPV-dev",
+                "action": "SetPosition"
+            },
+            "AutoNumber": {
+                "node": "xxMPV-dev",
+                "action": "AutoNumber"
+            },
+            "ClearSelection": {
+                "node": "xxMPV-dev",
+                "action": "ClearSelection"
+            },
+            "ClearOrdering": {
+                "node": "xxMPV-dev",
+                "action": "ClearOrdering"
+            },
+            "Rescan": {
+                "node": "xxMPV-dev",
+                "action": "Rescan"
+            },
+            "SavePreset": {
+                "node": "xxMPV-dev",
+                "action": "SavePreset"
+            },
+            "DeletePreset": {
+                "node": "xxMPV-dev",
+                "action": "DeletePreset"
+            },
+            "RecallPreset": {
+                "node": "xxMPV-dev",
+                "action": "RecallPreset"
+            },
+            "PlayPreset": {
+                "node": "xxMPV-dev",
+                "action": "PlayPreset"
+            },
+            "UpdatePreset": {
+                "node": "xxMPV-dev",
+                "action": "UpdatePreset"
+            },
+            "NewPlaylist": {
+                "node": "xxMPV-dev",
+                "action": "NewPlaylist"
+            }
+        },
+        "events": {
+            "Files": {
+                "node": "xxMPV-dev",
+                "event": "Files"
+            },
+            "Playlist": {
+                "node": "xxMPV-dev",
+                "event": "Playlist"
+            },
+            "NowPlaying": {
+                "node": "xxMPV-dev",
+                "event": "NowPlaying"
+            },
+            "Paused": {
+                "node": "xxMPV-dev",
+                "event": "Paused"
+            },
+            "MPVRunning": {
+                "node": "xxMPV-dev",
+                "event": "MPVRunning"
+            },
+            "Loop": {
+                "node": "xxMPV-dev",
+                "event": "Loop"
+            },
+            "Presets": {
+                "node": "xxMPV-dev",
+                "event": "Presets"
+            },
+            "EditingPreset": {
+                "node": "xxMPV-dev",
+                "event": "EditingPreset"
+            },
+            "PlayReady": {
+                "node": "xxMPV-dev",
+                "event": "PlayReady"
+            },
+            "LastIPC": {
+                "node": "xxMPV-dev",
+                "event": "LastIPC"
+            }
+        }
+    },
+    "paramValues": {
+        "engineNode": "xxMPV-dev"
+    }
+}

@@ -1,0 +1,143 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "PlayVolume": {
+                "node": "LTL-PLAY-AMP",
+                "action": "ZONEAGAIN"
+            },
+            "AllPower": {
+                "node": "LTL-LIB-GALLERY",
+                "action": "Power"
+            },
+            "PlayPower": {
+                "node": "LTL-LIB-PLAY",
+                "action": "Power"
+            },
+            "SingPower": {
+                "node": "LTL-LIB-SING",
+                "action": "Power"
+            },
+            "PlayBlockHeadPCPower": {
+                "node": "LTL-PLAY-INT-WOL",
+                "action": "PowerOn"
+            },
+            "PlayBlockHeadPCRestart": {
+                "node": "LTL-PLAY-INT",
+                "action": "Restart"
+            },
+            "PlayScannerPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "action": "PowerOn"
+            },
+            "PlayScannerPC01Restart": {
+                "node": "LTL-PLAY-SCAN01",
+                "action": "Restart"
+            },
+            "PlayScannerPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "action": "PowerOn"
+            },
+            "PlayScannerPC02Restart": {
+                "node": "LTL-PLAY-SCAN02",
+                "action": "Restart"
+            },
+            "PlayUnityAppPower": {
+                "node": "LTL-PLAY-UNITY",
+                "action": "Power"
+            },
+            "PlayUnityAppRestart": {
+                "node": "LTL-PLAY-UNITY",
+                "action": "PowerOff"
+            },
+            "PlayScannerSoftware01Power": {
+                "node": "LTL-PLAY-SNAP01",
+                "action": "Power"
+            },
+            "PlayScannerSoftware01Restart": {
+                "node": "LTL-PLAY-SNAP01",
+                "action": "PowerOff"
+            },
+            "PlayScannerSoftware02Power": {
+                "node": "LTL-PLAY-SNAP02",
+                "action": "Power"
+            },
+            "PlayScannerSoftware02Restart": {
+                "node": "LTL-PLAY-SNAP02",
+                "action": "PowerOff"
+            },
+            "PlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "Split Room": {},
+            "Play Audio Takeover": {},
+            "Sing Audio Takeover": {},
+            "Play Scanner 01 Power": {},
+            "Play Scanner 01 Restart": {},
+            "Play Scanner 02 Power": {},
+            "Play Scanner 02 Restart": {},
+            "Play SwitchBot 01 Power": {},
+            "Play SwitchBot 01 Restart": {},
+            "Play SwitchBot 02 Power": {},
+            "Play SwitchBot 02 Restart": {},
+            "Multipurpose Power": {},
+            "Multipurpose Volume": {},
+            "Multipurpose Mic 01 Level": {},
+            "Multipurpose Mic 02 Level": {},
+            "Multipurpose Apple TV": {},
+            "Multipurpose HDMI Wall Plate": {},
+            "Multipurpose HDMI Lead": {},
+            "Multipurpose Aux Audio": {}
+        },
+        "events": {
+            "PlayPower": {
+                "node": "LTL-LIB-PLAY",
+                "event": "Power"
+            },
+            "Sing Power": {},
+            "Split Room": {},
+            "Play Audio Takeover": {},
+            "Sing Audio Takeover": {},
+            "Play Volume": {},
+            "Play Level": {},
+            "Play BlockHead Screenshot": {},
+            "Play BlockHead PC Status": {},
+            "Play BlockHead PC Power": {},
+            "Play Scanner PC 01 Status": {},
+            "Play Scanner PC 01 Power": {},
+            "Play Scanner PC 02 Status": {},
+            "Play Scanner PC 02 Power": {},
+            "Play Unity App Status": {},
+            "Play Unity App Power": {},
+            "Play Scanner Software 01 Status": {},
+            "Play Scanner Software 01 Power": {},
+            "Play Scanner Software 02 Status": {},
+            "Play Scanner Software 02 Power": {},
+            "Play Projector Status": {},
+            "Play Projector Power": {},
+            "Play Scanner 01 Status": {},
+            "Play Scanner 01 Power": {},
+            "Play Scanner 02 Status": {},
+            "Play Scanner 02 Power": {},
+            "Play SwitchBot 01 Status": {},
+            "Play SwitchBot 01 Power": {},
+            "Play SwitchBot 02 Status": {},
+            "Play SwitchBot 02 Power": {},
+            "Multipurpose Power": {},
+            "Multipurpose Volume": {},
+            "Multipurpose Level": {},
+            "Multipurpose Mic 01 Level": {},
+            "Multipurpose Mic 01 Meter": {},
+            "Multipurpose Mic 02 Level": {},
+            "Multipurpose Mic 02 Meter": {},
+            "Multipurpose Apple TV": {},
+            "Multipurpose HDMI Wall Plate": {},
+            "Multipurpose HDMI Lead": {},
+            "Multipurpose Aux Audio": {}
+        }
+    },
+    "paramValues": {
+        "localOnlySignals": "All Power",
+        "localOnlyActions": ""
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "remoteBindingValues": {
+        "actions": {"PowerOff": {
+            "node": "LTL-SING-PC",
+            "action": "PowerOff"
+        }},
+        "events": {
+            "ComputerStatus": {},
+            "MACAddress": {},
+            "Power": {}
+        }
+    },
+    "paramValues": {}
+}

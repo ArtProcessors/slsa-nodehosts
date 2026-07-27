@@ -1,0 +1,30 @@
+.loop-btn {
+  background-color: #e2e2e2;
+  border: 1px solid #bfbfbf;
+  margin-right: 12px;
+}
+.loop-btn:hover {
+  background-color: #d2d2d2;
+}
+.power-btn {
+  display: block;
+  width: 260px;
+  max-width: 100%;
+  padding-top: 34px;
+  padding-bottom: 34px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.power-off {
+  margin-left: auto;
+  margin-right: 6px;
+}
+.power-on {
+  margin-left: 6px;
+  margin-right: auto;
+}
+.routing-btn {
+  padding-top: 32px;
+  padding-bottom: 32px;
+  white-space: normal;
+}

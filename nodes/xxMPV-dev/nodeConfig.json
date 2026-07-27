@@ -1,0 +1,10 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "mpvArgs": "--force-window=yes --idle --no-osc",
+        "folder": "/users/tomk/vids"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "remoteBindingValues": {
+        "actions": {"PowerOff": {
+            "node": "LTL-PLAY-SCAN02",
+            "action": "PowerOff"
+        }},
+        "events": {
+            "ComputerStatus": {},
+            "MACAddress": {},
+            "Power": {}
+        }
+    },
+    "paramValues": {}
+}

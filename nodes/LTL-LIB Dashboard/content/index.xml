@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="v1/index.xsl"?>
+<pages title="State Library of South Australia: Little Library " css='css/custom.css'>
+  <header>
+  </header>
+
+  <page title='Overview'>
+    <row>
+      <column sm="12">
+        <row>
+          <column sm='12' md='6'>
+            <subtitle>Little Library</subtitle>
+            <row>
+              <column sm='6'>
+                <button action='All Power' arg='Off' event='All Power' class-on="btn-danger" class-off="btn-success" class="btn-default btn-block btn-lg" confirm='true'>All Off</button>
+              </column>
+              <column sm='6'>
+                <button action='All Power' arg='On' event='All Power' class-on='btn-primary' class="btn-default btn-block btn-lg" confirm='true'>All On<icon type='on'/></button>
+              </column>
+            </row>
+            <subtitle>Exhibits</subtitle>
+            <status page="Play">Play<partialswitch join='Play Power' class='btn-light'></partialswitch></status>
+            <status page="Sing">Sing<partialswitch join='Sing Power' class='btn-light'></partialswitch></status>
+            <subtitle>Audio Routing</subtitle>
+            <group>
+              <row>
+                <column sm='4'><button join='Split Room' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Split Room</button></column>
+                <column sm='4'><button join='Play Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Play Audio Takeover</button></column>
+                <column sm='4'><button join='Sing Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Sing Audio Takeover</button></column>
+              </row>
+            </group>
+          </column>
+          <column sm='12' md='6'>
+            <subtitle>Help</subtitle>
+            <text>For support please visit the 'Art Processors Extranet' on the tab below for knowledge base articles and troubleshooting guides.</text>
+            <text>To raise a support request please select the 'Art Processors Service Desk' tab below and use the credentials provided to you.</text>
+            <text>If you are unable to login to the Service Desk or Extranet, please email support@artprocessors.net or call us on +61 (0) 3 9663 1266.</text>
+          </column>
+        </row>
+      </column>
+    </row>
+  </page>
+
+  <page title='Calendar'>
+    <row>
+      <column sm="12">
+        <title>Calendar</title>
+      </column>
+    </row>
+  </page>
+
+    <page title="Play">
+      <row>
+        <column sm='12'>
+          <row>
+            <column sm="6">
+              <title>Play</title>
+              <row>
+                <column sm='12'>
+                  <text>Power</text>
+                </column>
+                <column sm='6'>
+                  <button action='Play Power' arg='Off' event='Play Power' class-on="btn-danger" class-off="btn-success" class="btn-default btn-lg power-btn power-off">Off</button>
+                </column>
+                <column sm='6'>
+                  <button action='Play Power' arg='On' event='Play Power' class-on="btn-primary" class="btn-default btn-lg power-btn power-on">On</button>
+                </column>
+              </row>
+              <row>
+                <column sm="12">
+                  <text>Volume</text>
+                  <range event='Play Volume' action='Play Volume' min='0' max='100'></range>
+                </column>
+                <column sm="12">
+                  <meter event='Play Level' type='horizontal' range='db'/>
+                </column>
+              </row>
+              <row>
+                <column sm="12">
+                  <title>Screenshots</title>
+                  (updated every 60 seconds)
+                </column>
+              </row>
+              <row>
+                <column sm="6">
+                  <title size='6'>BlockHead PC</title>
+                  <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Screenshot'></image>
+                </column>
+              </row>
+            </column>
+            <column sm='6'>
+              <title>Equipment</title>
+              <text>Computers</text>
+              <status event='Play BlockHead PC Status'>BlockHead PC<partialswitch join='Play BlockHead PC Power'/><button action='Play BlockHead PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner PC 01 Status'>Scanner PC 01<partialswitch join='Play Scanner PC 01 Power'/><button action='Play Scanner PC 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner PC 02 Status'>Scanner PC 02<partialswitch join='Play Scanner PC 02 Power'/><button action='Play Scanner PC 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+
+              <text>Software</text>
+              <status event='Play Unity App Status'>BlockHead PC Unity App<partialswitch join='Play Unity App Power'/><button action='Play Unity App Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner Software 01 Status'>Scanner Software 01<partialswitch join='Play Scanner Software 01 Power'/><button action='Play Scanner Software 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner Software 02 Status'>Scanner Software 02<partialswitch join='Play Scanner Software 02 Power'/><button action='Play Scanner Software 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+
+              <text>Projectors</text>
+              <status event='Play Projector Status'>BlockHead Projector (EPSON EB-PU1007W / ELPLX01 lens)<partialswitch join='Play Projector Power'/></status>
+
+              <text>Scanners and Buttons</text>
+              <status event='Play Scanner 01 Status'>Scanner 01<partialswitch join='Play Scanner 01 Power'/><button action='Play Scanner 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner 02 Status'>Scanner 02<partialswitch join='Play Scanner 02 Power'/><button action='Play Scanner 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play SwitchBot 01 Status'>SwitchBot 01<partialswitch join='Play SwitchBot 01 Power'/><button action='Play SwitchBot 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play SwitchBot 02 Status'>SwitchBot 02<partialswitch join='Play SwitchBot 02 Power'/><button action='Play SwitchBot 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+    <page title="Sing">
+      <row>
+        <column sm='12'>
+          <row>
+            <column sm="6">
+              <title>Sing</title>
+              <row>
+                <column sm='12'>
+                  <text>Power</text>
+                </column>
+                <column sm='6'>
+                  <button class-on="btn-danger" class-off="btn-success" class="btn-default btn-lg power-btn power-off">Off</button>
+                </column>
+                <column sm='6'>
+                  <button class="btn-default btn-lg power-btn power-on">On</button>
+                </column>
+              </row>
+              <row>
+                <column sm="12">
+                  <text>Volume</text>
+                  <range min='-30' max='10'></range>
+                </column>
+                <column sm="12">
+                  <meter type='horizontal' range='db'/>
+                </column>
+              </row>
+            </column>
+            <column sm='6'>
+              <title>Mode</title>
+              <button class="btn-default btn-block btn-lg">Activities (Kuarna Songs)</button>
+              <button class="btn-default btn-block btn-lg">Programs (Alternate Content)</button>
+              <button class="btn-default btn-block btn-lg">Presentation</button>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+    <page title="Multipurpose">
+      <row>
+        <column sm='12'>
+          <row>
+            <column sm="6">
+              <title>Multipurpose Space</title>
+              <row>
+                <column sm='12'>
+                  <text>Power</text>
+                </column>
+                <column sm='6'>
+                  <button action='Multipurpose Power' arg='Off' event='Multipurpose Power' class-on="btn-danger" class-off="btn-success" class="btn-default btn-lg power-btn power-off">Off</button>
+                </column>
+                <column sm='6'>
+                  <button action='Multipurpose Power' arg='On' event='Multipurpose Power' class-on="btn-primary" class="btn-default btn-lg power-btn power-on">On</button>
+                </column>
+              </row>
+              <row>
+                <column sm="12">
+                  <text>Volume</text>
+                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-30' max='10'></range>
+                </column>
+                <column sm="12">
+                  <meter event='Multipurpose Level' type='horizontal' range='db'/>
+                </column>
+              </row>
+              <subtitle>Mic 01 (Handheld)</subtitle>
+              <text>Level</text>
+              <range event='Multipurpose Mic 01 Level' action='Multipurpose Mic 01 Level' min='-30' max='10'></range>
+              <meter event='Multipurpose Mic 01 Meter' type='horizontal' range='db'/>
+
+              <subtitle>Mic 02 (Belt Pack)</subtitle>
+              <text>Level</text>
+              <range event='Multipurpose Mic 02 Level' action='Multipurpose Mic 02 Level' min='-30' max='10'></range>
+              <meter event='Multipurpose Mic 02 Meter' type='horizontal' range='db'/>
+            </column>
+            <column sm='6'>
+              <title>Source</title>
+              <text>Input</text>
+              <button join='Multipurpose Sing PC' class-on='btn-primary' class="btn-default btn-block btn-lg">Sing PC</button>
+              <button join='Multipurpose Apple TV' class-on='btn-primary' class="btn-default btn-block btn-lg">Apple TV</button>
+              <button join='Multipurpose HDMI Wall Plate' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Wall Plate</button>
+              <button join='Multipurpose HDMI Lead' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Lead</button>
+              <button join='Multipurpose Aux Audio' class-on='btn-primary' class="btn-default btn-block btn-lg">Aux Audio (Projector Mute)</button>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+
+</pages>
