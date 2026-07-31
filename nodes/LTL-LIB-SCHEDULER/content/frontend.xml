@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="v1/index.xsl"?>
+<pages title="Scheduler"
+       css="css/scheduler-calendar.css"
+       js="js/scheduler-calendar.js"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="v1/index.xsd">
+  <page title="Overview">
+    <row>
+      <column xs="12">
+        <title>Schedule calendar</title>
+        <text>Loading the calendar editor.</text>
+      </column>
+    </row>
+  </page>
+</pages>

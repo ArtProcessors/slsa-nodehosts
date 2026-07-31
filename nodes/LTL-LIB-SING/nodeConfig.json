@@ -33,11 +33,11 @@
         },
         "events": {
             "MemberSingProjectorPower": {
-                "node": "Sing Projector",
+                "node": "LTL-SING-PJ",
                 "event": "Power"
             },
             "MemberSingProjectorStatus": {
-                "node": "Sing Projector",
+                "node": "LTL-SING-PJ",
                 "event": "Status"
             },
             "MemberSingAmpPower": {
@@ -53,23 +53,23 @@
                 "event": "Status"
             },
             "MemberSingVideoSwitcherPower": {
-                "node": "Sing Video Switcher",
-                "event": "Power"
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
             },
             "MemberSingVideoSwitcherMuting": {
-                "node": "Sing Video Switcher",
-                "event": "Muting"
+                "node": "LTL-SING-SWITCHER",
+                "event": "ExtractedAudioEnabled"
             },
             "MemberSingVideoSwitcherStatus": {
-                "node": "Sing Video Switcher",
+                "node": "LTL-SING-SWITCHER",
                 "event": "Status"
             },
             "MemberSingPCPower": {
-                "node": "Sing PC",
+                "node": "LTL-SING-PC-WOL",
                 "event": "Power"
             },
             "MemberSingPCStatus": {
-                "node": "Sing PC",
+                "node": "LTL-SING-PC",
                 "event": "Status"
             },
             "MemberSingRackPDU01Power": {
@@ -77,7 +77,7 @@
                 "event": "Power"
             },
             "MemberSingRackPDU01Status": {
-                "node": "Sing Rack PDU01",
+                "node": "LTL-SING-RACKPDU01",
                 "event": "Status"
             },
             "MemberSingRackPDU02Power": {
@@ -85,7 +85,7 @@
                 "event": "Power"
             },
             "MemberSingRackPDU02Status": {
-                "node": "Sing Rack PDU02",
+                "node": "LTL-SING-RACKPDU02",
                 "event": "Status"
             }
         }
@@ -121,13 +121,13 @@
             {
                 "name": "Sing Rack PDU01",
                 "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
+                "power": {},
                 "_$visible": true
             },
             {
                 "name": "Sing Rack PDU02",
                 "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
+                "power": {},
                 "_$visible": true
             }
         ],

@@ -69,6 +69,26 @@
                 "node": "LTL-PLAY-PJ",
                 "action": "Power"
             },
+            "MultipurposeSingPC": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input1"
+            },
+            "MultipurposeAppleTV": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input2"
+            },
+            "MultipurposeHDMIWallPlate": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input2"
+            },
+            "MultipurposeHDMILead": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input2"
+            },
+            "MultipurposeVolume": {
+                "node": "xxsingmaster",
+                "action": "ZONEAGAIN"
+            },
             "Split Room": {},
             "Play Audio Takeover": {},
             "Sing Audio Takeover": {},
@@ -81,19 +101,38 @@
             "Play SwitchBot 02 Power": {},
             "Play SwitchBot 02 Restart": {},
             "Multipurpose Power": {},
-            "Multipurpose Volume": {},
             "Multipurpose Mic 01 Level": {},
             "Multipurpose Mic 02 Level": {},
-            "Multipurpose Apple TV": {},
-            "Multipurpose HDMI Wall Plate": {},
-            "Multipurpose HDMI Lead": {},
             "Multipurpose Aux Audio": {}
         },
         "events": {
-            "PlayPower": {
-                "node": "LTL-LIB-PLAY",
+            "PlayProjectorStatus": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Status"
+            },
+            "PlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
                 "event": "Power"
             },
+            "MultipurposeSingPC": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "MultipurposeAppleTV": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "MultipurposeHDMIWallPlate": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "MultipurposeHDMILead": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "Play Status": {},
+            "Play Power": {},
+            "Sing Status": {},
             "Sing Power": {},
             "Split Room": {},
             "Play Audio Takeover": {},
@@ -113,8 +152,6 @@
             "Play Scanner Software 01 Power": {},
             "Play Scanner Software 02 Status": {},
             "Play Scanner Software 02 Power": {},
-            "Play Projector Status": {},
-            "Play Projector Power": {},
             "Play Scanner 01 Status": {},
             "Play Scanner 01 Power": {},
             "Play Scanner 02 Status": {},
@@ -130,9 +167,6 @@
             "Multipurpose Mic 01 Meter": {},
             "Multipurpose Mic 02 Level": {},
             "Multipurpose Mic 02 Meter": {},
-            "Multipurpose Apple TV": {},
-            "Multipurpose HDMI Wall Plate": {},
-            "Multipurpose HDMI Lead": {},
             "Multipurpose Aux Audio": {}
         }
     },

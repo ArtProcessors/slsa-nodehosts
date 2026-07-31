@@ -1,0 +1,10 @@
+{
+    "remoteBindingValues": {
+        "actions": {"NodelTransportForward1": {}},
+        "events": {"NodelTransportReceive1": {}}
+    },
+    "paramValues": {
+        "address": "10.242.25.230:50001",
+        "_$visible": true
+    }
+}

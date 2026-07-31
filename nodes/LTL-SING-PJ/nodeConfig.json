@@ -3,5 +3,9 @@
         "actions": {},
         "events": {}
     },
-    "paramValues": {}
+    "paramValues": {
+        "ipAddress": "10.242.25.206",
+        "password": "20112011",
+        "port": 4352
+    }
 }

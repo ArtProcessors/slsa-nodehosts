@@ -1,0 +1,328 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "PlayVolume": {
+                "node": "xxplaymaster",
+                "action": "ZONEAGAIN"
+            },
+            "AllPower": {
+                "node": "LTL-LIB-GALLERY",
+                "action": "Power"
+            },
+            "PlayPower": {
+                "node": "LTL-LIB-PLAY",
+                "action": "Power"
+            },
+            "SingPower": {
+                "node": "LTL-LIB-SING",
+                "action": "Power"
+            },
+            "PlayBlockHeadPCPower": {
+                "node": "LTL-PLAY-INT-WOL",
+                "action": "PowerOn"
+            },
+            "PlayBlockHeadPCRestart": {
+                "node": "LTL-PLAY-INT",
+                "action": "Restart"
+            },
+            "PlayScannerPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "action": "PowerOn"
+            },
+            "PlayScannerPC01Restart": {
+                "node": "LTL-PLAY-SCAN01",
+                "action": "Restart"
+            },
+            "PlayScannerPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "action": "PowerOn"
+            },
+            "PlayScannerPC02Restart": {
+                "node": "LTL-PLAY-SCAN02",
+                "action": "Restart"
+            },
+            "PlayUnityAppPower": {
+                "node": "LTL-PLAY-UNITY",
+                "action": "Power"
+            },
+            "PlayUnityAppRestart": {
+                "node": "LTL-PLAY-UNITY",
+                "action": "PowerOff"
+            },
+            "PlayScannerSoftware01Power": {
+                "node": "LTL-PLAY-SNAP01",
+                "action": "Power"
+            },
+            "PlayScannerSoftware01Restart": {
+                "node": "LTL-PLAY-SNAP01",
+                "action": "PowerOff"
+            },
+            "PlayScannerSoftware02Power": {
+                "node": "LTL-PLAY-SNAP02",
+                "action": "Power"
+            },
+            "PlayScannerSoftware02Restart": {
+                "node": "LTL-PLAY-SNAP02",
+                "action": "PowerOff"
+            },
+            "PlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "Play": {
+                "node": "xxMPV-eng",
+                "action": "Play"
+            },
+            "Stop": {
+                "node": "xxMPV-eng",
+                "action": "Stop"
+            },
+            "Previous": {
+                "node": "xxMPV-eng",
+                "action": "Previous"
+            },
+            "Next": {
+                "node": "xxMPV-eng",
+                "action": "Next"
+            },
+            "LoopToggle": {
+                "node": "xxMPV-eng",
+                "action": "LoopToggle"
+            },
+            "PauseToggle": {
+                "node": "xxMPV-eng",
+                "action": "PauseToggle"
+            },
+            "PlayFile": {
+                "node": "xxMPV-eng",
+                "action": "PlayFile"
+            },
+            "SetSelection": {
+                "node": "xxMPV-eng",
+                "action": "SetSelection"
+            },
+            "SetPosition": {
+                "node": "xxMPV-eng",
+                "action": "SetPosition"
+            },
+            "Rescan": {
+                "node": "xxMPV-eng",
+                "action": "Rescan"
+            },
+            "AutoNumber": {
+                "node": "xxMPV-eng",
+                "action": "AutoNumber"
+            },
+            "ClearSelection": {
+                "node": "xxMPV-eng",
+                "action": "ClearSelection"
+            },
+            "ClearOrdering": {
+                "node": "xxMPV-eng",
+                "action": "ClearOrdering"
+            },
+            "NewPlaylist": {
+                "node": "xxMPV-eng",
+                "action": "NewPlaylist"
+            },
+            "RecallPreset": {
+                "node": "xxMPV-eng",
+                "action": "RecallPreset"
+            },
+            "SavePreset": {
+                "node": "xxMPV-eng",
+                "action": "SavePreset"
+            },
+            "DeletePreset": {
+                "node": "xxMPV-eng",
+                "action": "DeletePreset"
+            },
+            "MultipurposeVolume": {
+                "node": "xxsingmaster",
+                "action": "ZONEAGAIN"
+            },
+            "MultipurposeSingPC": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input1"
+            },
+            "MultipurposeAppleTV": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input2"
+            },
+            "MultipurposeHDMIWallPlate": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input3"
+            },
+            "MultipurposeHDMILead": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input4"
+            },
+            "SplitRoom": {
+                "node": "LTL-LIB-AUDIO",
+                "action": "SplitRoom"
+            },
+            "PlayAudioTakeover": {
+                "node": "LTL-LIB-AUDIO",
+                "action": "PlayTakeover"
+            },
+            "SingAudioTakeover": {
+                "node": "LTL-LIB-AUDIO",
+                "action": "SingTakeover"
+            },
+            "Play Scanner 01 Power": {},
+            "Play Scanner 01 Restart": {},
+            "Play Scanner 02 Power": {},
+            "Play Scanner 02 Restart": {},
+            "Play SwitchBot 01 Power": {},
+            "Play SwitchBot 01 Restart": {},
+            "Play SwitchBot 02 Power": {},
+            "Play SwitchBot 02 Restart": {},
+            "Multipurpose Power": {},
+            "Multipurpose Mic 01 Level": {},
+            "Multipurpose Mic 02 Level": {},
+            "Multipurpose Aux Audio": {}
+        },
+        "events": {
+            "PlayPower": {
+                "node": "LTL-LIB-PLAY",
+                "event": "Power"
+            },
+            "Files": {
+                "node": "xxMPV-eng",
+                "event": "Files"
+            },
+            "Presets": {
+                "node": "xxMPV-eng",
+                "event": "Presets"
+            },
+            "EditingPreset": {
+                "node": "xxMPV-eng",
+                "event": "EditingPreset"
+            },
+            "NowPlaying": {
+                "node": "xxMPV-eng",
+                "event": "NowPlaying"
+            },
+            "PlayReady": {
+                "node": "xxMPV-eng",
+                "event": "PlayReady"
+            },
+            "Paused": {
+                "node": "xxMPV-eng",
+                "event": "Paused"
+            },
+            "Loop": {
+                "node": "xxMPV-eng",
+                "event": "Loop"
+            },
+            "MPVRunning": {
+                "node": "xxMPV-eng",
+                "event": "MPVRunning"
+            },
+            "PlayStatus": {
+                "node": "LTL-LIB-PLAY",
+                "event": "Status"
+            },
+            "SingStatus": {
+                "node": "LTL-LIB-SING",
+                "event": "Status"
+            },
+            "SingPower": {
+                "node": "LTL-LIB-SING",
+                "event": "Power"
+            },
+            "PlayVolume": {
+                "node": "LTL-PLAY-AMP",
+                "event": "MasterVolume"
+            },
+            "PlayBlockHeadPCStatus": {
+                "node": "LTL-PLAY-INT-WOL",
+                "event": "Status"
+            },
+            "PlayBlockHeadPCPower": {
+                "node": "LTL-PLAY-INT-WOL",
+                "event": "Power"
+            },
+            "PlayScannerPC01Status": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "event": "Status"
+            },
+            "PlayScannerPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "event": "Power"
+            },
+            "PlayScannerPC02Status": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "event": "Status"
+            },
+            "PlayScannerPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "event": "Power"
+            },
+            "PlayUnityAppStatus": {
+                "node": "LTL-PLAY-UNITY",
+                "event": "Status"
+            },
+            "PlayUnityAppPower": {
+                "node": "LTL-PLAY-UNITY",
+                "event": "Power"
+            },
+            "PlayScannerSoftware01Status": {
+                "node": "LTL-PLAY-SNAP01",
+                "event": "Status"
+            },
+            "PlayScannerSoftware01Power": {
+                "node": "LTL-PLAY-SNAP01",
+                "event": "Power"
+            },
+            "PlayScannerSoftware02Status": {
+                "node": "LTL-PLAY-SNAP02",
+                "event": "Status"
+            },
+            "PlayScannerSoftware02Power": {
+                "node": "LTL-PLAY-SNAP02",
+                "event": "Power"
+            },
+            "PlayProjectorStatus": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Status"
+            },
+            "PlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Power"
+            },
+            "MultipurposeSingPC": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "SplitRoom": {},
+            "PlayAudioTakeover": {},
+            "SingAudioTakeover": {},
+            "Play Level": {},
+            "Play BlockHead Screenshot": {},
+            "Play Scanner 01 Status": {},
+            "Play Scanner 01 Power": {},
+            "Play Scanner 02 Status": {},
+            "Play Scanner 02 Power": {},
+            "Play SwitchBot 01 Status": {},
+            "Play SwitchBot 01 Power": {},
+            "Play SwitchBot 02 Status": {},
+            "Play SwitchBot 02 Power": {},
+            "Multipurpose Power": {},
+            "Multipurpose Volume": {},
+            "Multipurpose Level": {},
+            "Multipurpose Mic 01 Level": {},
+            "Multipurpose Mic 01 Meter": {},
+            "Multipurpose Mic 02 Level": {},
+            "Multipurpose Mic 02 Meter": {},
+            "Multipurpose Apple TV": {},
+            "Multipurpose HDMI Wall Plate": {},
+            "Multipurpose HDMI Lead": {},
+            "Multipurpose Aux Audio": {}
+        }
+    },
+    "paramValues": {
+        "localOnlySignals": "All Power",
+        "localOnlyActions": ""
+    }
+}

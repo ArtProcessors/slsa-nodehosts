@@ -1,0 +1,7 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {"IPAddress": {}}
+    },
+    "paramValues": {"port": 7621}
+}

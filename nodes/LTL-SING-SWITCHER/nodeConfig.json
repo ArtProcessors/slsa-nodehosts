@@ -3,5 +3,8 @@
         "actions": {},
         "events": {}
     },
-    "paramValues": {}
+    "paramValues": {
+        "ipAddress": "10.242.25.207",
+        "port": 23
+    }
 }

@@ -1,7 +1,39 @@
 {
     "remoteBindingValues": {
-        "actions": {},
-        "events": {}
+        "actions": {
+            "MemberPlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "MemberSingProjectorPower": {
+                "node": "LTL-SING-PJ",
+                "action": "Power"
+            }
+        },
+        "events": {
+            "MemberPlayProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Power"
+            },
+            "MemberSingProjectorPower": {
+                "node": "LTL-SING-PJ",
+                "event": "Power"
+            }
+        }
     },
-    "paramValues": {}
+    "paramValues": {
+        "members": [
+            {
+                "name": "Play Projector",
+                "power": {"mode": "Action & Signal"},
+                "_$visible": true
+            },
+            {
+                "name": "Sing Projector",
+                "power": {"mode": "Action & Signal"},
+                "_$visible": true
+            }
+        ],
+        "_$visible": true
+    }
 }

@@ -1,0 +1,17 @@
+{
+    "remoteBindingValues": {
+        "actions": {"NodeXVolume": {}},
+        "events": {
+            "NodeXStatus": {},
+            "IPAddress": {}
+        }
+    },
+    "paramValues": {
+        "ipAddress": "10.242.25.216",
+        "Credentials": {
+            "username": "netio",
+            "password": "admin"
+        },
+        "_$visible": true
+    }
+}

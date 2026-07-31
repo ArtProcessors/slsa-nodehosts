@@ -1,0 +1,31 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "Schedules": [
+            {
+                "enabled": true,
+                "name": "Museum open",
+                "cron": "27 15 * * FRI",
+                "event": "Power",
+                "argument": "On",
+                "timezone": "Australia/Adelaide",
+                "exceptions": [{"date": "2026-12-25"}],
+                "notes": "Disabled example: open at 10:00 Tuesday to Sunday, except Christmas Day."
+            },
+            {
+                "enabled": true,
+                "name": "Museum close",
+                "cron": "35 15 * * FRI",
+                "event": "Power",
+                "argument": "Off",
+                "timezone": "Australia/Adelaide",
+                "exceptions": [],
+                "notes": "Disabled example: close at 17:00 Tuesday to Sunday."
+            }
+        ],
+        "_$visible": true
+    }
+}

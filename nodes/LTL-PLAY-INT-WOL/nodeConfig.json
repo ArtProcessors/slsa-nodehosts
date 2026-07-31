@@ -1,14 +1,7 @@
 {
     "remoteBindingValues": {
-        "actions": {"PowerOff": {
-            "node": "LTL-PLAY-INT",
-            "action": "PowerOff"
-        }},
-        "events": {
-            "ComputerStatus": {},
-            "MACAddress": {},
-            "Power": {}
-        }
+        "actions": {},
+        "events": {}
     },
     "paramValues": {}
 }

@@ -1,0 +1,62 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "PlayAmpZoneASource": {
+                "node": "xxplaymaster",
+                "action": "ZONEAPRIMARYSRC"
+            },
+            "SingAmpZoneASource": {
+                "node": "xxsingmaster",
+                "action": "ZONEAPRIMARYSRC"
+            }
+        },
+        "events": {}
+    },
+    "paramValues": {
+        "Cues": [
+            {
+                "Title": "Split Room",
+                "Actions": [
+                    {
+                        "title": "Play Amp Zone A Source",
+                        "argument": "500"
+                    },
+                    {
+                        "title": "Sing Amp Zone A Source",
+                        "argument": "500"
+                    }
+                ],
+                "_$visible": false
+            },
+            {
+                "Title": "Play Takeover",
+                "Actions": [
+                    {
+                        "title": "Play Amp Zone A Source",
+                        "argument": "500"
+                    },
+                    {
+                        "title": "Sing Amp Zone A Source",
+                        "argument": "501"
+                    }
+                ],
+                "_$visible": false
+            },
+            {
+                "Title": "Sing Takeover",
+                "Actions": [
+                    {
+                        "title": "Play Amp Zone A Source",
+                        "argument": "501"
+                    },
+                    {
+                        "title": "Sing Amp Zone A Source",
+                        "argument": "500"
+                    }
+                ],
+                "_$visible": true
+            }
+        ],
+        "_$visible": true
+    }
+}

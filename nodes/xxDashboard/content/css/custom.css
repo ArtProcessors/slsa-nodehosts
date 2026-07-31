@@ -1,0 +1,407 @@
+.loop-btn {
+  background-color: #e2e2e2;
+  border: 1px solid #bfbfbf;
+  margin-right: 12px;
+}
+.loop-btn:hover {
+  background-color: #d2d2d2;
+}
+.power-btn {
+  display: block;
+  width: 260px;
+  max-width: 100%;
+  padding-top: 34px;
+  padding-bottom: 34px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.power-off {
+  margin-left: auto;
+  margin-right: 6px;
+}
+.power-on {
+  margin-left: 6px;
+  margin-right: auto;
+}
+.routing-btn {
+  padding-top: 32px;
+  padding-bottom: 32px;
+  white-space: normal;
+}
+
+/* ====================================================================
+   Media Player tab (mpv playlist controller) - lifted from the
+   xxMPV-frontend node. Every rule below is .mpv-* scoped, so it cannot
+   affect the other tabs.
+   ==================================================================== */
+
+/* Hidden signal-declaration block in index.xml: the Mk 2 recipe needs those
+   action=/event= attributes to create this node's mpv surface, but they must
+   never be seen. (index.xsl already drops them - this is a safety net.) */
+.mpv-declare {
+  display: none;
+}
+
+/* mpv Playlist — live selection list styling */
+
+/* Selection & order toolbar buttons: horizontal spacing between them */
+.mpv-toolbtn {
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+
+/* Transport buttons: fill their grid column (the Bootstrap columns handle
+   alignment), with a size that fits the narrow control-pad columns. */
+.mpv-bigbtn {
+  display: flex;              /* flex so we can put the icon before the label */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;           /* uniform height even if a label wraps */
+  font-size: 1em;
+  font-weight: 600;
+  padding: 10px 8px;
+  margin: 0 0 4px 0;          /* tight vertical gap between stacked buttons */
+  white-space: normal;
+}
+/* The button template renders <p>label</p> then the icon after it; reorder so
+   the icon comes first (to the left of the label). */
+.mpv-bigbtn .fas,
+.mpv-bigbtn .far {
+  order: 0;
+  margin-right: 10px;
+}
+.mpv-bigbtn p {
+  order: 1;
+  margin: 0;
+}
+
+/* Playback control row: flex so the left (Start) and right (Stop + Prev/Next)
+   columns are equal height. Keeps the Bootstrap column widths (they act as the
+   flex-basis) but lets Start stretch vertically. */
+.mpv-playback-row {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;            /* collapse to stacked below the sm breakpoint */
+}
+.mpv-playback-row > div:first-child {
+  display: flex;             /* the Start column, so Start can flex-grow */
+  flex-direction: column;
+}
+
+/* Start: 4x-tall floor, then grows to fill the equal-height left column so its
+   bottom lines up with the bottom of the Prev/Next buttons on the right. */
+.mpv-play-btn {
+  min-height: 184px;
+  flex: 1 1 auto;
+}
+
+/* Transport controls (Prev / Next) sit in a column to the RIGHT of Start;
+   top-align their first row with the top of the Start button. */
+.mpv-transport {
+  margin-top: 0;
+}
+/* Prev/Next are the last row of the right column: drop their trailing bottom
+   margin so the column's bottom edge is exactly their bottom edge (which Start
+   stretches to meet). */
+.mpv-transport .mpv-bigbtn {
+  margin-bottom: 0;
+}
+/* Stop is sized so that Stop + the 4px gap + the 46px Prev/Next row together
+   match the 184px Start button height (184 - 46 - 4 = 134). */
+.mpv-stop-btn {
+  min-height: 134px;
+}
+
+/* Play disabled until the selection is a saved playlist */
+.mpv-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Loop button: separated from the transport, greys when off, orange when on */
+.mpv-loopbtn {
+  margin-top: 4px;             /* sits directly under Start, tight gap */
+}
+.mpv-loopbtn.mpv-loop-off,
+.mpv-loopbtn.mpv-loop-off:hover,
+.mpv-loopbtn.mpv-loop-off:focus,
+.mpv-loopbtn.mpv-loop-off:active {
+  background-color: #777;
+  border-color: #777;
+  color: #fff;
+}
+.mpv-loopbtn.mpv-loop-on,
+.mpv-loopbtn.mpv-loop-on:hover,
+.mpv-loopbtn.mpv-loop-on:focus,
+.mpv-loopbtn.mpv-loop-on:active {
+  background-color: #ff9800;
+  border-color: #ff9800;
+  color: #fff;
+}
+/* On/Off sub-line: matches the status-block text size, not bold. In the flex
+   button it takes a full row (order 2) so it sits under the icon + label. */
+.mpv-loop-state {
+  order: 2;
+  flex-basis: 100%;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+/* Compact running-status pill at the bottom-RIGHT of the Playback area (it is
+   injected as the last child of the Playback well): green when running, red
+   when not. display:table shrinks it to its text so margin-left:auto pushes it
+   to the right, while staying in normal flow below the buttons. */
+.mpv-status {
+  display: table;             /* shrink to text width for the right-align trick */
+  margin: 16px 0 0 auto;      /* top gap; auto-left pushes the pill to the right */
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  border-radius: 4px;
+}
+.mpv-status-on  { background-color: #5cb85c; }   /* running */
+.mpv-status-off { background-color: #d9534f; }   /* not running */
+
+.mpv-filelist {
+  display: block;
+  margin-top: 10px;
+}
+
+.mpv-table {
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: fixed;       /* declared column widths, so the Included and
+                                Available tables align even though only Included
+                                carries the <thead> header row */
+}
+
+/* Extra horizontal breathing room between columns. Applied to BOTH the
+   Included and Available media tables so their columns line up. */
+.mpv-table th,
+.mpv-table td {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+
+.mpv-table th.mpv-c,
+.mpv-table td.mpv-c {
+  width: 64px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.mpv-table td.mpv-name,
+.mpv-table th.mpv-namecol {
+  vertical-align: middle;
+  word-break: break-all;
+  padding-left: 84px;         /* extra gap between the position input and the name (3x) */
+  /* no width: fills the remaining space, pushing the Play column to the far right */
+}
+/* Play column: fixed narrow column pinned to the FAR RIGHT of each list. */
+.mpv-table td.mpv-playcell,
+.mpv-table th.mpv-playcell {
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+  width: 140px;               /* wide enough for the "Play video once" header */
+}
+/* Per-file play control: a textless, rounded "blob" in a darker green than the
+   standard btn-success. */
+.mpv-play {
+  width: 48px;
+  height: 26px;
+  padding: 0;
+  border-radius: 13px;
+}
+.mpv-play,
+.mpv-play:hover,
+.mpv-play:focus,
+.mpv-play:active {
+  background-color: #2e7d32;   /* darker green */
+  border-color: #24632a;
+  color: #fff;
+}
+
+.mpv-table input.mpv-pos {
+  width: 56px;
+  text-align: center;
+  background-color: #000;    /* black box so the (white) text is readable */
+  color: #fff;
+  border: 1px solid #555;
+}
+/* Position box is disabled until the file is ticked into the playlist */
+.mpv-table input.mpv-pos:disabled {
+  background-color: #333;
+  color: #777;
+  border-color: #333;
+  cursor: not-allowed;
+}
+
+/* Highlight rows that are in the playlist */
+.mpv-table tr.mpv-on {
+  background-color: rgba(76, 175, 80, 0.15);
+}
+.mpv-table tr.mpv-on td.mpv-name {
+  font-weight: 600;
+}
+
+/* Presets panel */
+.mpv-build {
+  margin-top: 6px;
+}
+.mpv-build-sep {
+  margin: 14px 0 12px;
+  border-top: 1px solid #ddd;
+}
+/* Bottom controls: edit (Editing/Update) on the left, save box on the right */
+.mpv-build-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mpv-build-row .mpv-editing {
+  flex: 1 1 auto;
+}
+.mpv-build-row .mpv-save {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.mpv-editing {
+  font-size: 14px;
+}
+.mpv-save-name {
+  width: 60%;
+  max-width: 220px;
+  display: inline-block;
+}
+.mpv-pname {
+  vertical-align: middle;
+  word-break: break-all;
+}
+.mpv-pbtns {
+  white-space: nowrap;
+}
+/* Saved-playlists "No. of files" and "Delete Playlist" columns */
+.mpv-table th.mpv-numcol,
+.mpv-table td.mpv-numcol,
+.mpv-table th.mpv-delcol,
+.mpv-table td.mpv-delcol {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* Bigger delete button */
+.mpv-preset-del {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 9px;
+}
+
+/* Selectable playlist rows: click to select, highlight the active one.
+   Keep the row height where it was even though the delete button shrank. */
+.mpv-preset-row {
+  cursor: pointer;
+}
+.mpv-preset-row > td {
+  height: 44px;
+  vertical-align: middle;
+}
+.mpv-preset-row:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.mpv-preset-row.mpv-preset-sel {
+  background-color: rgba(33, 150, 243, 0.20);
+}
+.mpv-preset-row.mpv-preset-sel td.mpv-pname {
+  font-weight: 700;
+}
+.mpv-table td.mpv-c .btn {
+  margin: 0 1px;
+}
+
+/* Now playing */
+.mpv-np-head {
+  font-size: 1.2em;
+  margin-bottom: 8px;
+}
+.mpv-np-idle {
+  font-style: italic;
+}
+.mpv-ol {
+  margin: 6px 0 0;
+  padding-left: 24px;
+}
+.mpv-ol li {
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* ---- Playlists block (dropdown + toolbar + Included/Available + Save) ---- */
+.mpv-pl-add {
+  float: right;
+  font-size: 15px;
+  padding: 8px 16px;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+.mpv-pl-add:hover,
+.mpv-pl-add:focus,
+.mpv-pl-add:active {
+  background-color: #f2f2f2;
+  color: #000;
+}
+.mpv-pl-controls {
+  margin: 8px 0 22px;        /* extra bottom space before the toolbar row */
+}
+.mpv-pl-select {
+  width: auto;
+  min-width: 260px;
+  max-width: 65%;
+  height: 48px;
+  font-size: 18px;
+  display: inline-block;
+  margin-right: 16px;        /* horizontal space before the rename box */
+}
+.mpv-pl-name {
+  width: 40%;
+  max-width: 220px;
+  display: inline-block;
+}
+/* Resting state always shows the greyed "Rename playlist" placeholder, italic.
+   (Placeholder colour is the browser default grey; typed rename text is upright
+   and full-colour so it reads as a deliberate entry.) */
+.mpv-pl-name::placeholder { font-style: italic; }
+.mpv-pl-name::-webkit-input-placeholder { font-style: italic; }
+.mpv-pl-name::-moz-placeholder { font-style: italic; opacity: 1; }
+.mpv-pl-name:-ms-input-placeholder { font-style: italic; }
+.mpv-pl-toolbar {
+  margin-bottom: 6px;
+}
+.mpv-pl-toolbar .btn {
+  margin: 0 6px 6px 0;
+}
+.mpv-listhead {
+  margin: 14px 0 4px;
+  font-weight: 700;
+}
+.mpv-empty {
+  padding: 6px 2px;
+}
+.mpv-pl-savebar {
+  margin-top: 12px;   /* Save playlist sits bottom-left */
+}

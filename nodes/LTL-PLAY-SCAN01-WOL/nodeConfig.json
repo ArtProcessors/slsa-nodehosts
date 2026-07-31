@@ -10,5 +10,5 @@
             "Power": {}
         }
     },
-    "paramValues": {}
+    "paramValues": {"macAddress": "88-AE-DD-6A-9A-99"}
 }

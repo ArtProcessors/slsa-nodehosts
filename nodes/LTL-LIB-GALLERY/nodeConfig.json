@@ -18,63 +18,157 @@
                 "action": "Muting"
             },
             "MemberPlayAmpPowerExtended": {
-                "node": "LTL-SING-AMP",
+                "node": "LTL-PLAY-AMP",
                 "action": "ZONEASetSource"
             },
             "MemberPlayAmpMutingExtended": {
-                "node": "LTL-SING-AMP",
+                "node": "LTL-PLAY-AMP",
                 "action": "ZONEAMUTE"
             },
             "MemberSingAmpPowerExtended": {},
-            "MemberSingAmpMutingExtended": {}
+            "MemberSingAmpMutingExtended": {},
+            "MemberPlayInteractivePCPower": {
+                "node": "LTL-PLAY-INT-WOL",
+                "action": "Power"
+            },
+            "MemberPlayInteractivePCMuting": {
+                "node": "LTL-PLAY-INT",
+                "action": "Mute"
+            },
+            "MemberPlayScannerPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "action": "Power"
+            },
+            "MemberPlayScannerPC01Muting": {
+                "node": "LTL-PLAY-SCAN01",
+                "action": "Muting"
+            },
+            "MemberPlayScannerPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "action": "Power"
+            },
+            "MemberPlayScannerPC02Muting": {"action": "Muting"},
+            "MemberSingPCPower": {
+                "node": "LTL-SING-PC-WOL",
+                "action": "Power"
+            },
+            "MemberSingPCMuting": {
+                "node": "LTL-SING-PC",
+                "action": "Mute"
+            },
+            "MemberSingVideoSwitchPower": {
+                "node": "LTL-SING-SWITCHER",
+                "action": "Output1Input1"
+            }
         },
         "events": {
             "MemberPlayProjectorStatus": {
-                "node": "Play Projector",
+                "node": "LTL-PLAY-PJ",
                 "event": "Status"
             },
             "MemberSingProjectorStatus": {
-                "node": "Sing Projector",
+                "node": "LTL-SING-PJ",
                 "event": "Status"
             },
             "MemberPlayProjectorPower": {
-                "node": "Play Projector",
+                "node": "LTL-PLAY-PJ",
                 "event": "Power"
             },
-            "MemberPlayProjectorMuting": {
-                "node": "Play Projector",
-                "event": "Muting"
-            },
+            "MemberPlayProjectorMuting": {"node": "LTL-PLAY-PJ"},
             "MemberSingProjectorPower": {
-                "node": "Sing Projector",
+                "node": "LTL-SING-PJ",
                 "event": "Power"
             },
             "MemberSingProjectorMuting": {
-                "node": "Sing Projector",
+                "node": "LTL-SING-PJ",
                 "event": "Muting"
             },
             "MemberPlayAmpPower": {
-                "node": "Play Amp",
+                "node": "LTL-PLAY-AMP",
                 "event": "Power"
             },
             "MemberPlayAmpMuting": {
-                "node": "Play Amp",
+                "node": "LTL-PLAY-AMP",
                 "event": "Muting"
             },
             "MemberPlayAmpStatus": {
-                "node": "Play Amp",
+                "node": "LTL-PLAY-AMP",
                 "event": "Status"
             },
             "MemberSingAmpPower": {
-                "node": "Sing Amp",
+                "node": "LTL-SING-AMP",
                 "event": "Power"
             },
             "MemberSingAmpMuting": {
-                "node": "Sing Amp",
+                "node": "LTL-SING-AMP",
                 "event": "Muting"
             },
             "MemberSingAmpStatus": {
-                "node": "Sing Amp",
+                "node": "LTL-SING-AMP",
+                "event": "Status"
+            },
+            "MemberPlayInteractivePCPower": {
+                "node": "Play Interactive PC",
+                "event": "Power"
+            },
+            "MemberPlayInteractivePCMuting": {
+                "node": "Play Interactive PC",
+                "event": "Muting"
+            },
+            "MemberPlayScannerPC01Power": {
+                "node": "Play Scanner PC01",
+                "event": "Power"
+            },
+            "MemberPlayScannerPC01Muting": {
+                "node": "Play Scanner PC01",
+                "event": "Muting"
+            },
+            "MemberPlayScannerPC02Power": {
+                "node": "Play Scanner PC02",
+                "event": "Power"
+            },
+            "MemberPlayScannerPC02Muting": {
+                "node": "Play Scanner PC02",
+                "event": "Muting"
+            },
+            "MemberSingPCPower": {
+                "node": "LTL-SING-PC-WOL",
+                "event": "Power"
+            },
+            "MemberSingPCMuting": {
+                "node": "LTL-SING-PC",
+                "event": "Mute"
+            },
+            "MemberSingVideoSwitchPower": {
+                "node": "LTL-SING-SWITCHER",
+                "event": "Output1Input"
+            },
+            "ScheduledMuting": {
+                "node": "LTL-LIB-SCHEDULER",
+                "event": "Muting"
+            },
+            "ScheduledPower": {
+                "node": "LTL-LIB-SCHEDULER",
+                "event": "Power"
+            },
+            "MemberPlayInteractivePCStatus": {
+                "node": "Play Interactive PC",
+                "event": "Status"
+            },
+            "MemberPlayScannerPC01Status": {
+                "node": "Play Scanner PC01",
+                "event": "Status"
+            },
+            "MemberPlayScannerPC02Status": {
+                "node": "Play Scanner PC02",
+                "event": "Status"
+            },
+            "MemberSingPCStatus": {
+                "node": "LTL-SING-PC",
+                "event": "Status"
+            },
+            "MemberSingVideoSwitchStatus": {
+                "node": "Sing Video Switch",
                 "event": "Status"
             }
         }
@@ -111,6 +205,38 @@
                 "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
                 "muting": {"mode": "Action & Signal"},
+                "_$visible": true
+            },
+            {
+                "name": "Play Interactive PC",
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Play Scanner PC01",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": false
+            },
+            {
+                "name": "Play Scanner PC02",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing PC",
+                "power": {"mode": "Action & Signal"},
+                "muting": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Sing Video Switch",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
                 "_$visible": true
             }
         ],

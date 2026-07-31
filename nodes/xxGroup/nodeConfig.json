@@ -1,0 +1,32 @@
+{
+    "remoteBindingValues": {
+        "actions": {"MemberSingPJPower": {
+            "node": "LTL-SING-PJ",
+            "action": "Power"
+        }},
+        "events": {
+            "MemberSingPJPower": {
+                "node": "Sing PJ",
+                "event": "Power"
+            },
+            "MemberSingPJStatus": {
+                "node": "Sing PJ",
+                "event": "Status"
+            },
+            "ScheduledPower": {
+                "node": "LTL-LIB-SCHEDULER",
+                "event": "Power"
+            },
+            "ScheduledMuting": {}
+        }
+    },
+    "paramValues": {
+        "members": [{
+            "name": "Sing PJ",
+            "power": {"mode": "Action & Signal"},
+            "hasStatus": true,
+            "_$visible": true
+        }],
+        "_$visible": true
+    }
+}

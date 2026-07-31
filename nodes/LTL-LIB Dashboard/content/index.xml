@@ -19,8 +19,8 @@
               </column>
             </row>
             <subtitle>Exhibits</subtitle>
-            <status page="Play">Play<partialswitch join='Play Power' class='btn-light'></partialswitch></status>
-            <status page="Sing">Sing<partialswitch join='Sing Power' class='btn-light'></partialswitch></status>
+            <status page="Play" event='Play Status'>Play<partialswitch join='Play Power' class='btn-light'></partialswitch></status>
+            <status page="Sing" event='Sing Status'>Sing<partialswitch join='Sing Power' class='btn-light'></partialswitch></status>
             <subtitle>Audio Routing</subtitle>
             <group>
               <row>
@@ -170,7 +170,7 @@
               <row>
                 <column sm="12">
                   <text>Volume</text>
-                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-30' max='10'></range>
+                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-80' max='0'></range>
                 </column>
                 <column sm="12">
                   <meter event='Multipurpose Level' type='horizontal' range='db'/>
