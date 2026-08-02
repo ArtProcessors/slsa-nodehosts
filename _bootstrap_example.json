@@ -1,0 +1,20 @@
+{
+    "NodelHostPort": 8085,
+    "messagingPort": 0,
+    "nodelRoot": "nodes",
+    "contentDirectory": ".nodel/webui_cache",
+    "cacheDirectory": "cache",
+    "networkInterfaces": [
+        "en0",
+        "lo0"
+    ],
+    "disableAdvertisements": false,
+    "enableProgramLogging": false,
+    "logsDirectory": "logs",
+    "inclFilters": [
+        "Main Campus *",
+        "Campus 2*"
+    ],
+    "exclFilters": ["Campus 3*"],
+    "recipesRoot": "recipes"
+}

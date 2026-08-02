@@ -1,0 +1,29 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "SceneOn": {
+                "node": "xxdynet",
+                "action": "GalleryOn"
+            },
+            "SceneOff": {
+                "node": "xxdynet",
+                "action": "AllOff"
+            }
+        },
+        "events": {
+            "SceneState": {
+                "node": "xxdynet",
+                "event": "Area2Preset"
+            },
+            "GatewayStatus": {
+                "node": "xxdynet",
+                "event": "Status"
+            }
+        }
+    },
+    "paramValues": {
+        "onStates": "Gallery On, Cleaning On",
+        "offStates": "All Off",
+        "assumeState": false
+    }
+}

@@ -1,236 +1,124 @@
-'''###Cues###
+'''
+**Little Library audio routing** - one operator button switches Zone A source on *both* amplifiers,
+and the current mode is reported back from what the amplifiers actually say.
 
-*Used to send an array of specified actions.*
+Replaces an earlier `Flows` configuration. The remote *action* stub names are unchanged
+("Play Amp Zone A Source" / "Sing Amp Zone A Source") so existing bindings survive; two remote
+*events* were added to read `ZONE-A.PRIMARY_SRC` back from each amp.
 
-**Title:** Title of the Cue, will also be the title of the associated Local Action.
+Each mode in the `Modes` parameter creates:
 
-<ins>**Actions**</ins>
+  - a local **action** (press it -> both amps are told to change source), and
+  - a local **boolean event**, true only while *both* amps report that mode's source pair.
 
-- **Title:** This will be the name of the remote Action, which you can then bind to another Node.
+Exactly one mode event is true at a time; a source pair that matches no mode leaves them all
+false (and `Audio Mode` reads "Unknown"). Nothing is emitted optimistically - the state comes
+from the amps' own echoes, so a change made at the amplifier front panel, by the scheduler or
+from another browser is reflected just the same.
 
-- **Argument:** Optional: If used, the Remote Action will send an argument to the bound Node. For example, 'On' or 'Off' to a remote 'Power' Action.
-
-- **Delay:** Optional: If used, the Cue will wait the specified duration before sending this Action. Useful for sequencing.
-
-###Flows###
-
-*Used to trigger a series of logical checks, to test whether a Cue is allowed to be actioned.*
-
-**Title:** Title of the Flow, will also be the title of the associated Local Action.
-
-**Remote Event Trigger**: Optional: If used, the Flow will automatically be activated upon receiving the specified Remote Event.
-
-<ins>**Outcomes**</ins>
-
-- **Outcome:** The name of a Cue or another Flow which will be activated if the specified checks all pass.
-
-- **Trigger Argument:** Optional: If used, when the Remote Event Trigger receives a message, this Outcome will only be activated if the specified argument matches. For example, if the Remote Event Trigger is a GPIO input from a BrightSign, you may only want to activate the Outcome if the GPIO is being turned on (i.e. button press), and ignore the command if the GPIO is being turned off (i.e. button release).
-
-  <ins>**Conditions**</ins>
-
-  - **Event:** A Remote Event which will be checked each time the Outcome is asked to run, which will need to match...
-
-  - **Argument:** ...the argument specified here.
-
+Bind a dashboard button's action *and* event halves to the same mode name to get a latching
+(radio-button) control.
 '''
 
-# Parameters
+DEFAULT_MODES = [
+  {'name': 'Split Room',          'playSource': 500, 'singSource': 100},
+  {'name': 'Play Audio Takeover', 'playSource': 500, 'singSource': 500},
+  {'name': 'Sing Audio Takeover', 'playSource': 600, 'singSource': 100}
+]
 
-# Setting options for the Cues
-param_Cues = Parameter({'title': 'Cues', 'order': '1', 'schema': {'type': 'array', 'items': {'type': 'object', 'properties': {
-          'Title': {'order': '1', 'type': 'string'}, 
-          'Actions': {'order': '2', 'type': 'array', 'items': {'type': 'object', 'properties': {
-            'title': {'order': '1', 'title': 'Title', 'type': 'string'},
-            'argument': {'order': '2', 'title': 'Argument (Optional)', 'type': 'string', 'hint': 'Enter argument to send with action (eg. On/Off)'},
-            'delay': {'order': '3', 'title': 'Delay Time (Optional)', 'type': 'number', 'hint': 'Enter time in seconds'}}}}
-            }}}})
+param_modes = Parameter({'title': 'Modes', 'order': 1, 'schema': {'type': 'array', 'items': {'type': 'object', 'properties': {
+  'name':       {'title': 'Mode name (matches the dashboard signal)', 'type': 'string',  'order': 1},
+  'playSource': {'title': 'Play amp ZONE-A.PRIMARY_SRC',              'type': 'integer', 'order': 2},
+  'singSource': {'title': 'Sing amp ZONE-A.PRIMARY_SRC',              'type': 'integer', 'order': 3}
+}}}})
 
-# Setting up options for creating Flows
-param_Flows = Parameter({'title': 'Flows', 'order': '3', 'schema': {'type': 'array', 'items': {'type': 'object', 'properties': {
-          'Title': {'order': '1', 'hint': 'Flow title', 'type': 'string'},
-          'Trigger': {'order': '2', 'title': 'Remote Event Trigger (Optional)', 'type': 'string', 'hint': 'When received, this Remote Event will activate the Flow'}, 
-          'Outcomes': {'order': '4', 'type': 'array', 'items': {'type': 'object', 'properties': {
-            'Cue': {'order': '2', 'title': 'Outcome', 'type': 'string', 'hint': 'Cue or Flow title to activate if conditions are met.'},
-            'TriggerArgument': {'order': '3', 'title': 'Trigger Argument (Optional)', 'type': 'string', 'hint': 'Activate this outcome when the given argument matches'},
-            'Conditions': {'order': '4', 'title': 'Conditions (Optional)', 'type': 'array', 'items': {'type': 'object', 'properties': {
-              'RemoteEvent': {'order': '1', 'title': 'Event', 'type': 'string', 'hint': 'Remote Event to check...'},
-              'Argument': {'order': '2', 'title': 'Argument', 'type': 'string', 'hint': 'Check if the Event matches this argument'}}}}
-            }}}
-            }}}})
+PLAY_SOURCE_ACTION = 'Play Amp Zone A Source'
+SING_SOURCE_ACTION = 'Sing Amp Zone A Source'
 
-# Create all the remote actions and events for each step of each sequence
+# last source reported by each amp; None means "has not told us yet"
+_reported = {'play': None, 'sing': None}
+
+_modes = []  # the resolved mode table
+
+
 def main():
+  global _modes
+  _modes = param_modes or DEFAULT_MODES
 
-  # Function to create local and remote Events for Triggers
-  def CreateTriggerEvents(FlowName, EventName, flowtriggerdict):
+  order = 0
+  for mode in _modes:
+    order = order + 1
+    initMode(mode, order)
 
-    # Function to emit the remote events to a local event, activate any Flows that have Triggers set for that Event
-    def remoteEventHandler(arg = None):
-      lookup_local_event(EventName).emit(str(arg))
+  create_local_event('Audio Mode', {'title': 'Audio Mode', 'group': 'Status', 'order': 100,
+                                    'schema': {'type': 'string'}})
 
-      # Check the dictionary for multiple Flows with the same Event source
-      for x in flowtriggerdict:
-        if flowtriggerdict[x] == EventName:
-          lookup_local_action(x).call(str(arg))
+  create_remote_action(PLAY_SOURCE_ACTION, {'title': PLAY_SOURCE_ACTION, 'group': 'Amplifiers',
+                                            'order': 110, 'schema': {'type': 'integer'}},
+                       suggestedNode='LTL-PLAY-AMP')
 
-    # If the event doesn't exist yet, make it
-    if EventName != None:
-      if lookup_local_event(EventName) == None:
-        remoteEvent = create_remote_event(EventName, remoteEventHandler)
-        create_local_event(EventName, {'title': EventName, 'group': 'Events', 'schema': {'type': 'string'}})
+  create_remote_action(SING_SOURCE_ACTION, {'title': SING_SOURCE_ACTION, 'group': 'Amplifiers',
+                                            'order': 111, 'schema': {'type': 'integer'}},
+                       suggestedNode='LTL-SING-AMP')
 
-  # Function to create local and remote Events for Conditions
-  def CreateConditionEvents(EventName):
-    def remoteEventHandler(arg = None):
-      lookup_local_event(EventName).emit(str(arg))
+  create_remote_event('Play Amp Zone A Source Feedback', lambda arg: onSourceReported('play', arg),
+                      {'title': 'Play Amp Zone A Source Feedback', 'group': 'Amplifiers',
+                       'order': 120, 'schema': {'type': 'integer'}},
+                      suggestedNode='LTL-PLAY-AMP')
 
-    if lookup_local_event(EventName) == None:
-      remoteEvent = create_remote_event(EventName, remoteEventHandler)
-      create_local_event(EventName, {'title': EventName, 'group': 'Events', 'schema': {'type': 'string'}})
-  
-  # Setting up the remote actions - Cues
-  if param_Cues != None:
-    for EachCue in param_Cues:
-      CueName = EachCue['Title']
-      
-      makelocalAction(CueName)
-      for EachItem in EachCue['Actions']:
-        ItemLabel = EachItem['title']
-        if lookup_remote_action(ItemLabel) == None:
-          create_remote_action(ItemLabel)
+  create_remote_event('Sing Amp Zone A Source Feedback', lambda arg: onSourceReported('sing', arg),
+                      {'title': 'Sing Amp Zone A Source Feedback', 'group': 'Amplifiers',
+                       'order': 121, 'schema': {'type': 'integer'}},
+                      suggestedNode='LTL-SING-AMP')
 
-  # Function for creating each Flow Action
-  def CreateFlow(FlowName, TriggerArgumentList):
-    # Setting all the information we need
-    # Find the correct flow
-    for EachFlow in param_Flows:
-      if FlowName == EachFlow['Title']:
+  evaluate()  # publish "nothing known yet" rather than leaving the dashboard blank
 
-        # Get the Remote Event Trigger
-        if EachFlow['Trigger'] != None:
-          TriggerEvent = EachFlow['Trigger']
-
-    def FlowHandler(arg):
-      print('Flow \"%s\" - Activated with Argument \"%s\"' % (FlowName, arg))
-      
-      # Find the correct Flow
-      for EachFlow in param_Flows: 
-        if FlowName == EachFlow['Title']:
-          ArgumentMatch = []
-
-          # Check the Conditions
-          for EachOutcome in EachFlow['Outcomes']:
-            
-            # First, check the Trigger Argument
-            TriggerArgument = EachOutcome['TriggerArgument']
-            if TriggerArgument == None or arg == TriggerArgument:
-              ArgumentMatch.append('True')
-              
-              # Now if that's a match, check the Conditions
-              ConditionCheck = []
-              if EachOutcome['Conditions'] != None:
-                for EachCondition in EachOutcome['Conditions']:
-                  if lookup_local_event(EachCondition['RemoteEvent']).getArg() == EachCondition['Argument']:
-                    ConditionCheck.append('True')
-                  else:
-                    ConditionCheck.append('False')
-              if 'False' in ConditionCheck:    
-                print('Flow \"%s\" - Conditions not met for Outcome \"%s\". Not running...' % (FlowName, EachOutcome['Cue']))
-              
-              # If the conditions pass
-              else:
-                EachCue = (EachOutcome['Cue'])
-                
-                # Check that the Outcome actually exists
-                if EachCue == None:
-                  console.error('Flow \"%s\" - No Cue defined for Outcome \"%s\"' % (FlowName, EachOutcome['Cue']))
-                else:
-                  if lookup_local_action(EachCue):
-                    lookup_local_action(EachCue).call()
-                  else:
-                    # If the Outcome isn't in the list of Cues or Flows
-                    console.error('Flow \"%s\" - Local Action \"%s\" does not exist.' % (FlowName, EachCue))
-          if ArgumentMatch == []:
-            print('Flow \"%s\" - No Outcome mapped for Argument \"%s\", stopping...' % (FlowName, arg))
-
-                  
-    # Create Local Action
-    if TriggerArgumentList == [None]:
-      Action(FlowName, FlowHandler, {'title': FlowName, 'group': 'Flows'})
-    else:
-      Action(FlowName, FlowHandler, {'title': FlowName, 'group': 'Flows', 'schema': {'type': 'string', 'enum': TriggerArgumentList}})
+  console.info('Started with %s mode(s): %s' % (len(_modes), ', '.join([m['name'] for m in _modes])))
 
 
-  #################### Flows Step 1 ##########################
+def initMode(mode, order):
+  '''One action to recall the mode, one boolean event that is true while it is active.'''
+  name = mode['name']
 
-  # Check if there are any flows
-  if param_Flows != None:
+  def handler(arg=None, _mode=mode):  # _mode bound now, not when the lambda finally runs
+    console.info('Recalling "%s" (play=%s, sing=%s)' % (_mode['name'], _mode['playSource'], _mode['singSource']))
+    lookup_remote_action(PLAY_SOURCE_ACTION).call(_mode['playSource'])
+    lookup_remote_action(SING_SOURCE_ACTION).call(_mode['singSource'])
 
-    # Create a list of flows - this will be used in the FlowHandler
-    FlowList = []
-    TriggerList = []
-    flowtriggerdict = {}
-    for EachFlow in param_Flows:
-      FlowName = EachFlow['Title']
-      FlowList.append(FlowName)
-      
-      # Get information which we need to create Remote Events
-      EventName = EachFlow['Trigger']
-      TriggerList.append(EventName)
+  create_local_action(name, handler, {'title': name, 'group': 'Modes', 'order': order})
+  create_local_event(name, {'title': name, 'group': 'Modes', 'order': order,
+                            'schema': {'type': 'boolean'}})
 
-      # Making a dictionary here in case multiple Flows use the same event
-      flowtriggerdict[FlowName] = EventName
 
-      # Function for creating the events
-      CreateTriggerEvents(FlowName, EventName, flowtriggerdict)
+def onSourceReported(which, arg):
+  '''An amp told us what its Zone A source is (or a set was echoed back).'''
+  _reported[which] = asInt(arg)
+  evaluate()
 
-      # Get data per Outcome
-      Data = EachFlow['Outcomes']
-      TriggerArgumentList = []
-      for EachItem in Data:
-        TriggerArgumentList.append(EachItem['TriggerArgument'])      
-        c = EachItem['Conditions']
-        if c!= None:
-          ConditionList = []
-          for EachCondition in EachItem['Conditions']:
-            ConditionEvent = EachCondition['RemoteEvent']
-            CreateConditionEvents(ConditionEvent)
 
-      CreateFlow(FlowName, TriggerArgumentList)
-    
+def evaluate():
+  '''Derive the active mode from the two reported sources and publish it.'''
+  play = _reported['play']
+  sing = _reported['sing']
 
-# Create local actions
-def makelocalAction(CueName):
-  if lookup_local_action(CueName) == None:
-    handler = lambda ignore: GoCue(CueName)
-    create_local_action(CueName, handler, {'group': 'Cues', 'title': CueName})
-        
-# Cue each action in turn
-def start(CueName):
-  for EachCue in param_Cues:
-    if CueName == EachCue['Title']:
-      for EachItem in EachCue['Actions']:
-        kickOffItem(EachItem)
+  active = None
+  for mode in _modes:
+    if play == mode['playSource'] and sing == mode['singSource']:
+      active = mode['name']
+      break
 
-def GoCue(CueName):
-  for EachCue in param_Cues:
-    if CueName == EachCue['Title']:
-      start(CueName)
-      console.info('Sending \"%s\"...' % CueName)
+  for mode in _modes:
+    lookup_local_event(mode['name']).emitIfDifferent(mode['name'] == active)
 
-# Start each action item within the cue
-def kickOffItem(item):
-  label = item['title']
+  lookup_local_event('Audio Mode').emitIfDifferent(active or 'Unknown')
 
-  # Check if there's a delay set
-  if item['delay'] != None:
-    time = item['delay']
-  else:
-    time = 0
-  if item['argument'] != None:
-    arg = str(item['argument'])
-  else:
-    arg = None
 
-  ra = lookup_remote_action(label)
-  call(lambda: lookup_remote_action(label).call(arg), time)
+def asInt(value):
+  '''Action and event arguments arrive as str, float or None depending on the sender.'''
+  if value is None:
+    return None
+  try:
+    return int(float(str(value).strip()))
+  except:
+    console.warn('Could not read "%s" as a source number' % value)
+    return None

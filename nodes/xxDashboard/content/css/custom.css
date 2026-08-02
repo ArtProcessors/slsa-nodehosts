@@ -30,6 +30,43 @@
 }
 
 /* ====================================================================
+   Multipurpose tab: equal-height columns.
+   The <column> template in templates.xsl ignores @class (it builds the
+   class purely from xs/sm/md/lg/push/pull), so these rules hang off the
+   row's .mp-cols and select the columns by position.
+   Scoped to the sm breakpoint and up: below it, Bootstrap's col-sm-6
+   carries no width and the columns are meant to stack, which flex would
+   otherwise defeat.
+   ==================================================================== */
+@media (min-width: 768px) {
+  .mp-cols {
+    display: flex;
+    align-items: stretch;
+  }
+  /* Right-hand column (Projector Input) becomes a flex column so its
+     buttons can grow into whatever height the audio column sets. */
+  .mp-cols > div:last-child {
+    display: flex;
+    flex-direction: column;
+  }
+  /* flex-basis 0 so all four buttons end up exactly equal height,
+     sharing the space left under the heading. Centring is needed because
+     a stretched .btn would otherwise leave its label at the top. */
+  .mp-cols > div:last-child > .btn {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* The label is wrapped in a <p>, which Bootstrap gives margin: 0 0 10px.
+     Inside a centred flex button that 10px would sit the text ~5px high, so
+     drop it here only - the un-flexed buttons elsewhere still want it. */
+  .mp-cols > div:last-child > .btn > p {
+    margin-bottom: 0;
+  }
+}
+
+/* ====================================================================
    Media Player tab (mpv playlist controller) - lifted from the
    xxMPV-frontend node. Every rule below is .mpv-* scoped, so it cannot
    affect the other tabs.
@@ -404,4 +441,17 @@
 }
 .mpv-pl-savebar {
   margin-top: 12px;   /* Save playlist sits bottom-left */
+}
+
+/* Status labels honour literal line breaks written in index.xml (the projector
+   model/lens detail, the "(Tea Room Comms Rack)" location suffixes).
+   The label is emitted as a single <strong> text node by templates.xsl
+   (<xsl:value-of select="text()"/>), so a <br/> child is not an option - it
+   would be dropped and would also truncate the label at the first text node.
+   index.xml carries a literal LF (&#10;) instead; pre-line honours it while
+   still collapsing ordinary runs of spaces, so single-line labels are
+   unaffected. Scoped by class rather than data-status because a <status> with
+   no event attribute renders data-status="" and cannot be selected by name. */
+.statusgroup .panel-body strong {
+  white-space: pre-line;
 }

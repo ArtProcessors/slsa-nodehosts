@@ -1,0 +1,10 @@
+{
+	"project" : "nodel-webui-js",
+	"origin" : "git@github.com:scroix/nodel.git",
+	"branch" : "cron-scheduling",
+	"version" : "2.2.1-cron-scheduling_r552",
+	"id" : "7b86c95322d222b4eebf3b325dada3ef1d086621",
+	"rev" : "552",
+	"host" : "CHARON",
+	"date" : "2026-07-23T09:16:08.745+10:00"
+}

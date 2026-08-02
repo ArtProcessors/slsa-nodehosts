@@ -1,0 +1,89 @@
+{
+    "type": "object",
+    "properties": {
+        "NodelHostPort": {
+            "type": "integer",
+            "required": true,
+            "order": 200,
+            "title": "NodelHost HTTP port",
+            "desc": "(command-line arg '-p')"
+        },
+        "messagingPort": {
+            "type": "integer",
+            "required": true,
+            "order": 210,
+            "title": "Messaging Port",
+            "desc": "TCP & UDP (reserved) port for the native node-to-node messaging protocol to run on; normally '0' meaning any port. (command-line arg '--messagingPort')"
+        },
+        "nodelRoot": {
+            "type": "string",
+            "required": false,
+            "order": 250,
+            "title": "Nodel root directory",
+            "desc": "(command-line arg '-r')"
+        },
+        "contentDirectory": {
+            "type": "string",
+            "required": true,
+            "order": 300,
+            "title": "Content directory"
+        },
+        "cacheDirectory": {
+            "type": "string",
+            "required": true,
+            "order": 500,
+            "title": "Cache directory"
+        },
+        "networkInterfaces": {
+            "type": "array",
+            "required": false,
+            "order": 800,
+            "title": "Network interface",
+            "desc": "Use network interface opt in instead of automatic bind all (command-line arg '--interface ... [--interface ...]') Use -? to dump interface list. Specify interface name.",
+            "items": {"type": "string"}
+        },
+        "disableAdvertisements": {
+            "type": "boolean",
+            "required": false,
+            "order": 900,
+            "title": "Disable advertisements"
+        },
+        "enableProgramLogging": {
+            "type": "boolean",
+            "required": false,
+            "order": 1000,
+            "title": "Enable program logging",
+            "desc": "(command-line arg '-l')"
+        },
+        "logsDirectory": {
+            "type": "string",
+            "required": false,
+            "order": 1050,
+            "title": "Logs directory",
+            "desc": "Can be relative or absolute path."
+        },
+        "inclFilters": {
+            "type": "array",
+            "required": false,
+            "order": 1100,
+            "title": "Node inclusions",
+            "desc": "If specified, exclusively hosts nodes (matched using simple glob-based pattern matching, e.g. 'Main Campus*'). Multiple patterns can be specified. (command-line arg '-I ... [-I ...]')",
+            "items": {"type": "string"}
+        },
+        "exclFilters": {
+            "type": "array",
+            "required": false,
+            "order": 1200,
+            "title": "Node exclusions",
+            "desc": "If specified, opts-out node hosting (matched using simple glob-based pattern matching, e.g. 'Campus 2*'). Multiple patterns can be specified. (command-line arg '-X ... [-X ...]')",
+            "items": {"type": "string"}
+        },
+        "recipesRoot": {
+            "type": "string",
+            "required": false,
+            "order": 1300,
+            "title": "Recipes directory",
+            "desc": "(command-line arg '--recipes')"
+        }
+    }
+}

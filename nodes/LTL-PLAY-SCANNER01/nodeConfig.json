@@ -1,0 +1,25 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "OutletPower": {
+                "node": "LTL-PLAY-TABLEPDU01",
+                "action": "Output 4"
+            },
+            "SwitchBotPress": {}
+        },
+        "events": {
+            "OutletState": {
+                "node": "LTL-PLAY-TABLEPDU01",
+                "event": "Output 4"
+            },
+            "PDUStatus": {
+                "node": "LTL-PLAY-TABLEPDU01",
+                "event": "Status"
+            }
+        }
+    },
+    "paramValues": {
+        "offDuration": 10,
+        "bootDuration": 30
+    }
+}

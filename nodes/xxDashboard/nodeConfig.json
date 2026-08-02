@@ -169,10 +169,34 @@
                 "node": "LTL-LIB-AUDIO",
                 "action": "SingTakeover"
             },
-            "Play Scanner 01 Power": {},
-            "Play Scanner 01 Restart": {},
-            "Play Scanner 02 Power": {},
-            "Play Scanner 02 Restart": {},
+            "LightingGalleryOn": {
+                "node": "xxdynet",
+                "action": "GalleryOn"
+            },
+            "LightingAllOff": {
+                "node": "xxdynet",
+                "action": "AllOff"
+            },
+            "LightingCleaningOn": {
+                "node": "xxdynet",
+                "action": "CleaningOn"
+            },
+            "Play Scanner 01 Power": {
+                "node": "LTL-PLAY-SCANNER01",
+                "action": "Power"
+            },
+            "Play Scanner 01 Restart": {
+                "node": "LTL-PLAY-SCANNER01",
+                "action": "Restart"
+            },
+            "Play Scanner 02 Power": {
+                "node": "LTL-PLAY-SCANNER02",
+                "action": "Power"
+            },
+            "Play Scanner 02 Restart": {
+                "node": "LTL-PLAY-SCANNER02",
+                "action": "Restart"
+            },
             "Play SwitchBot 01 Power": {},
             "Play SwitchBot 01 Restart": {},
             "Play SwitchBot 02 Power": {},
@@ -298,12 +322,27 @@
             "SplitRoom": {},
             "PlayAudioTakeover": {},
             "SingAudioTakeover": {},
+            "LightingGalleryOn": {},
+            "Lighting All Off": {},
+            "Lighting Cleaning On": {},
             "Play Level": {},
             "Play BlockHead Screenshot": {},
-            "Play Scanner 01 Status": {},
-            "Play Scanner 01 Power": {},
-            "Play Scanner 02 Status": {},
-            "Play Scanner 02 Power": {},
+            "Play Scanner 01 Status": {
+                "node": "LTL-PLAY-SCANNER01",
+                "event": "Status"
+            },
+            "Play Scanner 01 Power": {
+                "node": "LTL-PLAY-SCANNER01",
+                "event": "Power"
+            },
+            "Play Scanner 02 Status": {
+                "node": "LTL-PLAY-SCANNER02",
+                "event": "Status"
+            },
+            "Play Scanner 02 Power": {
+                "node": "LTL-PLAY-SCANNER02",
+                "event": "Power"
+            },
             "Play SwitchBot 01 Status": {},
             "Play SwitchBot 01 Power": {},
             "Play SwitchBot 02 Status": {},

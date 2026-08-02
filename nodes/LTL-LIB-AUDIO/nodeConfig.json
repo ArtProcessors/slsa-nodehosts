@@ -1,62 +1,41 @@
 {
     "remoteBindingValues": {
         "actions": {
-            "PlayAmpZoneASource": {
+            "Play Amp Zone A Source": {
                 "node": "xxplaymaster",
                 "action": "ZONEAPRIMARYSRC"
             },
-            "SingAmpZoneASource": {
+            "Sing Amp Zone A Source": {
                 "node": "xxsingmaster",
                 "action": "ZONEAPRIMARYSRC"
             }
         },
-        "events": {}
-    },
-    "paramValues": {
-        "Cues": [
-            {
-                "Title": "Split Room",
-                "Actions": [
-                    {
-                        "title": "Play Amp Zone A Source",
-                        "argument": "500"
-                    },
-                    {
-                        "title": "Sing Amp Zone A Source",
-                        "argument": "500"
-                    }
-                ],
-                "_$visible": false
+        "events": {
+            "Play Amp Zone A Source Feedback": {
+                "node": "xxplaymaster",
+                "event": "ZONEAPRIMARYSRC"
             },
-            {
-                "Title": "Play Takeover",
-                "Actions": [
-                    {
-                        "title": "Play Amp Zone A Source",
-                        "argument": "500"
-                    },
-                    {
-                        "title": "Sing Amp Zone A Source",
-                        "argument": "501"
-                    }
-                ],
-                "_$visible": false
-            },
-            {
-                "Title": "Sing Takeover",
-                "Actions": [
-                    {
-                        "title": "Play Amp Zone A Source",
-                        "argument": "501"
-                    },
-                    {
-                        "title": "Sing Amp Zone A Source",
-                        "argument": "500"
-                    }
-                ],
-                "_$visible": true
+            "Sing Amp Zone A Source Feedback": {
+                "node": "xxsingmaster",
+                "event": "ZONEAPRIMARYSRC"
             }
-        ],
-        "_$visible": true
-    }
+        }
+    },
+    "paramValues": {"modes": [
+        {
+            "name": "Split Room",
+            "playSource": 500,
+            "singSource": 500
+        },
+        {
+            "name": "Play Audio Takeover",
+            "playSource": 500,
+            "singSource": 501
+        },
+        {
+            "name": "Sing Audio Takeover",
+            "playSource": 501,
+            "singSource": 500
+        }
+    ]}
 }

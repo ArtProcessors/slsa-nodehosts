@@ -59,6 +59,26 @@
             "MemberSingVideoSwitchPower": {
                 "node": "LTL-SING-SWITCHER",
                 "action": "Output1Input1"
+            },
+            "Member Play Power Extended": {
+                "node": "Play",
+                "action": "Power"
+            },
+            "Member Play Muting Extended": {
+                "node": "Play",
+                "action": "Muting"
+            },
+            "Member Sing Power Extended": {
+                "node": "Sing",
+                "action": "Power"
+            },
+            "Member Sing Muting Extended": {
+                "node": "Sing",
+                "action": "Muting"
+            },
+            "Member Lighting Power Power": {
+                "node": "LTL-LIB-LIGHTING-POWER",
+                "action": "Power"
             }
         },
         "events": {
@@ -170,37 +190,45 @@
             "MemberSingVideoSwitchStatus": {
                 "node": "Sing Video Switch",
                 "event": "Status"
+            },
+            "Member Play Power": {
+                "node": "Play",
+                "event": "Power"
+            },
+            "Member Play Muting": {
+                "node": "Play",
+                "event": "Muting"
+            },
+            "Member Play Status": {
+                "node": "Play",
+                "event": "Status"
+            },
+            "Member Sing Power": {
+                "node": "Sing",
+                "event": "Power"
+            },
+            "Member Sing Muting": {
+                "node": "Sing",
+                "event": "Muting"
+            },
+            "Member Sing Status": {
+                "node": "Sing",
+                "event": "Status"
+            },
+            "Member Lighting Power Power": {
+                "node": "LTL-LIB-LIGHTING-POWER",
+                "event": "Power"
+            },
+            "Member Lighting Power Status": {
+                "node": "LTL-LIB-LIGHTING-POWER",
+                "event": "Status"
             }
         }
     },
     "paramValues": {
         "members": [
             {
-                "name": "Play Projector",
-                "isGroup": true,
-                "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
-                "muting": {"mode": "Signal Only"},
-                "_$visible": true
-            },
-            {
-                "name": "Sing Projector",
-                "isGroup": true,
-                "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
-                "muting": {"mode": "Signal Only"},
-                "_$visible": true
-            },
-            {
-                "name": "Play Amp",
-                "power": {"mode": "Action & Signal"},
-                "muting": {"mode": "Action & Signal"},
-                "isGroup": true,
-                "hasStatus": true,
-                "_$visible": true
-            },
-            {
-                "name": "Sing Amp",
+                "name": "Play",
                 "isGroup": true,
                 "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
@@ -208,35 +236,17 @@
                 "_$visible": true
             },
             {
-                "name": "Play Interactive PC",
+                "name": "Sing",
+                "isGroup": true,
+                "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
                 "muting": {"mode": "Action & Signal"},
-                "hasStatus": true,
                 "_$visible": true
             },
             {
-                "name": "Play Scanner PC01",
-                "power": {"mode": "Action & Signal"},
+                "name": "Lighting Power",
                 "hasStatus": true,
-                "_$visible": false
-            },
-            {
-                "name": "Play Scanner PC02",
                 "power": {"mode": "Action & Signal"},
-                "hasStatus": true,
-                "_$visible": true
-            },
-            {
-                "name": "Sing PC",
-                "power": {"mode": "Action & Signal"},
-                "muting": {"mode": "Action & Signal"},
-                "hasStatus": true,
-                "_$visible": true
-            },
-            {
-                "name": "Sing Video Switch",
-                "power": {"mode": "Action & Signal"},
-                "hasStatus": true,
                 "_$visible": true
             }
         ],

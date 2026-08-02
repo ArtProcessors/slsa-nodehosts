@@ -11,6 +11,62 @@
             "preset": 5,
             "channel": 0
         }],
+        "customMessages": [
+            {
+                "message": {
+                    "area": 2,
+                    "data0": 100,
+                    "preset": 11
+                },
+                "label": "Gallery On",
+                "_$visible": false
+            },
+            {
+                "message": {
+                    "area": 2,
+                    "data0": 100,
+                    "preset": 4
+                },
+                "label": "All Off",
+                "_$visible": true
+            },
+            {
+                "label": "Cleaning On",
+                "message": {
+                    "area": 2,
+                    "data0": 100,
+                    "preset": 1
+                },
+                "_$visible": true
+            },
+            {
+                "label": "Multipurpose - Normal",
+                "message": {
+                    "area": 101,
+                    "data0": 100,
+                    "preset": 11
+                },
+                "_$visible": true
+            },
+            {
+                "label": "Multipurpose - Low",
+                "message": {
+                    "area": 101,
+                    "data0": 100,
+                    "preset": 12
+                },
+                "_$visible": true
+            },
+            {
+                "label": "Multipurpose - Off",
+                "message": {
+                    "area": 101,
+                    "data0": 100,
+                    "preset": 13
+                },
+                "_$visible": true
+            }
+        ],
         "_$visible": true
     }
 }

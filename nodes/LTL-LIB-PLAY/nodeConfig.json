@@ -53,6 +53,48 @@
                 "node": "LTL-SING-AMP",
                 "action": "ZONEAMUTE"
             },
+            "MemberInteractivePCPower": {
+                "node": "LTL-PLAY-INT-WOL",
+                "action": "Power"
+            },
+            "MemberScannerPC01Power": {
+                "node": "Scanner PC01",
+                "action": "Power"
+            },
+            "MemberScannerPC02Power": {
+                "node": "Scanner PC02",
+                "action": "Power"
+            },
+            "MemberProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "action": "Power"
+            },
+            "MemberAmpPower": {
+                "node": "xxplaymaster",
+                "action": "ZONEAPRIMARYSRC"
+            },
+            "MemberAmpMuting": {
+                "node": "xxplaymaster",
+                "action": "ZONEAMUTE"
+            },
+            "MemberTablePDU01Power": {
+                "node": "Table PDU01",
+                "action": "Power"
+            },
+            "MemberTablePDU02Power": {
+                "node": "Table PDU02",
+                "action": "Power"
+            },
+            "MemberScanPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "action": "Power"
+            },
+            "MemberScanPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "action": "Power"
+            },
+            "MemberScanner01Power": {"node": "LTL-PLAY-TABLEPDU01"},
+            "MemberScanner02Power": {"node": "LTL-PLAY-TABLEPDU02"},
             "MemberPlayAmp-SetSourceatPowerOnPower": {"node": "LTL-PLAY-AMP"},
             "MemberPlayAmp-ToggleMuteatPowerControlMuting": {"node": "LTL-PLAY-AMP"},
             "MemberPlayPDU-Scanner01PowerPower": {"node": "LTL-PLAY-TABLEPDU01"},
@@ -152,85 +194,181 @@
                 "node": "Play Amp Set Source Power",
                 "event": "Status"
             },
-            "MemberPlayAmp-SetSourceatPowerOnPower": {
-                "node": "Play Amp - Set Source at PowerOn",
+            "MemberPlayProjectorStatus": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Status"
+            },
+            "MemberInteractivePCPower": {
+                "node": "LTL-PLAY-INT-WOL",
                 "event": "Power"
             },
+            "MemberInteractivePCMuting": {},
+            "MemberInteractivePCStatus": {
+                "node": "LTL-PLAY-INT-WOL",
+                "event": "Status"
+            },
+            "MemberScannerPC01Power": {
+                "node": "Scanner PC01",
+                "event": "Power"
+            },
+            "MemberScannerPC01Status": {
+                "node": "Scanner PC01",
+                "event": "Status"
+            },
+            "MemberScannerPC02Power": {
+                "node": "Scanner PC02",
+                "event": "Power"
+            },
+            "MemberScannerPC02Status": {
+                "node": "Scanner PC02",
+                "event": "Status"
+            },
+            "MemberProjectorPower": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Power"
+            },
+            "MemberProjectorStatus": {
+                "node": "LTL-PLAY-PJ",
+                "event": "Status"
+            },
+            "MemberAmpPower": {
+                "node": "xxplaymaster",
+                "event": "ZONEAPRIMARYSRC"
+            },
+            "MemberAmpMuting": {
+                "node": "xxplaymaster",
+                "event": "ZONEAMUTE"
+            },
+            "MemberAmpStatus": {
+                "node": "xxplaymaster",
+                "event": "Status"
+            },
+            "MemberTablePDU01Power": {
+                "node": "Table PDU01",
+                "event": "Power"
+            },
+            "MemberTablePDU01Status": {
+                "node": "Table PDU01",
+                "event": "Status"
+            },
+            "MemberTablePDU02Power": {
+                "node": "Table PDU02",
+                "event": "Power"
+            },
+            "MemberTablePDU02Status": {
+                "node": "Table PDU02",
+                "event": "Status"
+            },
+            "MemberScanPC01Power": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "event": "Power"
+            },
+            "MemberScanPC01Status": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "event": "Status"
+            },
+            "MemberScanPC02Power": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "event": "Power"
+            },
+            "MemberScanPC02Status": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "event": "Status"
+            },
+            "MemberScanner01Power": {
+                "node": "LTL-PLAY-TABLEPDU01",
+                "event": "Power"
+            },
+            "MemberScanner01Status": {
+                "node": "LTL-PLAY-TABLEPDU01",
+                "event": "Status"
+            },
+            "MemberScanner02Power": {
+                "node": "LTL-PLAY-TABLEPDU02",
+                "event": "Power"
+            },
+            "MemberScanner02Status": {
+                "node": "LTL-PLAY-TABLEPDU02",
+                "event": "Status"
+            },
+            "MemberPlayAmp-SetSourceatPowerOnPower": {
+                "node": "xxplaymaster",
+                "event": "ZONEAPRIMARYSRC"
+            },
             "MemberPlayAmp-SetSourceatPowerOnStatus": {
-                "node": "Play Amp - Set Source at PowerOn",
+                "node": "xxplaymaster",
                 "event": "Status"
             },
             "MemberPlayAmp-ToggleMuteatPowerControlPower": {
-                "node": "Play Amp - Toggle Mute at Power Control",
-                "event": "Power"
+                "node": "xxplaymaster",
+                "event": "ZONEAMUTE"
             },
             "MemberPlayAmp-ToggleMuteatPowerControlMuting": {
-                "node": "Play Amp - Toggle Mute at Power Control",
+                "node": "xxplaymaster",
                 "event": "Muting"
             },
             "MemberPlayPDU-Scanner01PowerPower": {
-                "node": "Play PDU - Scanner 01 Power",
+                "node": "LTL-PLAY-TABLEPDU01",
                 "event": "Power"
             },
             "MemberPlayPDU-Scanner01PowerStatus": {
-                "node": "Play PDU - Scanner 01 Power",
+                "node": "LTL-PLAY-TABLEPDU01",
                 "event": "Status"
             },
             "MemberPlayPDU-Scanner02PowerPower": {
-                "node": "Play PDU - Scanner 02 Power",
+                "node": "LTL-PLAY-TABLEPDU02",
                 "event": "Power"
+            },
+            "MemberPlayPDU-Scanner02PowerStatus": {
+                "node": "LTL-PLAY-TABLEPDU02",
+                "event": "Status"
             }
         }
     },
     "paramValues": {
         "members": [
             {
-                "name": "Play Interactive PC WOL",
+                "name": "Interactive PC",
                 "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
                 "muting": {"mode": "Signal Only"},
                 "_$visible": true
             },
             {
-                "name": "Play Scanner PC01 WOL",
-                "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
-                "muting": {},
-                "_$visible": true
-            },
-            {
-                "name": "Play Scanner PC02 WOL",
-                "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
-                "muting": {},
-                "_$visible": true
-            },
-            {
-                "name": "Play Projector",
-                "power": {"mode": "Action & Signal"},
-                "_$visible": true
-            },
-            {
-                "name": "Play Amp - Set Source at PowerOn",
+                "name": "Scan PC01",
                 "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
                 "_$visible": true
             },
             {
-                "name": "Play Amp - Toggle Mute at Power Control",
-                "power": {"mode": "Signal Only"},
+                "name": "Scan PC02",
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
+                "_$visible": true
+            },
+            {
+                "name": "Projector",
+                "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
+                "_$visible": true
+            },
+            {
+                "name": "Amp",
+                "hasStatus": true,
+                "power": {"mode": "Action & Signal"},
                 "muting": {"mode": "Action & Signal"},
                 "_$visible": true
             },
             {
-                "name": "Play PDU - Scanner 01 Power",
+                "name": "Scanner 01",
                 "hasStatus": true,
                 "power": {"mode": "Action & Signal"},
                 "_$visible": true
             },
             {
-                "name": "Play PDU - Scanner 02 Power",
+                "name": "Scanner 02",
                 "power": {"mode": "Action & Signal"},
+                "hasStatus": true,
                 "_$visible": true
             }
         ],
