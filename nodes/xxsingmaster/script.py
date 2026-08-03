@@ -1,7 +1,7 @@
 '''
 **Blaze** PowerZone Connect 1002 and similar amplifiers
 
-`rev 7`
+`rev 9`
 
 **Resources:** Blaze/Sonance "Open API for Installers", edition 2026.24.1 (June 2026)
 
@@ -9,6 +9,8 @@ Work-in-progress: feel free to update recipe with extra registers of interest
 
 _revision history_
 
+* _r9 added a synthesised aux input mute -- "Aux Input Enabled" drives one analogue input's MIX-{MID}.GAIN-{IID} slot in every mix named by "Aux mixes" (1 & 2 by default) between its last audible level and the -144 dB floor. The amplifier has no input mute register of any kind; this is the nearest equivalent_
+* _r8 added the analogue input stage for the inputs named in ANALOGUE_INPUTS (Analogue 5 & 6 by default) -- IN-{IID}.GAIN trim, IN-{IID}.SENS sensitivity, and the subscription-only signal / clip meters_
 * _r7 added OUT-{1..4} registers and a second synthesised MASTER OUTPUT group (drives OUT-{OID}.GAIN / .MUTE, i.e. the power-amp outputs) -- the two master groups now share one implementation; corrected the zone master's default gain ceiling to 0 dB per API 5.177_
 * _r6 added synthesised MASTER group -- Master Volume / Master Mute fan out one absolute value to every zone named in the "Master zones" parameter_
 * _r5 added Zones C & D; added ZONE-{ZID}.PRIMARY_SRC (read) and ZONE-{ZID}.PRIORITY_SRC (set) for all 4 zones; added friendly SetSource actions with named-source enum_
@@ -346,6 +348,252 @@ SOURCE_NAMES = {
   503: "Mix-3",
 }
 
+# <!-- analogue inputs
+
+# The analogue inputs that get gain/trim controls, by front-panel input number.
+#
+# {IID} = 100 + (input number - 1) (API 2026.24.1 1.4.1), i.e. the same integers the source
+# registers use, so Analogue 5 is IN-104 and Analogue 6 is IN-105. Inputs 5..8 exist on the
+# 8-channel models only -- this amplifier reports itself as a PowerZone Connect 1008D.
+#
+# Add more numbers here if other inputs need trimming, e.g. [ 1, 2, 5, 6 ].
+ANALOGUE_INPUTS = [ 5, 6 ]
+
+# IN-{IID}.GAIN accepts -15.0..+15.0 dB (API 2026.24.1 5.16). Note that this is the FIRST
+# gain stage in the chain --
+#
+#   analogue in --> IN-{IID}.SENS --> IN-{IID}.GAIN --> ZONE-{ZID}.GAIN --> OUT-{OID}.GAIN
+#
+# -- so it is the right place to match an incoming source's level, and the wrong place to
+# ride a room's volume: an input feeding several zones takes all of them with it.
+INPUT_GAIN_MIN = -15.0
+INPUT_GAIN_MAX = 15.0
+
+# IN-{IID}.SENS, the input's analogue sensitivity (API 2026.24.1 5.19). This is the coarse
+# trim -- it sets what the input considers full scale before IN-{IID}.GAIN is applied.
+INPUT_SENS_VALUES = [ "14DBU", "4DBU", "-10DBV", "MIC" ]
+
+INPUT_SENS_TITLES = [ "+14 dBu (professional line)",
+                      "+4 dBu (professional line)",
+                      "-10 dBV (consumer line)",
+                      "Microphone" ]
+
+def initAnalogueInput(inputNum):
+  'Creates the gain / sensitivity controls and the meters for one analogue input.'
+
+  iid = 100 + inputNum - 1
+  group = "IN-%s -- Analogue %s" % (iid, inputNum)
+
+  tryInitFloatRegister("IN-%s.GAIN" % iid, group, withSetter=True,
+                       desc="Input trim (dB), %s..%s" % (INPUT_GAIN_MIN, INPUT_GAIN_MAX))
+
+  tryInitStringRegister("IN-%s.SENS" % iid, group, withSetter=True,
+                        desc="Input sensitivity -- the coarse trim, applied ahead of the gain",
+                        enumValues=INPUT_SENS_VALUES, enumTitles=INPUT_SENS_TITLES)
+
+  # metering, so the trim can be set against something. Both are subscription-only
+  # (API 2026.24.1 5.8 / 5.9): they arrive on the DYN topic of the SUBSCRIBE issued on
+  # connect and are rejected if GET.
+  tryInitFloatRegister("IN-%s.DYN.SIGNAL" % iid, group, withGetter=False)
+  tryInitBoolRegister("IN-%s.DYN.CLIP" % iid, group, withGetter=False)
+
+# -->
+
+# <!-- aux input mute, over the mixes
+
+# This amplifier has NO input mute. The input register set (API 2026.24.1 3.2.5) is
+# NAME / SENS / GAIN / STEREO / HPF_ENABLE / DYN.SIGNAL / DYN.CLIP plus the EQ bands, and
+# every MUTE register in the API belongs to a ZONE, an OUT, Dante or SETUP.POWER. The
+# closest per-input control is MIX-{MID}.GAIN-{IID} (5.23) -- that input's contribution to
+# one mix -- which bottoms out at -144 dB. That is what this section calls "muted".
+#
+# Because it is a level and not a switch, unmuting has to know what to put back. Each
+# managed mix gets a companion "unmuted level" event holding the gain that mix was last
+# seen at while audible; Nodel retains it, so an operator's trim survives a node restart.
+# A mix never seen audible falls back to the "Aux unmuted gain (dB)" parameter.
+#
+# Zone A's source is switched between Mix 1 (SID 500) and Mix 2 (SID 501), so muting only
+# the mix that happens to be selected would un-mute itself the moment the source changed.
+# Every managed mix is always written.
+
+AUX_GROUP = "AUX INPUT"
+
+DEFAULT_AUX_INPUT = 3
+DEFAULT_AUX_MIXES = "1, 2"
+DEFAULT_AUX_UNMUTED_GAIN = 0.0
+
+# MIX-{MID}.GAIN-{IID} spans -144..0 dB (API 2026.24.1 5.23). There is no ramp on this
+# register, so a mute is a hard cut rather than a fade.
+MIX_GAIN_MIN = -144.0
+MIX_GAIN_MAX = 0.0
+
+param_auxInput = Parameter({ "title": "Aux input", "order": next_seq(),
+                             "schema": { "type": "integer", "hint": "(front-panel analogue input number, default %s)" % DEFAULT_AUX_INPUT }})
+
+param_auxMixes = Parameter({ "title": "Aux mixes", "order": next_seq(),
+                             "schema": { "type": "string", "hint": "(comma separated {MID}, default '%s')" % DEFAULT_AUX_MIXES }})
+
+param_auxUnmutedGain = Parameter({ "title": "Aux unmuted gain (dB)", "order": next_seq(),
+                                   "schema": { "type": "number", "hint": "(fallback for a mix never seen audible, default %s)" % DEFAULT_AUX_UNMUTED_GAIN }})
+
+local_event_AuxInputEnabled = LocalEvent({ "title": "Aux Input Enabled", "group": AUX_GROUP, "order": next_seq(),
+                                           "desc": "True while the aux input is audible in at least one managed mix. False is only published once every managed mix has reported it at the floor.",
+                                           "schema": { "type": "boolean" }})
+
+class AuxInputControl:
+  '''
+  A synthesised mute for one analogue input, assembled from that input's slot in each of
+  the managed mixes (MIX-{MID}.GAIN-{IID}).
+
+  Like the two master groups, feedback comes from the amplifier's own echoes and is never
+  emitted optimistically -- the button only latches once the device has accepted the write.
+
+  It errs live rather than silent: one mix still audible reports enabled straight away, on
+  partial data, while "not enabled" waits until every managed mix has reported and all of
+  them are at the floor. Claiming silence while a mix was still up would be the dangerous
+  way round.
+  '''
+
+  def __init__(self, enabledEventName):
+    self.enabledEventName = enabledEventName
+    self.enabledEvent = None      # resolved in init(), for the reason MasterControl gives
+    self.iid = None
+    self.inputNum = None
+    self.mixes = []               # resolved in init(), e.g. [ "1", "2" ]
+    self.unmutedGain = DEFAULT_AUX_UNMUTED_GAIN
+
+  def gainRegister(self, mix):
+    return "MIX-%s.GAIN-%s" % (mix, self.iid)
+
+  def stashName(self, mix):
+    return "MIX-%s.GAIN-%s Unmuted Level" % (mix, self.iid)
+
+  def setEnabled(self, arg):
+    if len(self.mixes) == 0:
+      console.warn("Aux Input Enabled: no mixes are being managed, ignoring (see 'Aux mixes' parameter)")
+      return
+
+    if arg == None or arg == "":
+      # No argument: a dashboard button with a bare join= sends "{}", which arrives here as
+      # None. Treat that as a toggle, decided from the amplifier's own last reported state
+      # rather than from whatever a browser happens to be showing -- so it is right on a
+      # freshly-loaded page, and right on the second browser as well.
+      #
+      # An unknown state toggles to enabled: the button reads unlit while the state is
+      # unknown, so "make it audible" is what the operator is asking for.
+      on = not (self.enabledEvent.getArg() == True)
+
+    else:
+      # an explicit value (the scheduler, or a switch bound to the absolute state) wins;
+      # tolerate the string forms those might send
+      on = arg in (True, 1, "1", "true", "True", "on", "On", "Enabled", "Unmute", "Unmuted")
+
+    for mix in self.mixes:
+      if on:
+        stash = lookup_local_event(self.stashName(mix))
+        level = stash.getArg() if stash != None else None
+
+        if level == None:
+          level = self.unmutedGain
+
+        value = min(max(float(level), MIX_GAIN_MIN), MIX_GAIN_MAX)
+      else:
+        value = MIX_GAIN_MIN
+
+      log(1, "Aux Input %s -> SET %s %s" % ("enabled" if on else "muted", self.gainRegister(mix), value))
+      _tcp.send("SET %s %s" % (self.gainRegister(mix), value))
+
+  def recompute(self, ignoredArg=None):
+    'Derives the aux feedback from whatever the managed mixes last reported.'
+
+    known = [] # one True (audible) / False (at the floor) per mix that has reported
+
+    for mix in self.mixes:
+      e = lookup_local_event(self.gainRegister(mix))
+
+      if e == None or e.getArg() == None:
+        continue
+
+      gain = float(e.getArg())
+      audible = gain > (MIX_GAIN_MIN + GAIN_EPSILON)
+      known.append(audible)
+
+      # only a level seen while audible is worth putting back on unmute
+      if audible:
+        stash = lookup_local_event(self.stashName(mix))
+
+        if stash != None:
+          stash.emitIfDifferent(gain)
+
+    if True in known:
+      self.enabledEvent.emitIfDifferent(True)
+
+    elif len(known) > 0 and len(known) == len(self.mixes):
+      self.enabledEvent.emitIfDifferent(False)
+
+  def init(self, inputNum, spec, unmutedGain):
+    self.enabledEvent = lookup_local_event(self.enabledEventName)
+    self.inputNum = int(inputNum)
+    self.iid = 100 + self.inputNum - 1 # API 2026.24.1 1.4.1, as for ANALOGUE_INPUTS above
+
+    if unmutedGain != None:
+      self.unmutedGain = min(max(float(unmutedGain), MIX_GAIN_MIN), MIX_GAIN_MAX)
+
+    mixes = []
+
+    for part in spec.split(","):
+      mix = part.strip()
+
+      if mix == "":
+        continue
+
+      # created here rather than in main() because which mix registers matter depends on
+      # this parameter
+      tryInitFloatRegister(self.gainRegister(mix), AUX_GROUP, withSetter=True,
+                           desc="Analogue %s into Mix %s (dB); %s is muted" % (self.inputNum, mix, MIX_GAIN_MIN))
+
+      if lookup_local_event(self.stashName(mix)) == None:
+        create_local_event(self.stashName(mix),
+                           { "title": "Mix %s unmuted level" % mix, "group": AUX_GROUP, "order": next_seq(),
+                             "desc": "The gain Analogue %s was last seen at while audible in Mix %s -- what unmute puts back" % (self.inputNum, mix),
+                             "schema": { "type": "number" }})
+
+      mixes.append(mix)
+
+    self.mixes = mixes
+
+    if len(self.mixes) == 0:
+      console.warn("Aux Input Enabled manages no mixes -- check the 'Aux mixes' parameter")
+      return
+
+    console.info("Aux Input drives Analogue %s (IN-%s) in mix(es) %s; muted = %s dB, fallback unmuted = %s dB"
+                 % (self.inputNum, self.iid, ", ".join(self.mixes), MIX_GAIN_MIN, self.unmutedGain))
+
+    # a plain function, not the bound method -- see MasterControl.init()
+    def onMixChanged(arg):
+      self.recompute(arg)
+
+    for mix in self.mixes:
+      lookup_local_event(self.gainRegister(mix)).addEmitHandler(onMixChanged)
+
+    self.recompute()
+
+_auxInput = AuxInputControl("AuxInputEnabled")
+
+_auxInputEnabledAction = create_local_action("Aux Input Enabled", lambda arg: _auxInput.setEnabled(arg),
+                                             { "title": "Aux Input Enabled", "group": AUX_GROUP, "order": next_seq(),
+                                               "desc": "True unmutes the aux input in every managed mix, restoring the level each was last audible at; false drives them all to the floor. Called with NO argument it toggles, based on the state the amplifier last reported.",
+                                               "schema": { "type": "boolean" }})
+
+def initAuxInput():
+  'Must run after the analogue input registers exist, so the two share a consistent {IID}.'
+
+  _auxInput.init(param_auxInput or DEFAULT_AUX_INPUT,
+                 DEFAULT_AUX_MIXES if is_blank(param_auxMixes) else param_auxMixes,
+                 param_auxUnmutedGain)
+
+# -->
+
 def main():
   if is_blank(param_ipAddress):
     # try last dynamic address
@@ -367,6 +615,12 @@ def main():
   tryInitStringRegister("SYSTEM.DEVICE.SERIAL", "SYSTEM.DEVICE")
   tryInitStringRegister("SYSTEM.DEVICE.FIRMWARE_DATE", "SYSTEM.DEVICE")
   tryInitStringRegister("SYSTEM.DEVICE.FIRMWARE", "SYSTEM.DEVICE")
+
+  # --- Analogue input registers ---
+  # Created first so they sit at the head of the dashboard, matching the signal chain.
+
+  for inputNum in ANALOGUE_INPUTS:
+    initAnalogueInput(inputNum)
 
   # --- Zone registers ---
   # ZONE-{ZID}.PRIMARY_SRC  : integer, read-only  -- reflects the currently playing source
@@ -410,6 +664,12 @@ def main():
 
   # SOURCE OFF:                SOURCE ANALOGUE-1:
   # SET ROUT-200.SRC 0         SET ROUT-200.SRC 100
+
+  # --- Aux input mute ---
+  # Creates its own MIX-{MID}.GAIN-{IID} registers, so it only has to follow the analogue
+  # input section it shares an {IID} convention with.
+
+  initAuxInput()
 
   # must run last -- it binds onto the zone and output events created above
   initMasters()
@@ -457,26 +717,37 @@ _handlers_byPrefix = { } # e.g. { "ZONE-A.GAIN": fn,     # *SET ZONE-A.GAIN -11.
   
 _initial_getters = [] # strings to send on TCP connect
 
-def tryInitBoolRegister(name, group, withSetter=False): # e.g. ZONE-A.MUTE 0
+def _registerMeta(name, group, schema, desc=None):
+  'Metadata for one register\'s event or action; "desc" is only included when there is one.'
+
+  meta = { "title": name, "group": group, "order": next_seq(), "schema": schema }
+
+  if desc != None:
+    meta["desc"] = desc
+
+  return meta
+
+def tryInitBoolRegister(name, group, withSetter=False, withGetter=True, desc=None): # e.g. ZONE-A.MUTE 0
   e = lookup_local_event(name)
   if e is not None:
     return
-  
-  e = create_local_event(name, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "boolean" }})
-  
-  _initial_getters.append("GET %s" % name) # this needs to be sent on the first connection
-  
+
+  e = create_local_event(name, _registerMeta(name, group, { "type": "boolean" }, desc))
+
+  if withGetter: # subscription-only registers (e.g. IN-104.DYN.CLIP) reject a GET
+    _initial_getters.append("GET %s" % name) # this needs to be sent on the first connection
+
   def value_handler(arg):
     e.emit(arg == "1")
-    
+
   _handlers_byPrefix[name] = value_handler
-  
+
   if withSetter:
     def setter(value):
       _tcp.send("SET %s %s" % (name, "1" if value else "0")) # SET ZONE-A.GAIN -11.2
 
-    a = create_local_action(name, setter, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "boolean" }})
-    
+    a = create_local_action(name, setter, _registerMeta(name, group, { "type": "boolean" }, desc))
+
 def tryInitIntegerRegister(name, group, withSetter=False): # e.g. 
   e = lookup_local_event(name)
   if e is not None:
@@ -497,47 +768,57 @@ def tryInitIntegerRegister(name, group, withSetter=False): # e.g.
 
     a = create_local_action(name, setter, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "integer" }})    
     
-def tryInitFloatRegister(name, group, withSetter=False, withGetter=True): # name could be "ZONE-A.GAIN"
+def tryInitFloatRegister(name, group, withSetter=False, withGetter=True, desc=None): # name could be "ZONE-A.GAIN"
   e = lookup_local_event(name)
   if e is not None:
     return
 
-  e = create_local_event(name, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "number" }})
+  e = create_local_event(name, _registerMeta(name, group, { "type": "number" }, desc))
 
   if withGetter: # subscription-only registers (e.g. OUT-1.DYN.SIGNAL) reject a GET
     _initial_getters.append("GET %s" % name) # this needs to be sent on the first connection
 
   def value_handler(arg):
     e.emit(float(arg))
-    
+
   _handlers_byPrefix[name] = value_handler
-  
+
   if withSetter:
     def setter(value):
       _tcp.send("SET %s %s" % (name, value)) # SET ZONE-A.GAIN -11.2
 
-    a = create_local_action(name, setter, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "number" }})
-    
-def tryInitStringRegister(name, group, withSetter=False): # name could be "ZONE-A.GAIN"
+    a = create_local_action(name, setter, _registerMeta(name, group, { "type": "number" }, desc))
+
+def tryInitStringRegister(name, group, withSetter=False, desc=None, enumValues=None, enumTitles=None): # name could be "ZONE-A.GAIN"
   e = lookup_local_event(name)
-  
+
   if e is not None:
     return
-  
-  e = create_local_event(name, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "string" }})
-  
+
+  e = create_local_event(name, _registerMeta(name, group, { "type": "string" }, desc))
+
   _initial_getters.append("GET %s" % name) # this needs to be sent on the first connection
-  
+
   def value_handler(arg):
     e.emit(arg)
-    
+
   _handlers_byPrefix[name] = value_handler
-  
+
   if withSetter:
     def setter(value):
       _tcp.send("SET %s %s" % (name, value)) # SET ZONE-A.GAIN -11.2
 
-    a = create_local_action(name, setter, { "title": name, "group": group, "order": next_seq(), "schema": { "type": "string" }})    
+    # an enum gives the dashboard a dropdown of the values the register actually accepts,
+    # rather than a free-text box that can only be got wrong
+    schema = { "type": "string" }
+
+    if enumValues != None:
+      schema["enum"] = enumValues
+
+      if enumTitles != None:
+        schema["enumTitles"] = enumTitles
+
+    a = create_local_action(name, setter, _registerMeta(name, group, schema, desc))
     
 # <!-- protocol
 

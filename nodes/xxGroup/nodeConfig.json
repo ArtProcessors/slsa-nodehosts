@@ -1,22 +1,10 @@
 {
     "remoteBindingValues": {
-        "actions": {"MemberSingPJPower": {
-            "node": "LTL-SING-PJ",
-            "action": "Power"
-        }},
+        "actions": {"MemberSingPJPower": {}},
         "events": {
-            "MemberSingPJPower": {
-                "node": "Sing PJ",
-                "event": "Power"
-            },
-            "MemberSingPJStatus": {
-                "node": "Sing PJ",
-                "event": "Status"
-            },
-            "ScheduledPower": {
-                "node": "LTL-LIB-SCHEDULER",
-                "event": "Power"
-            },
+            "MemberSingPJPower": {},
+            "MemberSingPJStatus": {},
+            "ScheduledPower": {},
             "ScheduledMuting": {}
         }
     },

@@ -93,8 +93,14 @@
                 "node": "LTL-PLAY-SCAN02-WOL",
                 "action": "Power"
             },
-            "MemberScanner01Power": {"node": "LTL-PLAY-TABLEPDU01"},
-            "MemberScanner02Power": {"node": "LTL-PLAY-TABLEPDU02"},
+            "MemberScanner01Power": {
+                "node": "LTL-PLAY-SCANNER01",
+                "action": "Power"
+            },
+            "MemberScanner02Power": {
+                "node": "LTL-PLAY-SCANNER02",
+                "action": "Power"
+            },
             "MemberPlayAmp-SetSourceatPowerOnPower": {"node": "LTL-PLAY-AMP"},
             "MemberPlayAmp-ToggleMuteatPowerControlMuting": {"node": "LTL-PLAY-AMP"},
             "MemberPlayPDU-Scanner01PowerPower": {"node": "LTL-PLAY-TABLEPDU01"},
@@ -276,19 +282,19 @@
                 "event": "Status"
             },
             "MemberScanner01Power": {
-                "node": "LTL-PLAY-TABLEPDU01",
+                "node": "LTL-PLAY-SCANNER01",
                 "event": "Power"
             },
             "MemberScanner01Status": {
-                "node": "LTL-PLAY-TABLEPDU01",
+                "node": "LTL-PLAY-SCANNER01",
                 "event": "Status"
             },
             "MemberScanner02Power": {
-                "node": "LTL-PLAY-TABLEPDU02",
+                "node": "LTL-PLAY-SCANNER02",
                 "event": "Power"
             },
             "MemberScanner02Status": {
-                "node": "LTL-PLAY-TABLEPDU02",
+                "node": "LTL-PLAY-SCANNER02",
                 "event": "Status"
             },
             "MemberPlayAmp-SetSourceatPowerOnPower": {

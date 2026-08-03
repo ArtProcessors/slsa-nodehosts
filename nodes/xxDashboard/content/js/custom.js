@@ -18,6 +18,8 @@
  * them, set positions, then "Save playlist" persists changes. "+ Add Playlist"
  * starts a new draft. Names are resolved by row INDEX, never embedded into HTML
  * attributes (filenames/names may contain characters that would break markup).
+ *
+ * Calendar tab: js/scheduler-calendar.js, loaded at the bottom of this file.
  */
 $(function () {
   var POLL_MS = 1500;
@@ -376,4 +378,19 @@ $(function () {
 
   setInterval(refresh, POLL_MS);
   refresh();
+});
+
+/*
+ * Calendar tab. index.xsl emits a single <script> for the js= attribute on
+ * <pages>, so the schedule calendar - which is a whole separate UI lifted from
+ * the LTL-LIB-SCHEDULER node, not more of the code above - is fetched from here
+ * rather than pasted in. It registers its own $(document).ready() handler, which
+ * jQuery runs immediately when the DOM is already up, so loading it late is fine.
+ * The path is relative to the page (/nodes/xxDashboard/), like every other URL
+ * in this file.
+ */
+$(function () {
+  $.getScript('js/scheduler-calendar.js').fail(function () {
+    console.error('The schedule calendar (js/scheduler-calendar.js) could not be loaded.');
+  });
 });

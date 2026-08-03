@@ -10,7 +10,7 @@
                 "action": "Power"
             },
             "MemberSingAmpMuting": {
-                "node": "LTL-SING-AMP",
+                "node": "xxsingmaster",
                 "action": "ZONEAMUTE"
             },
             "MemberSingVideoSwitcherPower": {

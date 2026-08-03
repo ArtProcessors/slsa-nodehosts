@@ -25,8 +25,6 @@
                 "node": "LTL-PLAY-AMP",
                 "action": "ZONEAMUTE"
             },
-            "MemberSingAmpPowerExtended": {},
-            "MemberSingAmpMutingExtended": {},
             "MemberPlayInteractivePCPower": {
                 "node": "LTL-PLAY-INT-WOL",
                 "action": "Power"
@@ -60,23 +58,23 @@
                 "node": "LTL-SING-SWITCHER",
                 "action": "Output1Input1"
             },
-            "Member Play Power Extended": {
-                "node": "Play",
+            "MemberPlayPowerExtended": {
+                "node": "LTL-LIB-PLAY",
                 "action": "Power"
             },
-            "Member Play Muting Extended": {
-                "node": "Play",
+            "MemberPlayMutingExtended": {
+                "node": "LTL-LIB-PLAY",
                 "action": "Muting"
             },
-            "Member Sing Power Extended": {
-                "node": "Sing",
+            "MemberSingPowerExtended": {
+                "node": "LTL-LIB-SING",
                 "action": "Power"
             },
-            "Member Sing Muting Extended": {
-                "node": "Sing",
+            "MemberSingMutingExtended": {
+                "node": "LTL-LIB-SING",
                 "action": "Muting"
             },
-            "Member Lighting Power Power": {
+            "MemberLightingPowerPower": {
                 "node": "LTL-LIB-LIGHTING-POWER",
                 "action": "Power"
             }
@@ -191,35 +189,35 @@
                 "node": "Sing Video Switch",
                 "event": "Status"
             },
-            "Member Play Power": {
+            "MemberPlayPower": {
                 "node": "Play",
                 "event": "Power"
             },
-            "Member Play Muting": {
+            "MemberPlayMuting": {
                 "node": "Play",
                 "event": "Muting"
             },
-            "Member Play Status": {
+            "MemberPlayStatus": {
                 "node": "Play",
                 "event": "Status"
             },
-            "Member Sing Power": {
+            "MemberSingPower": {
                 "node": "Sing",
                 "event": "Power"
             },
-            "Member Sing Muting": {
+            "MemberSingMuting": {
                 "node": "Sing",
                 "event": "Muting"
             },
-            "Member Sing Status": {
+            "MemberSingStatus": {
                 "node": "Sing",
                 "event": "Status"
             },
-            "Member Lighting Power Power": {
+            "MemberLightingPowerPower": {
                 "node": "LTL-LIB-LIGHTING-POWER",
                 "event": "Power"
             },
-            "Member Lighting Power Status": {
+            "MemberLightingPowerStatus": {
                 "node": "LTL-LIB-LIGHTING-POWER",
                 "event": "Status"
             }

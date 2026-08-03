@@ -5,7 +5,10 @@
                 "node": "LTL-PLAY-TABLEPDU01",
                 "action": "Output 4"
             },
-            "SwitchBotPress": {}
+            "SwitchBotPress": {
+                "node": "LTL-PLAY-BOT01",
+                "action": "Press"
+            }
         },
         "events": {
             "OutletState": {
@@ -15,11 +18,14 @@
             "PDUStatus": {
                 "node": "LTL-PLAY-TABLEPDU01",
                 "event": "Status"
-            }
+            },
+            "ScanSnapRunning": {},
+            "ScannerPCStatus": {}
         }
     },
     "paramValues": {
         "offDuration": 10,
-        "bootDuration": 30
+        "bootDuration": 30,
+        "readyTimeout": 180
     }
 }

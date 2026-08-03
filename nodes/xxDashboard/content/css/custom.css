@@ -1,3 +1,10 @@
+/* Calendar tab: the schedule calendar's stylesheet, lifted from the
+   LTL-LIB-SCHEDULER node. index.xsl emits one <link> for the css= attribute on
+   <pages>, so a second stylesheet gets in via @import - which has to stay the
+   first rule in this file. Everything it defines is prefixed .scheduler-*
+   except the .page[data-section="Calendar"] canvas, so it stays in its tab. */
+@import url("scheduler-calendar.css");
+
 .loop-btn {
   background-color: #e2e2e2;
   border: 1px solid #bfbfbf;

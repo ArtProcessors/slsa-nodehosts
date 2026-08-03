@@ -141,33 +141,21 @@
                 "node": "xxsingmaster",
                 "action": "ZONEAGAIN"
             },
-            "MultipurposeSingPC": {
+            "MultipurposeProjectorInput": {
                 "node": "LTL-SING-SWITCHER",
-                "action": "Output1Input1"
-            },
-            "MultipurposeAppleTV": {
-                "node": "LTL-SING-SWITCHER",
-                "action": "Output1Input2"
-            },
-            "MultipurposeHDMIWallPlate": {
-                "node": "LTL-SING-SWITCHER",
-                "action": "Output1Input3"
-            },
-            "MultipurposeHDMILead": {
-                "node": "LTL-SING-SWITCHER",
-                "action": "Output1Input4"
+                "action": "RouteOutput1"
             },
             "SplitRoom": {
                 "node": "LTL-LIB-AUDIO",
-                "action": "SplitRoom"
+                "action": "Split Room"
             },
             "PlayAudioTakeover": {
                 "node": "LTL-LIB-AUDIO",
-                "action": "PlayTakeover"
+                "action": "Play Audio Takeover"
             },
             "SingAudioTakeover": {
                 "node": "LTL-LIB-AUDIO",
-                "action": "SingTakeover"
+                "action": "Sing Audio Takeover"
             },
             "LightingGalleryOn": {
                 "node": "xxdynet",
@@ -181,30 +169,70 @@
                 "node": "xxdynet",
                 "action": "CleaningOn"
             },
-            "Play Scanner 01 Power": {
+            "PlayScanner01Power": {
                 "node": "LTL-PLAY-SCANNER01",
                 "action": "Power"
             },
-            "Play Scanner 01 Restart": {
+            "PlayScanner01Restart": {
                 "node": "LTL-PLAY-SCANNER01",
                 "action": "Restart"
             },
-            "Play Scanner 02 Power": {
+            "PlayScanner02Power": {
                 "node": "LTL-PLAY-SCANNER02",
                 "action": "Power"
             },
-            "Play Scanner 02 Restart": {
+            "PlayScanner02Restart": {
                 "node": "LTL-PLAY-SCANNER02",
                 "action": "Restart"
             },
-            "Play SwitchBot 01 Power": {},
-            "Play SwitchBot 01 Restart": {},
-            "Play SwitchBot 02 Power": {},
-            "Play SwitchBot 02 Restart": {},
-            "Multipurpose Power": {},
-            "Multipurpose Mic 01 Level": {},
-            "Multipurpose Mic 02 Level": {},
-            "Multipurpose Aux Audio": {}
+            "PlaySwitchBot01Press": {
+                "node": "LTL-PLAY-BOT01",
+                "action": "Press"
+            },
+            "PlaySwitchBot02Press": {
+                "node": "LTL-PLAY-BOT02",
+                "action": "Press"
+            },
+            "MultipurposeMic01Level": {
+                "node": "xxsingmaster",
+                "action": "IN104GAIN"
+            },
+            "MultipurposeMic02Level": {
+                "node": "xxsingmaster",
+                "action": "IN105GAIN"
+            },
+            "MultipurposeAuxAudio": {
+                "node": "xxsingmaster",
+                "action": "AuxInputEnabled"
+            },
+            "MultipurposeLightingNormal": {
+                "node": "xxdynet",
+                "action": "MultipurposeNormal"
+            },
+            "MultipurposeLightingLower": {
+                "node": "xxdynet",
+                "action": "MultipurposeLow"
+            },
+            "MultipurposeLightingOff": {
+                "node": "xxdynet",
+                "action": "MultipurposeOff"
+            },
+            "MultipurposeProjectorPower": {
+                "node": "LTL-SING-PJ",
+                "action": "Power"
+            },
+            "MultipurposeSingPCPower": {
+                "node": "LTL-SING-PC-WOL",
+                "action": "Power"
+            },
+            "MultipurposeSingPCRestart": {
+                "node": "LTL-SING-PC",
+                "action": "Restart"
+            },
+            "MultipurposeAppleTVPower": {"node": "LTL-SING-RACKPDU01"},
+            "MultipurposeHDbTTxPower": {"node": "LTL-SING-RACKPDU01"},
+            "Play HDbT Tx Power": {},
+            "Multipurpose Media Player Power": {}
         },
         "events": {
             "PlayPower": {
@@ -315,49 +343,103 @@
                 "node": "LTL-PLAY-PJ",
                 "event": "Power"
             },
-            "MultipurposeSingPC": {
+            "MultipurposeProjectorInput": {
                 "node": "LTL-SING-SWITCHER",
                 "event": "Output1Input"
             },
-            "SplitRoom": {},
-            "PlayAudioTakeover": {},
-            "SingAudioTakeover": {},
-            "LightingGalleryOn": {},
+            "PlayScanner01Status": {
+                "node": "LTL-PLAY-SCANNER01",
+                "event": "Status"
+            },
+            "PlayScanner01Power": {
+                "node": "LTL-PLAY-SCANNER01",
+                "event": "Power"
+            },
+            "PlayScanner02Status": {
+                "node": "LTL-PLAY-SCANNER02",
+                "event": "Status"
+            },
+            "PlayScanner02Power": {
+                "node": "LTL-PLAY-SCANNER02",
+                "event": "Power"
+            },
+            "PlaySwitchBot01Status": {
+                "node": "LTL-PLAY-BOT01",
+                "event": "Status"
+            },
+            "PlaySwitchBot02Status": {
+                "node": "LTL-PLAY-BOT02",
+                "event": "Status"
+            },
+            "MultipurposeAuxAudio": {
+                "node": "xxsingmaster",
+                "event": "AuxInputEnabled"
+            },
+            "MultipurposeLightingNormal": {},
+            "MultipurposeLightingLower": {},
+            "MultipurposeLightingOff": {},
+            "MultipurposeProjectorStatus": {
+                "node": "LTL-SING-PJ",
+                "event": "Status"
+            },
+            "MultipurposeProjectorPower": {
+                "node": "LTL-SING-PJ",
+                "event": "Power"
+            },
+            "MultipurposeMediaPlayerStatus": {},
+            "MultipurposeMediaPlayerPower": {},
+            "Split Room": {
+                "node": "LTL-LIB-AUDIO",
+                "event": "Split Room"
+            },
+            "Play Audio Takeover": {
+                "node": "LTL-LIB-AUDIO",
+                "event": "Play Audio Takeover"
+            },
+            "Sing Audio Takeover": {
+                "node": "LTL-LIB-AUDIO",
+                "event": "Sing Audio Takeover"
+            },
+            "Lighting Gallery On": {},
             "Lighting All Off": {},
             "Lighting Cleaning On": {},
             "Play Level": {},
+            "Play HDbT Tx Power": {},
             "Play BlockHead Screenshot": {},
-            "Play Scanner 01 Status": {
-                "node": "LTL-PLAY-SCANNER01",
+            "Multipurpose Volume": {
+                "node": "xxsingmaster",
+                "event": "ZONEAGAIN"
+            },
+            "Multipurpose Level": {
+                "node": "xxsingmaster",
+                "event": "ZONEADYNSIGNAL"
+            },
+            "Multipurpose Mic 01 Level": {
+                "node": "xxsingmaster",
+                "event": "IN104GAIN"
+            },
+            "Multipurpose Mic 01 Meter": {
+                "node": "xxsingmaster",
+                "event": "IN104DYNSIGNAL"
+            },
+            "Multipurpose Mic 02 Level": {
+                "node": "xxsingmaster",
+                "event": "IN105GAIN"
+            },
+            "Multipurpose Mic 02 Meter": {
+                "node": "xxsingmaster",
+                "event": "IN105DYNSIGNAL"
+            },
+            "Multipurpose Sing PC Status": {
+                "node": "LTL-SING-PC-WOL",
                 "event": "Status"
             },
-            "Play Scanner 01 Power": {
-                "node": "LTL-PLAY-SCANNER01",
+            "Multipurpose Sing PC Power": {
+                "node": "LTL-SING-PC-WOL",
                 "event": "Power"
             },
-            "Play Scanner 02 Status": {
-                "node": "LTL-PLAY-SCANNER02",
-                "event": "Status"
-            },
-            "Play Scanner 02 Power": {
-                "node": "LTL-PLAY-SCANNER02",
-                "event": "Power"
-            },
-            "Play SwitchBot 01 Status": {},
-            "Play SwitchBot 01 Power": {},
-            "Play SwitchBot 02 Status": {},
-            "Play SwitchBot 02 Power": {},
-            "Multipurpose Power": {},
-            "Multipurpose Volume": {},
-            "Multipurpose Level": {},
-            "Multipurpose Mic 01 Level": {},
-            "Multipurpose Mic 01 Meter": {},
-            "Multipurpose Mic 02 Level": {},
-            "Multipurpose Mic 02 Meter": {},
-            "Multipurpose Apple TV": {},
-            "Multipurpose HDMI Wall Plate": {},
-            "Multipurpose HDMI Lead": {},
-            "Multipurpose Aux Audio": {}
+            "Multipurpose Apple TV Power": {},
+            "Multipurpose HDbT Tx Power": {}
         }
     },
     "paramValues": {
