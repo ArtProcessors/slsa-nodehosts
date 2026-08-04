@@ -1,68 +1,8 @@
 {
     "remoteBindingValues": {
         "actions": {
-            "MemberPlayInteractivePCWOLPower": {
-                "node": "LTL-PLAY-INT-WOL",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC01WOLPower": {
-                "node": "LTL-PLAY-SCAN01-WOL",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC02WOLPower": {
-                "node": "LTL-PLAY-SCAN02-WOL",
-                "action": "Power"
-            },
-            "MemberPlayInteractiveComputerPower": {
-                "node": "Play Interactive Computer",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC01Power": {
-                "node": "Play Scanner PC01",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC02Power": {
-                "node": "Play Scanner PC02",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC01PowerExtended": {
-                "node": "Play Scanner PC01",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC02PowerExtended": {
-                "node": "Play Scanner PC02",
-                "action": "Power"
-            },
-            "MemberPlayProjectorPower": {
-                "node": "LTL-PLAY-PJ",
-                "action": "Power"
-            },
-            "MemberPlayAmpMuting": {
-                "node": "Play Amp",
-                "action": "Muting"
-            },
-            "MemberPlayAmpUnmutePowerMuting": {
-                "node": "LTL-SING-AMP",
-                "action": "ZONEAMUTE"
-            },
-            "MemberPlayAmpSetSourcePowerPower": {
-                "node": "LTL-SING-AMP",
-                "action": "ZONEASetSource"
-            },
-            "MemberPlayAmpUnmutePowerPower": {
-                "node": "LTL-SING-AMP",
-                "action": "ZONEAMUTE"
-            },
             "MemberInteractivePCPower": {
                 "node": "LTL-PLAY-INT-WOL",
-                "action": "Power"
-            },
-            "MemberScannerPC01Power": {
-                "node": "Scanner PC01",
-                "action": "Power"
-            },
-            "MemberScannerPC02Power": {
-                "node": "Scanner PC02",
                 "action": "Power"
             },
             "MemberProjectorPower": {
@@ -70,16 +10,8 @@
                 "action": "Power"
             },
             "MemberAmpMuting": {
-                "node": "xxplaymaster",
+                "node": "LTL-PLAY-AMP",
                 "action": "ZONEAMUTE"
-            },
-            "MemberTablePDU01Power": {
-                "node": "Table PDU01",
-                "action": "Power"
-            },
-            "MemberTablePDU02Power": {
-                "node": "Table PDU02",
-                "action": "Power"
             },
             "MemberScanPC01Power": {
                 "node": "LTL-PLAY-SCAN01-WOL",
@@ -96,110 +28,9 @@
             "MemberScanner02Power": {
                 "node": "LTL-PLAY-SCANNER02",
                 "action": "Power"
-            },
-            "MemberPlayAmp-SetSourceatPowerOnPower": {"node": "LTL-PLAY-AMP"},
-            "MemberPlayAmp-ToggleMuteatPowerControlMuting": {"node": "LTL-PLAY-AMP"},
-            "MemberPlayPDU-Scanner01PowerPower": {"node": "LTL-PLAY-TABLEPDU01"},
-            "MemberPlayPDU-Scanner02PowerPower": {"node": "LTL-PLAY-TABLEPDU02"}
+            }
         },
         "events": {
-            "MemberPlayInteractivePCWOLPower": {
-                "node": "LTL-PLAY-INT-WOL",
-                "event": "Power"
-            },
-            "MemberPlayInteractivePCWOLMuting": {
-                "node": "LTL-PLAY-INT",
-                "event": "Mute"
-            },
-            "MemberPlayInteractivePCWOLStatus": {
-                "node": "LTL-PLAY-INT-WOL",
-                "event": "ComputerStatus"
-            },
-            "MemberPlayScannerPC01WOLPower": {
-                "node": "LTL-PLAY-SCAN01-WOL",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC01WOLMuting": {
-                "node": "LTL-PLAY-SCAN01",
-                "event": "Mute"
-            },
-            "MemberPlayScannerPC01WOLStatus": {
-                "node": "LTL-PLAY-SCAN01-WOL",
-                "event": "ComputerStatus"
-            },
-            "MemberPlayScannerPC02WOLPower": {
-                "node": "LTL-PLAY-SCAN02-WOL",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC02WOLMuting": {"event": "Muting"},
-            "MemberPlayScannerPC02WOLStatus": {
-                "node": "Play Scanner PC02 WOL",
-                "event": "Status"
-            },
-            "MemberPlayInteractiveComputerPower": {
-                "node": "Play Interactive Computer",
-                "event": "Power"
-            },
-            "MemberPlayInteractiveComputerStatus": {
-                "node": "Play Interactive Computer",
-                "event": "Status"
-            },
-            "MemberPlayScannerPC01Power": {
-                "node": "Play Scanner PC01",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC01Status": {
-                "node": "Play Scanner PC01",
-                "event": "Status"
-            },
-            "MemberPlayScannerPC02Power": {
-                "node": "Play Scanner PC02",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC02Status": {
-                "node": "Play Scanner PC02",
-                "event": "Status"
-            },
-            "MemberPlayProjectorPower": {
-                "node": "LTL-PLAY-PJ",
-                "event": "Power"
-            },
-            "MemberPlayAmpMuting": {
-                "node": "Play Amp",
-                "event": "Muting"
-            },
-            "MemberPlayAmpStatus": {
-                "node": "Play Amp",
-                "event": "Status"
-            },
-            "MemberPlayAmpPower": {
-                "node": "Play Amp",
-                "event": "Power"
-            },
-            "MemberPlayAmpUnmutePowerPower": {
-                "node": "Play Amp Unmute Power",
-                "event": "Power"
-            },
-            "MemberPlayAmpUnmutePowerMuting": {
-                "node": "Play Amp Unmute Power",
-                "event": "Muting"
-            },
-            "MemberPlayAmpUnmutePowerStatus": {
-                "node": "Play Amp Unmute Power",
-                "event": "Status"
-            },
-            "MemberPlayAmpSetSourcePowerPower": {
-                "node": "Play Amp Set Source Power",
-                "event": "Power"
-            },
-            "MemberPlayAmpSetSourcePowerStatus": {
-                "node": "Play Amp Set Source Power",
-                "event": "Status"
-            },
-            "MemberPlayProjectorStatus": {
-                "node": "LTL-PLAY-PJ",
-                "event": "Status"
-            },
             "MemberInteractivePCPower": {
                 "node": "LTL-PLAY-INT-WOL",
                 "event": "Power"
@@ -207,22 +38,6 @@
             "MemberInteractivePCMuting": {},
             "MemberInteractivePCStatus": {
                 "node": "LTL-PLAY-INT-WOL",
-                "event": "Status"
-            },
-            "MemberScannerPC01Power": {
-                "node": "Scanner PC01",
-                "event": "Power"
-            },
-            "MemberScannerPC01Status": {
-                "node": "Scanner PC01",
-                "event": "Status"
-            },
-            "MemberScannerPC02Power": {
-                "node": "Scanner PC02",
-                "event": "Power"
-            },
-            "MemberScannerPC02Status": {
-                "node": "Scanner PC02",
                 "event": "Status"
             },
             "MemberProjectorPower": {
@@ -234,27 +49,11 @@
                 "event": "Status"
             },
             "MemberAmpMuting": {
-                "node": "xxplaymaster",
+                "node": "LTL-PLAY-AMP",
                 "event": "ZONEAMUTE"
             },
             "MemberAmpStatus": {
-                "node": "xxplaymaster",
-                "event": "Status"
-            },
-            "MemberTablePDU01Power": {
-                "node": "Table PDU01",
-                "event": "Power"
-            },
-            "MemberTablePDU01Status": {
-                "node": "Table PDU01",
-                "event": "Status"
-            },
-            "MemberTablePDU02Power": {
-                "node": "Table PDU02",
-                "event": "Power"
-            },
-            "MemberTablePDU02Status": {
-                "node": "Table PDU02",
+                "node": "LTL-PLAY-AMP",
                 "event": "Status"
             },
             "MemberScanPC01Power": {
@@ -287,38 +86,6 @@
             },
             "MemberScanner02Status": {
                 "node": "LTL-PLAY-SCANNER02",
-                "event": "Status"
-            },
-            "MemberPlayAmp-SetSourceatPowerOnPower": {
-                "node": "xxplaymaster",
-                "event": "ZONEAPRIMARYSRC"
-            },
-            "MemberPlayAmp-SetSourceatPowerOnStatus": {
-                "node": "xxplaymaster",
-                "event": "Status"
-            },
-            "MemberPlayAmp-ToggleMuteatPowerControlPower": {
-                "node": "xxplaymaster",
-                "event": "ZONEAMUTE"
-            },
-            "MemberPlayAmp-ToggleMuteatPowerControlMuting": {
-                "node": "xxplaymaster",
-                "event": "Muting"
-            },
-            "MemberPlayPDU-Scanner01PowerPower": {
-                "node": "LTL-PLAY-TABLEPDU01",
-                "event": "Power"
-            },
-            "MemberPlayPDU-Scanner01PowerStatus": {
-                "node": "LTL-PLAY-TABLEPDU01",
-                "event": "Status"
-            },
-            "MemberPlayPDU-Scanner02PowerPower": {
-                "node": "LTL-PLAY-TABLEPDU02",
-                "event": "Power"
-            },
-            "MemberPlayPDU-Scanner02PowerStatus": {
-                "node": "LTL-PLAY-TABLEPDU02",
                 "event": "Status"
             }
         }

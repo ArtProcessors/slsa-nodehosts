@@ -2,21 +2,21 @@
     "remoteBindingValues": {
         "actions": {
             "SceneOn": {
-                "node": "xxdynet",
+                "node": "LTL-LIB-DYNALITE",
                 "action": "GalleryOn"
             },
             "SceneOff": {
-                "node": "xxdynet",
+                "node": "LTL-LIB-DYNALITE",
                 "action": "AllOff"
             }
         },
         "events": {
             "SceneState": {
-                "node": "xxdynet",
+                "node": "LTL-LIB-DYNALITE",
                 "event": "Area2Preset"
             },
             "GatewayStatus": {
-                "node": "xxdynet",
+                "node": "LTL-LIB-DYNALITE",
                 "event": "Status"
             }
         }

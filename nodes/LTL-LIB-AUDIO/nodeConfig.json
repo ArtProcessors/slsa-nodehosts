@@ -2,21 +2,21 @@
     "remoteBindingValues": {
         "actions": {
             "Play Amp Zone A Source": {
-                "node": "xxplaymaster",
+                "node": "LTL-PLAY-AMP",
                 "action": "ZONEAPRIMARYSRC"
             },
             "Sing Amp Zone A Source": {
-                "node": "xxsingmaster",
+                "node": "LTL-SING-AMP",
                 "action": "ZONEAPRIMARYSRC"
             }
         },
         "events": {
             "Play Amp Zone A Source Feedback": {
-                "node": "xxplaymaster",
+                "node": "LTL-PLAY-AMP",
                 "event": "ZONEAPRIMARYSRC"
             },
             "Sing Amp Zone A Source Feedback": {
-                "node": "xxsingmaster",
+                "node": "LTL-SING-AMP",
                 "event": "ZONEAPRIMARYSRC"
             },
             "Gallery Power": {

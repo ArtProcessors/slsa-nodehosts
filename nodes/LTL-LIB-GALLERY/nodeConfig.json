@@ -1,63 +1,6 @@
 {
     "remoteBindingValues": {
         "actions": {
-            "MemberPlayProjectorPowerExtended": {
-                "node": "LTL-PLAY-PJ",
-                "action": "Power"
-            },
-            "MemberPlayProjectorMutingExtended": {
-                "node": "LTL-PLAY-PJ",
-                "action": "Muting"
-            },
-            "MemberSingProjectorPowerExtended": {
-                "node": "LTL-PLAY-PJ",
-                "action": "Power"
-            },
-            "MemberSingProjectorMutingExtended": {
-                "node": "LTL-PLAY-PJ",
-                "action": "Muting"
-            },
-            "MemberPlayAmpPowerExtended": {
-                "node": "LTL-PLAY-AMP",
-                "action": "ZONEASetSource"
-            },
-            "MemberPlayAmpMutingExtended": {
-                "node": "LTL-PLAY-AMP",
-                "action": "ZONEAMUTE"
-            },
-            "MemberPlayInteractivePCPower": {
-                "node": "LTL-PLAY-INT-WOL",
-                "action": "Power"
-            },
-            "MemberPlayInteractivePCMuting": {
-                "node": "LTL-PLAY-INT",
-                "action": "Mute"
-            },
-            "MemberPlayScannerPC01Power": {
-                "node": "LTL-PLAY-SCAN01-WOL",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC01Muting": {
-                "node": "LTL-PLAY-SCAN01",
-                "action": "Muting"
-            },
-            "MemberPlayScannerPC02Power": {
-                "node": "LTL-PLAY-SCAN02-WOL",
-                "action": "Power"
-            },
-            "MemberPlayScannerPC02Muting": {"action": "Muting"},
-            "MemberSingPCPower": {
-                "node": "LTL-SING-PC-WOL",
-                "action": "Power"
-            },
-            "MemberSingPCMuting": {
-                "node": "LTL-SING-PC",
-                "action": "Mute"
-            },
-            "MemberSingVideoSwitchPower": {
-                "node": "LTL-SING-SWITCHER",
-                "action": "Output1Input1"
-            },
             "MemberPlayPowerExtended": {
                 "node": "LTL-LIB-PLAY",
                 "action": "Power"
@@ -80,87 +23,6 @@
             }
         },
         "events": {
-            "MemberPlayProjectorStatus": {
-                "node": "LTL-PLAY-PJ",
-                "event": "Status"
-            },
-            "MemberSingProjectorStatus": {
-                "node": "LTL-SING-PJ",
-                "event": "Status"
-            },
-            "MemberPlayProjectorPower": {
-                "node": "LTL-PLAY-PJ",
-                "event": "Power"
-            },
-            "MemberPlayProjectorMuting": {"node": "LTL-PLAY-PJ"},
-            "MemberSingProjectorPower": {
-                "node": "LTL-SING-PJ",
-                "event": "Power"
-            },
-            "MemberSingProjectorMuting": {
-                "node": "LTL-SING-PJ",
-                "event": "Muting"
-            },
-            "MemberPlayAmpPower": {
-                "node": "LTL-PLAY-AMP",
-                "event": "Power"
-            },
-            "MemberPlayAmpMuting": {
-                "node": "LTL-PLAY-AMP",
-                "event": "Muting"
-            },
-            "MemberPlayAmpStatus": {
-                "node": "LTL-PLAY-AMP",
-                "event": "Status"
-            },
-            "MemberSingAmpPower": {
-                "node": "LTL-SING-AMP",
-                "event": "Power"
-            },
-            "MemberSingAmpMuting": {
-                "node": "LTL-SING-AMP",
-                "event": "Muting"
-            },
-            "MemberSingAmpStatus": {
-                "node": "LTL-SING-AMP",
-                "event": "Status"
-            },
-            "MemberPlayInteractivePCPower": {
-                "node": "Play Interactive PC",
-                "event": "Power"
-            },
-            "MemberPlayInteractivePCMuting": {
-                "node": "Play Interactive PC",
-                "event": "Muting"
-            },
-            "MemberPlayScannerPC01Power": {
-                "node": "Play Scanner PC01",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC01Muting": {
-                "node": "Play Scanner PC01",
-                "event": "Muting"
-            },
-            "MemberPlayScannerPC02Power": {
-                "node": "Play Scanner PC02",
-                "event": "Power"
-            },
-            "MemberPlayScannerPC02Muting": {
-                "node": "Play Scanner PC02",
-                "event": "Muting"
-            },
-            "MemberSingPCPower": {
-                "node": "LTL-SING-PC-WOL",
-                "event": "Power"
-            },
-            "MemberSingPCMuting": {
-                "node": "LTL-SING-PC",
-                "event": "Mute"
-            },
-            "MemberSingVideoSwitchPower": {
-                "node": "LTL-SING-SWITCHER",
-                "event": "Output1Input"
-            },
             "ScheduledMuting": {
                 "node": "LTL-LIB-SCHEDULER",
                 "event": "Muting"
@@ -169,48 +31,28 @@
                 "node": "LTL-LIB-SCHEDULER",
                 "event": "Power"
             },
-            "MemberPlayInteractivePCStatus": {
-                "node": "Play Interactive PC",
-                "event": "Status"
-            },
-            "MemberPlayScannerPC01Status": {
-                "node": "Play Scanner PC01",
-                "event": "Status"
-            },
-            "MemberPlayScannerPC02Status": {
-                "node": "Play Scanner PC02",
-                "event": "Status"
-            },
-            "MemberSingPCStatus": {
-                "node": "LTL-SING-PC",
-                "event": "Status"
-            },
-            "MemberSingVideoSwitchStatus": {
-                "node": "Sing Video Switch",
-                "event": "Status"
-            },
             "MemberPlayPower": {
-                "node": "Play",
+                "node": "LTL-LIB-PLAY",
                 "event": "Power"
             },
             "MemberPlayMuting": {
-                "node": "Play",
+                "node": "LTL-LIB-PLAY",
                 "event": "Muting"
             },
             "MemberPlayStatus": {
-                "node": "Play",
+                "node": "LTL-LIB-PLAY",
                 "event": "Status"
             },
             "MemberSingPower": {
-                "node": "Sing",
+                "node": "LTL-LIB-SING",
                 "event": "Power"
             },
             "MemberSingMuting": {
-                "node": "Sing",
+                "node": "LTL-LIB-SING",
                 "event": "Muting"
             },
             "MemberSingStatus": {
-                "node": "Sing",
+                "node": "LTL-LIB-SING",
                 "event": "Status"
             },
             "MemberLightingPowerPower": {

@@ -14,7 +14,7 @@ The lighting gateway offers none of those directly: its scene recalls are
 argument-less custom messages, and its feedback is a per-area preset label. This
 node translates between the two, and does nothing else.
 
-Bind the remote actions and events below to the gateway node (`xxdynet`):
+Bind the remote actions and events below to the gateway node (`LTL-LIB-DYNALITE`):
 
   | this node       | gateway                              |
   |-----------------|--------------------------------------|

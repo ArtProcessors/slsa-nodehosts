@@ -5,12 +5,8 @@
                 "node": "LTL-SING-PJ",
                 "action": "Power"
             },
-            "MemberSingAmpPower": {
-                "node": "LTL-SING-AMP",
-                "action": "Power"
-            },
             "MemberSingAmpMuting": {
-                "node": "xxsingmaster",
+                "node": "LTL-SING-AMP",
                 "action": "ZONEAMUTE"
             },
             "MemberSingVideoSwitcherPower": {
@@ -24,11 +20,6 @@
             "MemberSingPCPower": {
                 "node": "LTL-SING-PC-WOL",
                 "action": "Power"
-            },
-            "MemberSingRackPDU01Power": {"node": "LTL-SING-RACKPDU01"},
-            "MemberSingRackPDU02Power": {
-                "node": "LTL-SING-RACKPDU02",
-                "action": "Power"
             }
         },
         "events": {
@@ -40,16 +31,12 @@
                 "node": "LTL-SING-PJ",
                 "event": "Status"
             },
-            "MemberSingAmpPower": {
-                "node": "Sing Amp",
-                "event": "Power"
-            },
             "MemberSingAmpMuting": {
-                "node": "Sing Amp",
-                "event": "Muting"
+                "node": "LTL-SING-AMP",
+                "event": "ZONEAMUTE"
             },
             "MemberSingAmpStatus": {
-                "node": "Sing Amp",
+                "node": "LTL-SING-AMP",
                 "event": "Status"
             },
             "MemberSingVideoSwitcherPower": {
@@ -72,17 +59,9 @@
                 "node": "LTL-SING-PC",
                 "event": "Status"
             },
-            "MemberSingRackPDU01Power": {
-                "node": "Sing Rack PDU01",
-                "event": "Power"
-            },
             "MemberSingRackPDU01Status": {
                 "node": "LTL-SING-RACKPDU01",
                 "event": "Status"
-            },
-            "MemberSingRackPDU02Power": {
-                "node": "Sing Rack PDU02",
-                "event": "Power"
             },
             "MemberSingRackPDU02Status": {
                 "node": "LTL-SING-RACKPDU02",
@@ -101,7 +80,6 @@
             {
                 "name": "Sing Amp",
                 "hasStatus": true,
-                "power": {"mode": "Signal Only"},
                 "muting": {"mode": "Action & Signal"},
                 "_$visible": true
             },
@@ -121,13 +99,11 @@
             {
                 "name": "Sing Rack PDU01",
                 "hasStatus": true,
-                "power": {},
                 "_$visible": true
             },
             {
                 "name": "Sing Rack PDU02",
                 "hasStatus": true,
-                "power": {},
                 "_$visible": true
             }
         ],

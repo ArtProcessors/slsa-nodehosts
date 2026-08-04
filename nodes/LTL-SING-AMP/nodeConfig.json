@@ -4,7 +4,7 @@
         "events": {"IPAddress": {}}
     },
     "paramValues": {
-        "ipAddress": "192.168.3.231",
+        "ipAddress": "10.242.25.210",
         "port": 7621
     }
 }
