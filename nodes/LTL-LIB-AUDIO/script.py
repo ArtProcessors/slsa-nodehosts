@@ -18,6 +18,12 @@ from another browser is reflected just the same.
 
 Bind a dashboard button's action *and* event halves to the same mode name to get a latching
 (radio-button) control.
+
+**Power-on follow.** Bind the `Gallery Power` remote event to `LTL-LIB-GALLERY`'s `Desired Power`
+and the mode named in `Recall on power-on` is recalled whenever the gallery is switched on - so
+"All On" lands in a known routing state. Only `'On'` acts; there is no "off" routing state, so an
+`'Off'` is deliberately ignored. Leave the parameter blank to disable the follow. This is a
+one-way follow, not group membership: it does not affect any group's aggregate Power.
 '''
 
 DEFAULT_MODES = [
@@ -32,8 +38,16 @@ param_modes = Parameter({'title': 'Modes', 'order': 1, 'schema': {'type': 'array
   'singSource': {'title': 'Sing amp ZONE-A.PRIMARY_SRC',              'type': 'integer', 'order': 3}
 }}}})
 
+param_recallOnPowerOn = Parameter({'title': 'Recall on power-on', 'order': 2,
+  'desc': 'Mode recalled when "Gallery Power" reports On. Blank disables the follow.',
+  'schema': {'type': 'string'}})
+
 PLAY_SOURCE_ACTION = 'Play Amp Zone A Source'
 SING_SOURCE_ACTION = 'Sing Amp Zone A Source'
+
+GALLERY_POWER_EVENT = 'Gallery Power'
+
+DEFAULT_RECALL = 'Split Room'  # used when the parameter has never been set
 
 # last source reported by each amp; None means "has not told us yet"
 _reported = {'play': None, 'sing': None}
@@ -71,9 +85,67 @@ def main():
                        'order': 121, 'schema': {'type': 'integer'}},
                       suggestedNode='LTL-SING-AMP')
 
+  # must come after the mode loop above - it recalls one of those actions by name
+  create_remote_event(GALLERY_POWER_EVENT, onGalleryPower,
+                      {'title': GALLERY_POWER_EVENT, 'group': 'Gallery',
+                       'order': 130, 'schema': {'type': 'string'}},
+                      suggestedNode='LTL-LIB-GALLERY')
+
   evaluate()  # publish "nothing known yet" rather than leaving the dashboard blank
 
   console.info('Started with %s mode(s): %s' % (len(_modes), ', '.join([m['name'] for m in _modes])))
+
+  recall = recallMode()
+  if not recall:
+    console.info('Power-on follow is disabled')
+  else:
+    console.info('Will recall "%s" when the gallery powers on' % recall)
+
+
+def recallMode():
+  '''The mode to recall on power-on. Never set -> the default; blank -> follow disabled.'''
+  if param_recallOnPowerOn is None:
+    return DEFAULT_RECALL
+
+  return param_recallOnPowerOn.strip()
+
+
+def onGalleryPower(arg=None):
+  '''The gallery announced a power intent. Only "On" means anything here - there is no
+     "off" routing state, so 'Off' (and any 'Partially ...' form) is deliberately ignored.'''
+  state = asState(arg)
+  if state != 'On':
+    return
+
+  recall = recallMode()
+  if not recall:
+    return
+
+  mode = lookup_local_action(recall)
+  if mode is None:
+    return console.warn('Power-on: no mode named "%s" exists; check the "Recall on power-on" '
+                        'parameter against the Modes table' % recall)
+
+  console.info('Gallery powered on - recalling "%s"' % recall)
+  mode.call(None)
+
+
+def asState(value):
+  '''Group members are called with a plain 'On'/'Off', but a group's "Extended" stub
+     sends {'state': 'On', ...} instead - accept either, and booleans for good measure.'''
+  if value is None:
+    return None
+
+  if hasattr(value, 'get'):  # dict/map-like i.e. the extended form
+    value = value.get('state')
+
+  if value is True:
+    return 'On'
+
+  if value is False:
+    return 'Off'
+
+  return str(value).strip() if value is not None else None
 
 
 def initMode(mode, order):

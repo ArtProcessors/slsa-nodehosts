@@ -10,39 +10,38 @@
         <row>
           <column sm='12' md='6'>
             <subtitle>Little Library</subtitle>
+            <!-- Button heights come from .routing-btn; see css/custom.css. The
+                 same class is on the Lighting and Audio Routing buttons below,
+                 so all three blocks match. -->
             <row>
               <column sm='6'>
-                <button action='All Power' arg='Off' event='All Power' class-on="btn-danger" class="btn-default btn-block btn-lg" confirm='true'>All Off</button>
+                <button action='All Power' arg='Off' event='All Power' class-on="btn-danger" class="btn-default btn-block btn-lg routing-btn" confirm='true'>All Off</button>
               </column>
               <column sm='6'>
-                <button action='All Power' arg='On' event='All Power' class-on='btn-success' class="btn-default btn-block btn-lg" confirm='true'>All On<icon type='on'/></button>
+                <button action='All Power' arg='On' event='All Power' class-on='btn-success' class="btn-default btn-block btn-lg routing-btn" confirm='true'>All On<icon type='on'/></button>
               </column>
+            </row>
+            <subtitle>Lighting Controls</subtitle>
+            <row>
+              <column sm='4'><button join='Lighting Gallery On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Gallery On</button></column>
+              <column sm='4'><button join='Lighting All Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn" confirm='true'>All Off</button></column>
+              <column sm='4'><button join='Lighting Cleaning On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Cleaning On</button></column>
             </row>
             <subtitle>Exhibits</subtitle>
             <status page="Play" event='Play Status'>Play<partialswitch join='Play Power' class='btn-light'></partialswitch></status>
             <status event='Sing Status'>Sing<partialswitch join='Sing Power' class='btn-light'></partialswitch></status>
             <subtitle>Audio Routing</subtitle>
-            <group>
-              <row>
-                <column sm='4'><button join='Split Room' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Split Room</button></column>
-                <column sm='4'><button join='Play Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Play Audio Takeover</button></column>
-                <column sm='4'><button join='Sing Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Sing Audio Takeover</button></column>
-              </row>
-            </group>
-            <subtitle>Lighting Controls</subtitle>
-            <group>
-              <row>
-                <column sm='4'><button join='Lighting Gallery On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Gallery On</button></column>
-                <column sm='4'><button join='Lighting All Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn" confirm='true'>All Off</button></column>
-                <column sm='4'><button join='Lighting Cleaning On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Cleaning On</button></column>
-              </row>
-            </group>
+            <row>
+              <column sm='4'><button join='Split Room' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Split Room</button></column>
+              <column sm='4'><button join='Play Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Play Audio Takeover</button></column>
+              <column sm='4'><button join='Sing Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Sing Audio Takeover</button></column>
+            </row>
           </column>
           <column sm='12' md='6'>
             <subtitle>Help</subtitle>
-            <text>For support please visit the 'Art Processors Extranet' on the tab below for knowledge base articles and troubleshooting guides.</text>
-            <text>To raise a support request please select the 'Art Processors Service Desk' tab below and use the credentials provided to you.</text>
-            <text>If you are unable to login to the Service Desk or Extranet, please email support@artprocessors.net or call us on +61 (0) 3 9663 1266.</text>
+            <text>Please visit the 'Art Processors Extranet' for knowledge base articles and troubleshooting guides.</text>
+            <text>To raise a support request, please access the 'Art Processors Service Desk' and use the credentials provided to you.</text>
+            <text>If you are unable to login to the Service Desk or Extranet, please email support@artprocessors.net.</text>
           </column>
         </row>
       </column>
@@ -93,39 +92,159 @@
                   <status event='Play Projector Status'>BlockHead Projector&#10;(EPSON EB-PU1007W / ELPLX01 lens)<partialswitch join='Play Projector Power'/></status>
                 </column>
               </row>
-              <row>
-                <column sm="12">
-                  <title>BlockHeads Interactive</title>
-                  <status event='Play BlockHead PC Status'>BlockHead PC&#10;(Tea Room Comms Rack)<partialswitch join='Play BlockHead PC Power'/><button action='Play BlockHead PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-                  <status event='Play Unity App Status'>Unity App<partialswitch join='Play Unity App Power'/><button action='Play Unity App Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-                  <status>HDbT Tx&#10;(Tea Room Comms Rack)<partialswitch join='Play HDbT Tx Power'/></status>
-                </column>
-              </row>
-              <row>
-                <column sm="12">
-                  <title size='6'>Screenshot (updated every 60 seconds)</title>
-                  <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Screenshot'></image>
-                </column>
-              </row>
             </column>
             <column sm='4'>
+              <title>BlockHeads Interactive</title>
+              <status event='Play BlockHead PC Status'>BlockHead PC&#10;(Tea Room Comms Rack)<partialswitch join='Play BlockHead PC Power'/><button action='Play BlockHead PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Unity App Status'>Unity App<partialswitch join='Play Unity App Power'/><button action='Play Unity App Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
               <title>Scanner 01</title>
-              <status event='Play Scanner PC 01 Status'>PC<partialswitch join='Play Scanner PC 01 Power'/><button action='Play Scanner PC 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-              <status event='Play Scanner Software 01 Status'>Software<partialswitch join='Play Scanner Software 01 Power'/><button action='Play Scanner Software 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-              <status event='Play Scanner 01 Status'>ScanSnap<partialswitch join='Play Scanner 01 Power'/><button action='Play Scanner 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner PC 01 Status'>PC&#10;(Cupboard under scanner)<partialswitch join='Play Scanner PC 01 Power'/><button action='Play Scanner PC 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner Software 01 Status'>Software&#10;(ScanSnap Home)<partialswitch join='Play Scanner Software 01 Power'/><button action='Play Scanner Software 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner 01 Status'>Scanner&#10;(Device)<partialswitch join='Play Scanner 01 Power'/><button action='Play Scanner 01 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
               <status event='Play SwitchBot 01 Status'>SwitchBot<button action='Play SwitchBot 01 Press' class='btn-default'>Press</button></status>
             </column>
             <column sm='4'>
+              <title size='6'>Screenshot (updated every 60 seconds)</title>
+              <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Screenshot'></image>
               <title>Scanner 02</title>
-              <status event='Play Scanner PC 02 Status'>PC<partialswitch join='Play Scanner PC 02 Power'/><button action='Play Scanner PC 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-              <status event='Play Scanner Software 02 Status'>Software<partialswitch join='Play Scanner Software 02 Power'/><button action='Play Scanner Software 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-              <status event='Play Scanner 02 Status'>ScanSnap<partialswitch join='Play Scanner 02 Power'/><button action='Play Scanner 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner PC 02 Status'>PC&#10;(Cupboard under scanner)<partialswitch join='Play Scanner PC 02 Power'/><button action='Play Scanner PC 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner Software 02 Status'>Software&#10;(ScanSnap Home)<partialswitch join='Play Scanner Software 02 Power'/><button action='Play Scanner Software 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Play Scanner 02 Status'>Scanner&#10;(Device)<partialswitch join='Play Scanner 02 Power'/><button action='Play Scanner 02 Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
               <status event='Play SwitchBot 02 Status'>SwitchBot<button action='Play SwitchBot 02 Press' class='btn-default'>Press</button></status>
             </column>
           </row>
         </column>
       </row>
     </page>
+    <page title="Multipurpose">
+      <row>
+        <column sm='12'>
+          <!-- .mp-cols flexes its columns to equal height (sm and up). Nothing inside
+               them stretches or is repositioned - everything is at its natural size
+               and in normal flow. See css/custom.css.
+
+               Three sm='4' columns: audio controls with Audio Routing beneath them,
+               Projector Input with Lighting Controls beneath it, and the Equipment
+               list. -->
+          <row class='mp-cols'>
+            <column sm="4">
+              <row>
+                <column sm="12">
+                  <title>Program audio</title>
+                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-30' max='10'></range>
+                </column>
+                <column sm="9">
+                  <meter event='Multipurpose Level' type='horizontal' range='db'/>
+                </column>
+                <!-- Aux Audio rides alongside the Program audio meter as a small
+                     btn-sm - deliberately NOT routing-btn/btn-lg, which are the
+                     chunky styles used for the full-size scene buttons.
+
+                     Mute/unmute toggle. Deliberately a bare join= with no arg: that
+                     sends {} (i.e. calls the action with no argument), and the amp
+                     node treats a no-arg call as "flip whatever you last reported".
+                     Doing it there rather than with arg-on/arg-off keeps the toggle
+                     right on a freshly-loaded page and in a second browser, neither
+                     of which can infer the state from this button's own colour.
+
+                     The signal is 'Enabled', not 'Muted', so blue = audible reads
+                     straight off the amplifier's own value with no inversion here.
+                     It is a boolean, which is what makes class-on latch AND unlatch
+                     off a bare join=. The numeric Projector Input buttons below need
+                     an arg= as well; see the note there. -->
+                <column sm="3">
+                  <button join='Multipurpose Aux Audio' class-on='btn-primary' class="btn-default btn-block btn-sm">Aux Audio</button>
+                </column>
+              </row>
+              <title>Handheld Mic</title>
+              <range event='Multipurpose Mic 01 Level' action='Multipurpose Mic 01 Level' min='-30' max='10'></range>
+              <meter event='Multipurpose Mic 01 Meter' type='horizontal' range='db'/>
+
+              <title>Lav Mic</title>
+              <range event='Multipurpose Mic 02 Level' action='Multipurpose Mic 02 Level' min='-30' max='10'></range>
+              <meter event='Multipurpose Mic 02 Meter' type='horizontal' range='db'/>
+
+              <!-- Audio Routing: sits under the faders in normal flow, and keeps the
+                   Overview tab's IN-LINE arrangement - three sm='4' sub-columns side
+                   by side - rather than the stacked btn-block used by Projector Input
+                   opposite.
+
+                   This is a deliberate SECOND COPY of the Overview tab's controls,
+                   reusing the very same three signals ('Split Room', 'Play Audio
+                   Takeover', 'Sing Audio Takeover') rather than 'Multipurpose *' ones.
+                   Because the join names are identical, the Mk 2 recipe creates nothing
+                   new, both tabs drive the same actions, and class-on latches on both
+                   pages off the same events - so the state shown here and on Overview
+                   can never disagree. Do NOT rename these to make them "belong" to this
+                   tab; that would orphan the shared binding. -->
+              <title>Audio Routing</title>
+              <row>
+                <column sm='4'><button join='Split Room' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Split Room</button></column>
+                <column sm='4'><button join='Play Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Play Audio Takeover</button></column>
+                <column sm='4'><button join='Sing Audio Takeover' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Sing Audio Takeover</button></column>
+              </row>
+            </column>
+            <column sm='4'>
+              <!-- Matrix-switcher crosspoint select: exactly one input can be live
+                   on the projector output, so all four buttons share ONE signal,
+                   'Multipurpose Projector Input', and are told apart by arg=.
+
+                   Pressing sends the arg as the action argument (-> the switcher's
+                   'Route Output 1', which takes the input number). The same signal
+                   coming back carries the switcher's own 'Output 1 Input' number,
+                   and nodel.js latches class-on only on the button whose data-arg
+                   equals it, clearing every other - so the blue follows the device,
+                   is mutually exclusive for free, and self-corrects if the input is
+                   changed from the panel or another browser.
+
+                   This is why these are no longer four separate joins: a bare join
+                   with no arg only latches on a boolean signal, which is what left
+                   them inert. The arg is what makes a numeric signal work. -->
+              <title>Projector Input</title>
+              <button join='Multipurpose Projector Input' arg='1' class-on='btn-primary' class="btn-default btn-block btn-lg">Sing PC</button>
+              <button join='Multipurpose Projector Input' arg='2' class-on='btn-primary' class="btn-default btn-block btn-lg">Apple TV</button>
+              <button join='Multipurpose Projector Input' arg='3' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Wall Plate</button>
+              <button join='Multipurpose Projector Input' arg='4' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Lead</button>
+
+              <!-- Lighting: sits directly under Projector Input in normal flow.
+                   Same three-across treatment as Audio Routing, and the
+                   Overview tab's routing-btn styling, but with no <group> wrapper
+                   (that renders the grey .well panel) and its own 'Multipurpose
+                   Lighting *' signals - unlike Audio Routing, nothing here is shared
+                   with the Overview lighting buttons. -->
+              <title>Lighting Controls</title>
+              <row>
+                <column sm='4'><button join='Multipurpose Lighting Normal' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Normal</button></column>
+                <column sm='4'><button join='Multipurpose Lighting Lower' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Lower</button></column>
+                <!-- No confirm= here: this only darkens the Multipurpose room, so
+                     the prompt was friction in the middle of an event. The Overview
+                     tab's 'All Off' keeps its confirm - that one kills the whole
+                     Little Library. -->
+                <column sm='4'><button join='Multipurpose Lighting Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Off</button></column>
+              </row>
+            </column>
+            <!-- Equipment: the third column. Same status-block idiom as the Play tab -
+                 a <status> whose event drives the indicator, with a <partialswitch>
+                 for power. Two-line labels use a literal LF (&#10;), never <br/>:
+                 templates.xsl emits the label via <xsl:value-of select="text()"/>,
+                 which drops element children; css/custom.css puts status labels in
+                 white-space: pre-line so the newline renders as a break.
+                 Apple TV carries no status event - it is a passive, switched device
+                 with no feedback, so it sits last.
+                 This was a two-column list of its own when it ran full-width below;
+                 in a third of the page the blocks stack in one column instead. -->
+            <column sm='4'>
+              <title>Equipment</title>
+              <status event='Multipurpose Projector Status'>Projector&#10;(EPSON EB-690SE)<partialswitch join='Multipurpose Projector Power'/></status>
+              <status event='Multipurpose Sing PC Status'>Sing PC&#10;(Cupboard Mini Rack)<partialswitch join='Multipurpose Sing PC Power'/><button action='Multipurpose Sing PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
+              <status event='Multipurpose Media Player Status'>Media Player Software<partialswitch join='Multipurpose Media Player Power'/></status>
+              <status>Apple TV&#10;(Cupboard Mini Rack - Outlet power)<partialswitch join='Multipurpose Apple TV Power'/></status>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+
     <!-- Media Player: the mpv playlist controller, lifted from the xxMPV-frontend
          node (content/index.xml + css + js). The engine is the mpv driver node
          (xxMPV-dev); every action/event below is bound to it in the Bindings editor,
@@ -220,117 +339,6 @@
         <signal event='MPVRunning'/>
       </row>
 
-    </page>
-
-    <page title="Multipurpose">
-      <row>
-        <column sm='12'>
-          <!-- .mp-cols flexes the two half-columns to equal height (sm and up) so the
-               Projector Input buttons stretch to fill the audio column's height and the
-               two columns' bottom edges line up. See css/custom.css. -->
-          <row class='mp-cols'>
-            <column sm="6">
-              <row>
-                <column sm="12">
-                  <title>Program audio</title>
-                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-30' max='10'></range>
-                </column>
-                <column sm="9">
-                  <meter event='Multipurpose Level' type='horizontal' range='db'/>
-                </column>
-                <!-- Aux Audio rides alongside the Program audio meter as a small
-                     btn-sm - deliberately NOT routing-btn/btn-lg, which are the
-                     chunky styles used for the full-size scene buttons.
-
-                     Mute/unmute toggle. Deliberately a bare join= with no arg: that
-                     sends {} (i.e. calls the action with no argument), and the amp
-                     node treats a no-arg call as "flip whatever you last reported".
-                     Doing it there rather than with arg-on/arg-off keeps the toggle
-                     right on a freshly-loaded page and in a second browser, neither
-                     of which can infer the state from this button's own colour.
-
-                     The signal is 'Enabled', not 'Muted', so blue = audible reads
-                     straight off the amplifier's own value with no inversion here.
-                     It is a boolean, which is what makes class-on latch AND unlatch
-                     off a bare join=. The numeric Projector Input buttons below need
-                     an arg= as well; see the note there. -->
-                <column sm="3">
-                  <button join='Multipurpose Aux Audio' class-on='btn-primary' class="btn-default btn-block btn-sm">Aux Audio</button>
-                </column>
-              </row>
-              <title>Handheld Mic</title>
-              <range event='Multipurpose Mic 01 Level' action='Multipurpose Mic 01 Level' min='-30' max='10'></range>
-              <meter event='Multipurpose Mic 01 Meter' type='horizontal' range='db'/>
-
-              <title>Lav Mic</title>
-              <range event='Multipurpose Mic 02 Level' action='Multipurpose Mic 02 Level' min='-30' max='10'></range>
-              <meter event='Multipurpose Mic 02 Meter' type='horizontal' range='db'/>
-            </column>
-            <column sm='6'>
-              <!-- Matrix-switcher crosspoint select: exactly one input can be live
-                   on the projector output, so all four buttons share ONE signal,
-                   'Multipurpose Projector Input', and are told apart by arg=.
-
-                   Pressing sends the arg as the action argument (-> the switcher's
-                   'Route Output 1', which takes the input number). The same signal
-                   coming back carries the switcher's own 'Output 1 Input' number,
-                   and nodel.js latches class-on only on the button whose data-arg
-                   equals it, clearing every other - so the blue follows the device,
-                   is mutually exclusive for free, and self-corrects if the input is
-                   changed from the panel or another browser.
-
-                   This is why these are no longer four separate joins: a bare join
-                   with no arg only latches on a boolean signal, which is what left
-                   them inert. The arg is what makes a numeric signal work. -->
-              <title>Projector Input</title>
-              <button join='Multipurpose Projector Input' arg='1' class-on='btn-primary' class="btn-default btn-block btn-lg">Sing PC</button>
-              <button join='Multipurpose Projector Input' arg='2' class-on='btn-primary' class="btn-default btn-block btn-lg">Apple TV</button>
-              <button join='Multipurpose Projector Input' arg='3' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Wall Plate</button>
-              <button join='Multipurpose Projector Input' arg='4' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Lead</button>
-            </column>
-          </row>
-          <!-- Lighting: sits in its own row BELOW .mp-cols, not inside the left
-               column, so it stays outside the equal-height calculation and the
-               Projector Input buttons keep their current size. The sm='6' column
-               lines it up under the audio controls.
-               Buttons use the Overview tab's routing-btn styling, but with no
-               <group> wrapper (that renders the grey .well panel) and their own
-               'Multipurpose Lighting *' signals - nothing is shared with the
-               Overview lighting buttons. -->
-          <row>
-            <column sm='6'>
-              <title>Lighting Controls</title>
-              <row>
-                <column sm='4'><button join='Multipurpose Lighting Normal' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Normal</button></column>
-                <column sm='4'><button join='Multipurpose Lighting Lower' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Lower</button></column>
-                <!-- No confirm= here: this only darkens the Multipurpose room, so
-                     the prompt was friction in the middle of an event. The Overview
-                     tab's 'All Off' keeps its confirm - that one kills the whole
-                     Little Library. -->
-                <column sm='4'><button join='Multipurpose Lighting Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Off</button></column>
-              </row>
-            </column>
-          </row>
-          <!-- Equipment: same status-block idiom as the Play tab - a <status>
-               whose event drives the indicator, with a <partialswitch> for
-               power. Two-line labels use a literal LF (&#10;), never <br/>:
-               templates.xsl emits the label via <xsl:value-of select="text()"/>,
-               which drops element children; css/custom.css puts status labels in
-               white-space: pre-line so the newline renders as a break.
-               Apple TV and HDbT Tx carry no status event, matching the Play tab's
-               HDbT Tx - they are passive, switched devices with no feedback. -->
-          <row>
-            <column sm='6'>
-              <title>Equipment</title>
-              <status event='Multipurpose Projector Status'>Projector<partialswitch join='Multipurpose Projector Power'/></status>
-              <status event='Multipurpose Sing PC Status'>Sing PC&#10;(Cupboard Mini Rack)<partialswitch join='Multipurpose Sing PC Power'/><button action='Multipurpose Sing PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
-              <status event='Multipurpose Media Player Status'>Media Player<partialswitch join='Multipurpose Media Player Power'/></status>
-              <status>Apple TV<partialswitch join='Multipurpose Apple TV Power'/></status>
-              <status>HDbT Tx<partialswitch join='Multipurpose HDbT Tx Power'/></status>
-            </column>
-          </row>
-        </column>
-      </row>
     </page>
 
 </pages>

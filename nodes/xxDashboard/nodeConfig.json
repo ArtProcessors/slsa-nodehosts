@@ -231,7 +231,6 @@
             },
             "MultipurposeAppleTVPower": {"node": "LTL-SING-RACKPDU01"},
             "MultipurposeHDbTTxPower": {"node": "LTL-SING-RACKPDU01"},
-            "Play HDbT Tx Power": {},
             "Multipurpose Media Player Power": {}
         },
         "events": {
@@ -404,7 +403,6 @@
             "Lighting All Off": {},
             "Lighting Cleaning On": {},
             "Play Level": {},
-            "Play HDbT Tx Power": {},
             "Play BlockHead Screenshot": {},
             "Multipurpose Volume": {
                 "node": "xxsingmaster",

@@ -5,7 +5,6 @@
     "contentDirectory": ".nodel/webui_cache",
     "cacheDirectory": "cache",
     "networkInterfaces": [
-        "en10",
         "en0",
         "lo0"
     ],

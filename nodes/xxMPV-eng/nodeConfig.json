@@ -1,0 +1,11 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "mpvArgs": "--fullscreen --idle --no-osc",
+        "folder": "C:\\Content",
+        "mpvPath": "C:\\ProgramData\\chocolatey\\lib\\mpvio.install\\tools\\mpv.exe"
+    }
+}

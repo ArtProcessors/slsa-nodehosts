@@ -24,6 +24,26 @@
                 "timezone": "Australia/Adelaide",
                 "exceptions": [],
                 "notes": "Disabled example: close at 17:00 Tuesday to Sunday."
+            },
+            {
+                "enabled": true,
+                "name": "Song Book start",
+                "cron": "7 14 * * TUE",
+                "event": "PlayPlaylist",
+                "argument": "Kuarna Song Book",
+                "timezone": "Australia/Melbourne",
+                "exceptions": [{"date": "2026-12-25"}],
+                "notes": "Plays the 'Kuarna Song Book' playlist saved in the dashboard's Media Player tab. The argument IS the playlist name - rename the playlist in the Media Player tab and this must be updated to match. Reaches the mpv engine via LTL-LIB-MEDIA-SCHEDULE. Left disabled on this dev host; tick Enabled on site."
+            },
+            {
+                "enabled": false,
+                "name": "Song Book stop",
+                "cron": "45 16 * * TUE-SUN",
+                "event": "StopPlayback",
+                "argument": "",
+                "timezone": "Australia/Adelaide",
+                "exceptions": [{"date": "2026-12-25"}],
+                "notes": "Stops mpv at end of day. No argument. Without this the playlist keeps looping after hours."
             }
         ],
         "_$visible": true

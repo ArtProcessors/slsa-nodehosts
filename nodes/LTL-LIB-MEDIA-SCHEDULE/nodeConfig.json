@@ -1,0 +1,29 @@
+{
+    "remoteBindingValues": {
+        "actions": {
+            "PlayPreset": {
+                "node": "xxMPV-eng",
+                "action": "PlayPreset"
+            },
+            "Stop": {
+                "node": "xxMPV-eng",
+                "action": "Stop"
+            }
+        },
+        "events": {
+            "PlayPlaylist": {
+                "node": "LTL-LIB-SCHEDULER",
+                "event": "PlayPlaylist"
+            },
+            "StopPlayback": {
+                "node": "LTL-LIB-SCHEDULER",
+                "event": "StopPlayback"
+            },
+            "Presets": {
+                "node": "xxMPV-eng",
+                "event": "Presets"
+            }
+        }
+    },
+    "paramValues": {}
+}

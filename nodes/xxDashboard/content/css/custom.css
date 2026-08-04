@@ -30,46 +30,77 @@
   margin-left: 6px;
   margin-right: auto;
 }
+/* Scene buttons - Audio Routing and Lighting Controls, on both the Overview and
+   Multipurpose tabs. Every one of them is the same size, wherever it appears and
+   however its label wraps.
+
+   These used to size themselves from 32px of vertical padding plus however many
+   lines the label ran to, which made them uneven in two different ways: within a
+   row, 'Split Room' (one line) came out shorter than 'Play Audio Takeover' (two)
+   beside it; and between blocks, the whole Audio Routing row stood taller than
+   Lighting Controls, whose labels all fit on one line.
+
+   Fixing the box height instead settles both at once. 90px is what the old
+   padding-based rule produced for a single line, so nothing changed size except
+   the labels that used to overflow into a second line:
+       32px padding + 24px line + 32px padding + 2px border
+   where the 24px is .btn-lg's 18px font at its 1.3333 line-height (see
+   webui_cache/v1/css/components.css). The vertical padding has to go, or it
+   would eat the box from the inside and a two-line label would spill out.
+
+   min-height, not height: two lines (48px) and even three (72px) sit inside 90px
+   comfortably, so in practice every button is exactly 90px - but a label long
+   enough to need a fourth line grows the button rather than overflowing it.
+
+   Flex centring replaces the padding that used to do that job; the <p> that
+   templates.xsl wraps the label in carries a 10px bottom margin that would
+   otherwise sit the text off-centre. */
 .routing-btn {
-  padding-top: 32px;
-  padding-bottom: 32px;
+  min-height: 90px;
+  padding-top: 0;
+  padding-bottom: 0;
   white-space: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.routing-btn > p {
+  margin-bottom: 0;
 }
 
 /* ====================================================================
-   Multipurpose tab: equal-height columns.
-   The <column> template in templates.xsl ignores @class (it builds the
-   class purely from xs/sm/md/lg/push/pull), so these rules hang off the
-   row's .mp-cols and select the columns by position.
-   Scoped to the sm breakpoint and up: below it, Bootstrap's col-sm-6
-   carries no width and the columns are meant to stack, which flex would
-   otherwise defeat.
+   Multipurpose tab: three equal-height columns.
+     left   - Program audio / mics, then Audio Routing
+     middle - Projector Input, then Lighting Controls
+     right  - Equipment
+
+   Everything inside the columns is at its natural size and in normal flow, so
+   this rule does nothing but keep the two columns the same height. Two earlier
+   mechanisms have been removed as the layout settled, and neither should come
+   back without a reason:
+
+     - stretching the button columns (flex: 1 1 0 on their buttons), which
+       sized Projector Input off whatever height the audio column happened to
+       be; and
+     - .mp-bottom (margin-top: auto), which dropped Audio Routing and Lighting
+       Controls to the foot of their columns to line them up with each other.
+       Lighting now sits directly under Projector Input instead.
+
+   Both of those also had to name columns by position - the <column> template
+   in templates.xsl drops @class, leaving nth-child as the only handle - and
+   each silently followed the wrong column whenever one was added, removed or
+   reordered. If bottom-alignment is ever wanted again, mark the block in
+   index.xml (a class on <row>, which templates.xsl does pass through) rather
+   than counting columns here.
+
+   Scoped to the sm breakpoint and up: below it, Bootstrap's col-sm-4 carries
+   no width and the columns are meant to stack, which flex would otherwise
+   defeat.
    ==================================================================== */
 @media (min-width: 768px) {
   .mp-cols {
     display: flex;
     align-items: stretch;
-  }
-  /* Right-hand column (Projector Input) becomes a flex column so its
-     buttons can grow into whatever height the audio column sets. */
-  .mp-cols > div:last-child {
-    display: flex;
-    flex-direction: column;
-  }
-  /* flex-basis 0 so all four buttons end up exactly equal height,
-     sharing the space left under the heading. Centring is needed because
-     a stretched .btn would otherwise leave its label at the top. */
-  .mp-cols > div:last-child > .btn {
-    flex: 1 1 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  /* The label is wrapped in a <p>, which Bootstrap gives margin: 0 0 10px.
-     Inside a centred flex button that 10px would sit the text ~5px high, so
-     drop it here only - the un-flexed buttons elsewhere still want it. */
-  .mp-cols > div:last-child > .btn > p {
-    margin-bottom: 0;
   }
 }
 
@@ -84,6 +115,21 @@
    never be seen. (index.xsl already drops them - this is a safety net.) */
 .mpv-declare {
   display: none;
+}
+
+/* The Playlists and Playback tiles are <group> elements, and templates.xsl
+   renders a <group> as Bootstrap's .well - a filled box (background, border,
+   inset shadow, 19px inset padding) sitting behind the controls. Strip that
+   chrome so the controls sit flat on the page and line up with the grid, the
+   same as the Multipurpose tab (which has no <group> wrapper at all).
+   The .well element itself must STAY: js/custom.js finds each tile by it
+   (tileByTitle()) and injects the playlist editor / status pill into it. */
+.mpv-root .well {
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 /* mpv Playlist — live selection list styling */

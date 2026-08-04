@@ -69,10 +69,6 @@
                 "node": "LTL-PLAY-PJ",
                 "action": "Power"
             },
-            "MemberAmpPower": {
-                "node": "xxplaymaster",
-                "action": "ZONEAPRIMARYSRC"
-            },
             "MemberAmpMuting": {
                 "node": "xxplaymaster",
                 "action": "ZONEAMUTE"
@@ -237,10 +233,6 @@
                 "node": "LTL-PLAY-PJ",
                 "event": "Status"
             },
-            "MemberAmpPower": {
-                "node": "xxplaymaster",
-                "event": "ZONEAPRIMARYSRC"
-            },
             "MemberAmpMuting": {
                 "node": "xxplaymaster",
                 "event": "ZONEAMUTE"
@@ -361,7 +353,6 @@
             {
                 "name": "Amp",
                 "hasStatus": true,
-                "power": {"mode": "Action & Signal"},
                 "muting": {"mode": "Action & Signal"},
                 "_$visible": true
             },

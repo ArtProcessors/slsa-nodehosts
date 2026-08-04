@@ -1,1 +1,1 @@
-{"arg":{"level":2,"message":"No landing since 2:31:51 pm, Fri. 31-Jul."},"seq":1785720487280,"timestamp":"2026-08-03T20:27:27.049+10:00"}
+{"arg":{"level":2,"message":"Waited 180s for the scanner PC (no \"ScannerPCStatus\" binding exists). The SwitchBot was not pressed, so the scanner is powered but probably off."},"seq":1785818336831,"timestamp":"2026-08-04T18:16:29.330+10:00"}

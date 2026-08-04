@@ -18,6 +18,10 @@
             "Sing Amp Zone A Source Feedback": {
                 "node": "xxsingmaster",
                 "event": "ZONEAPRIMARYSRC"
+            },
+            "Gallery Power": {
+                "node": "LTL-LIB-GALLERY",
+                "event": "Desired Power"
             }
         }
     },
