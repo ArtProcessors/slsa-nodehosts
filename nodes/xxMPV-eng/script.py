@@ -24,6 +24,14 @@ relaunching it. mpv runs with the managed process's startOnce() (not start()),
 so there is NO keep-alive/relaunch. It is launched --idle=yes, so Stop (and a
 non-looping playlist ending) leave mpv open on a blank window, ready for the
 next Play; mpv only exits if its process is killed or the window is closed.
+
+Two different "off"s, deliberately kept apart:
+  * Stop      -- playback control. Blanks mpv to its idle window, process stays
+                 up, next Play is instant.
+  * Quit mpv  -- machine control (Power group). Exits the process so the PC's
+                 display can be used for something else. Power On / Play brings
+                 it back. The Power / Status events exist so a dashboard tile
+                 can bind to this the same way it binds to a PC or projector.
 '''
 
 import os
@@ -88,6 +96,34 @@ local_event_MPVRunning = LocalEvent({
     'group': 'Status', 'order': 3,
     'title': 'mpv running',
     'schema': {'type': 'boolean'}})
+
+# --- Power signals ----------------------------------------------------------
+# These exist purely so a dashboard power tile can bind to this node the same
+# way it binds to a PC or projector. They are derived from "mpv running", never
+# set independently -- see derivePower().
+
+# String mirror of "mpv running", for <partialswitch join='...'/>, which expects
+# 'On'/'Off' rather than a boolean.
+local_event_Power = LocalEvent({
+    'group': 'Power', 'order': 1,
+    'title': 'Power',
+    'schema': {'type': 'string', 'enum': ['On', 'Off']}})
+
+# What the operator last ASKED for, persisted. Used only to tell a deliberate
+# quit ("the PC has been handed back", not a fault) from mpv dying on its own.
+local_event_DesiredPower = LocalEvent({
+    'group': 'Power', 'order': 2,
+    'title': 'Desired power',
+    'schema': {'type': 'string', 'enum': ['On', 'Off']}})
+
+# Status-tile shape, matching the {level, message} that <status event='...'>
+# renders elsewhere on the dashboard.
+local_event_Status = LocalEvent({
+    'group': 'Status', 'order': -100,
+    'title': 'Status',
+    'schema': {'type': 'object', 'properties': {
+        'level':   {'type': 'integer', 'order': 1},
+        'message': {'type': 'string', 'order': 2}}}})
 
 local_event_Loop = LocalEvent({
     'group': 'Status', 'order': 4,
@@ -214,6 +250,7 @@ def broadcastState():
         local_event_Loop.emit(isLoopEnabled())
         local_event_Paused.emit(isPaused())
         local_event_MPVRunning.emit(bool(mpvRunning[0]))
+        derivePower()                  # Power + Status ride along with it
         np = local_event_NowPlaying.getArg()
         local_event_NowPlaying.emit(np if np else {'kind': '', 'name': '', 'files': []})
     except:
@@ -389,6 +426,11 @@ except:
 def startMpv(loopOverride=None):
     '''loopOverride: None = use the global Loop setting; True/False = force it
     (per-file on-demand play forces no-loop).'''
+    # Record the intent here, at the single choke point every launch path goes
+    # through (Play, Play file, Play preset, Power On). Otherwise a quit-then-
+    # Play sequence would leave Desired power on 'Off' and a later crash would
+    # be reported as a deliberate quit.
+    local_event_DesiredPower.emit('On')
     loop = isLoopEnabled() if loopOverride is None else bool(loopOverride)
     binary = param_mpvPath or 'mpv'
     removeStaleSocket()                          # POSIX: clear a leftover socket
@@ -490,6 +532,85 @@ def Stop(arg=None):
         sendMpv(['stop'])         # stop playback + clear file; mpv stays idle
     setNowPlaying('', '', [])     # nothing is playing now
     setPaused(False)              # ...and not paused
+
+# --- Power (quit mpv / bring it back) ---------------------------------------
+# Stop above is the *playback* control: it blanks mpv to its idle window and
+# leaves the process up, ready for the next Play. Quit below is the *machine*
+# control, driven from the dashboard's Multipurpose tab: it exits mpv entirely
+# so the PC's display can be used for something else.
+
+@local_action({'group': 'Power', 'order': 10, 'title': 'Quit mpv'})
+def QuitMPV(arg=None):
+    '''Exit mpv, releasing the display. Unlike Stop, the process does not
+    survive this. Play (or Power On) brings it back.'''
+    local_event_DesiredPower.emit('Off')
+    # Unconditional: mpvProc.stop() is idempotent, and if mpvRunning[0] has gone
+    # stale-False while a window is still up, guarding on it would strand mpv.
+    mpvProc.stop()      # -> onMpvStopped -> teardownPlayback() clears the state
+    derivePower()       # in case no process was up, so nothing else will fire
+
+@local_action({'group': 'Power', 'order': 11, 'title': 'Start mpv (idle)'})
+def StartMPV(arg=None):
+    '''Bring mpv back up on its blank idle window, ready to Play. Deliberately
+    does NOT start playback -- that stays Play's job.'''
+    local_event_DesiredPower.emit('On')
+    if mpvRunning[0]:
+        derivePower()
+        return
+    # startMpv() passes --playlist=<file>; on a fresh machine that file may not
+    # exist yet and mpv would log an error before settling into idle.
+    if not os.path.exists(playlistFilePath()):
+        writePlaylistFile([])
+    startMpv()
+
+@local_action({'group': 'Power', 'order': 12, 'title': 'Power',
+               'schema': {'type': 'string', 'enum': ['On', 'Off']}})
+def Power(arg=None):
+    '''On -> mpv idle and ready; Off -> mpv gone. This is what the dashboard's
+    <partialswitch> calls, so it must accept both halves.'''
+    # Args reach a Nodel action as whatever the caller sent -- a bare string
+    # from a switch, but {'state': 'On'} from the Group recipe. Duck-type the
+    # unwrap: a JSON object arrives here as a *java.util.Map*, not a Python
+    # dict, so isinstance(arg, dict) silently misses it.
+    if not isinstance(arg, basestring) and hasattr(arg, 'get'):
+        try:
+            arg = arg.get('state') or arg.get('value')
+        except:
+            pass
+    state = str(arg).strip().lower() if arg is not None else ''
+
+    if state in ('on', 'true', '1'):
+        StartMPV.call()
+    elif state in ('off', 'false', '0'):
+        QuitMPV.call()
+    else:
+        console.warn('Power: expected "On" or "Off", got %s' % repr(arg))
+
+def derivePower():
+    '''Recompute the two dashboard-facing signals from actual running state.'''
+    running = bool(mpvRunning[0])
+    local_event_Power.emit('On' if running else 'Off')
+
+    if running:
+        local_event_Status.emit({'level': 0, 'message': 'OK'})
+    elif local_event_DesiredPower.getArg() == 'Off':
+        # Quit was deliberate -- the PC has been handed back on purpose, so this
+        # is a normal resting state, not a fault.
+        local_event_Status.emit({'level': 0, 'message': 'mpv quit by operator'})
+    else:
+        local_event_Status.emit({'level': 2, 'message': 'mpv is not running'})
+
+@after_main
+def bindPowerSignals():
+    # Derive from the existing running flag rather than emitting from both
+    # onMpvStarted() and teardownPlayback(), so there is one source of truth.
+    # A module-level function, not a bound method -- addEmitHandler rejects those.
+    local_event_MPVRunning.addEmitHandler(lambda arg: derivePower())
+    derivePower()
+    # The emit handler alone is not enough: if mpv fails to LAUNCH, MPVRunning
+    # never changes, so the tile would sit on its previous value indefinitely.
+    # Re-derive on a timer so "asked for On, still not running" surfaces.
+    Timer(derivePower, 30, 5)
 
 # --- Presets (saved playlists) ----------------------------------------------
 # A preset = {name, files:[filenames in play order]}, stored in the persisted

@@ -50,20 +50,20 @@
                 "action": "PowerOff"
             },
             "PlayScannerSoftware01Power": {
-                "node": "LTL-PLAY-SNAP01",
+                "node": "LTL-PLAY-SCANMON01",
                 "action": "Power"
             },
             "PlayScannerSoftware01Restart": {
-                "node": "LTL-PLAY-SNAP01",
-                "action": "PowerOff"
+                "node": "LTL-PLAY-SCANMON01",
+                "action": "RestartScanSnap"
             },
             "PlayScannerSoftware02Power": {
-                "node": "LTL-PLAY-SNAP02",
+                "node": "LTL-PLAY-SCANMON02",
                 "action": "Power"
             },
             "PlayScannerSoftware02Restart": {
-                "node": "LTL-PLAY-SNAP02",
-                "action": "PowerOff"
+                "node": "LTL-PLAY-SCANMON02",
+                "action": "RestartScanSnap"
             },
             "PlayProjectorPower": {
                 "node": "LTL-PLAY-PJ",
@@ -231,7 +231,10 @@
             },
             "MultipurposeAppleTVPower": {"node": "LTL-SING-RACKPDU01"},
             "MultipurposeHDbTTxPower": {"node": "LTL-SING-RACKPDU01"},
-            "Multipurpose Media Player Power": {}
+            "Multipurpose Media Player Power": {
+                "node": "xxMPV-eng",
+                "action": "Power"
+            }
         },
         "events": {
             "PlayPower": {
@@ -319,20 +322,20 @@
                 "event": "Power"
             },
             "PlayScannerSoftware01Status": {
-                "node": "LTL-PLAY-SNAP01",
-                "event": "Status"
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScanSnapStatus"
             },
             "PlayScannerSoftware01Power": {
-                "node": "LTL-PLAY-SNAP01",
-                "event": "Power"
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScanSnapPower"
             },
             "PlayScannerSoftware02Status": {
-                "node": "LTL-PLAY-SNAP02",
-                "event": "Status"
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScanSnapStatus"
             },
             "PlayScannerSoftware02Power": {
-                "node": "LTL-PLAY-SNAP02",
-                "event": "Power"
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScanSnapPower"
             },
             "PlayProjectorStatus": {
                 "node": "LTL-PLAY-PJ",
@@ -385,8 +388,14 @@
                 "node": "LTL-SING-PJ",
                 "event": "Power"
             },
-            "MultipurposeMediaPlayerStatus": {},
-            "MultipurposeMediaPlayerPower": {},
+            "MultipurposeMediaPlayerStatus": {
+                "node": "xxMPV-eng",
+                "event": "Status"
+            },
+            "MultipurposeMediaPlayerPower": {
+                "node": "xxMPV-eng",
+                "event": "Power"
+            },
             "Split Room": {
                 "node": "LTL-LIB-AUDIO",
                 "event": "Split Room"

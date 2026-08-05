@@ -1,0 +1,12 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "pollInterval": 150,
+        "fastPollInterval": 5,
+        "fastPollDuration": 60,
+        "holdDuration": 600
+    }
+}

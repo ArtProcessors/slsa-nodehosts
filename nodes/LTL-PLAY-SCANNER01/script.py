@@ -16,14 +16,16 @@ button still has to be pressed once it has had time to boot. So:
 
 Bind the remote actions and events below:
 
-  | this node           | target                                     |
-  |---------------------|--------------------------------------------|
-  | `Outlet Power`      | table PDU `Output <n>` (action)            |
-  | `Outlet State`      | table PDU `Output <n>` (event)             |
-  | `PDU Status`        | table PDU `Status` (event)                 |
-  | `SwitchBot Press`   | the SwitchBot node's press action          |
-  | `Scanner PC Status` | the scanner PC node's `Status` (event)     |
-  | `ScanSnap Running`  | the ScanSnap launcher's `Running` (event)  |
+  | this node           | target                                        |
+  |---------------------|-----------------------------------------------|
+  | `Outlet Power`      | table PDU `Output <n>` (action)               |
+  | `Outlet State`      | table PDU `Output <n>` (event)                |
+  | `PDU Status`        | table PDU `Status` (event)                    |
+  | `SwitchBot Press`   | the SwitchBot node's press action             |
+  | `Scanner PC Status` | the scanner PC node's `Status` (event)        |
+  | `ScanSnap Running`  | `LTL-PLAY-SCANMON0x` `ScanSnap Running` (event) |
+  | `Scanner Power`     | `LTL-PLAY-SCANMON0x` `Scanner Power` (event)  |
+  | `Scanner Poll`      | `LTL-PLAY-SCANMON0x` `Fast Poll` (action)     |
 
 **The press is gated.** There is no point pressing the scanner's power button while the
 PC it feeds is still booting or the ScanSnap software is not up, so the press waits for
@@ -45,6 +47,18 @@ caused deliberately.
 SwitchBot press is a *toggle*, so letting two sequences overlap would press twice and
 switch the scanner back off. `Power Off` is never refused: it cancels whatever is
 pending and kills the outlet, so there is always a way to stop things.
+
+**Confirming the press.** With `Scanner Power` bound to a `LTL-PLAY-SCANMON0x` monitor
+there is, for the first time, feedback on whether the press actually worked -- so
+_Confirm the press_ makes the sequence watch for the scanner to come up and say so if it
+does not. Because the button is a toggle, that same feedback is also used to *skip* the
+press when the scanner already reports `On`.
+
+The monitor reports three states, and the difference between them matters here. `Unknown`
+means it cannot see the scanner, not that the scanner is off -- ScanSnap Home refuses to
+answer mid-scan. So `Unknown` is never acted on: _Press again if it did not come on_
+fires only on a definite `Off`. Pressing on an `Unknown` would switch off a scanner
+somebody was using.
 '''
 
 from org.nodel.core import BindingState
@@ -55,6 +69,11 @@ DEFAULT_READY_TIMEOUT = 180
 
 # how often readiness is re-checked, both while waiting for it and at rest
 READY_POLL_INTERVAL = 5
+
+# how often the scanner is re-checked while waiting for a press to be confirmed
+CONFIRM_POLL_INTERVAL = 5
+
+DEFAULT_CONFIRM_TIMEOUT = 45
 
 # status 'level' reserved for "we are deliberately interfering with this thing"
 BUSY_LEVEL = 5
@@ -92,7 +111,27 @@ param_readyTimeout = Parameter({'title': 'Ready timeout (sec)', 'order': 3,
                                         'launching.',
                                 'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_READY_TIMEOUT}})
 
-param_pressWithoutReady = Parameter({'title': 'Press without waiting for readiness', 'order': 4,
+param_confirmPress = Parameter({'title': 'Confirm the press', 'order': 4,
+                                'desc': 'Watch the ScanSnap monitor after the button is pressed and report whether '
+                                        'the scanner actually came on. Also skips the press altogether when the '
+                                        'scanner already reports On -- the button is a toggle, so pressing it then '
+                                        'would switch the scanner off. Needs the "Scanner Power" binding.',
+                                'schema': {'type': 'boolean'}})
+
+param_confirmTimeout = Parameter({'title': 'Confirm timeout (sec)', 'order': 5,
+                                  'desc': 'How long to wait for the scanner to report On after the press before '
+                                          'giving up on it.',
+                                  'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_CONFIRM_TIMEOUT}})
+
+param_repressOnFailure = Parameter({'title': 'Press again if it did not come on', 'order': 6,
+                                    'desc': 'If the scanner still definitely reports Off once the confirm timeout '
+                                            'has elapsed, press once more. Leave this off until the monitor has been '
+                                            'watched on site through a full day, including someone scanning: if it '
+                                            'ever reports Off while the scanner is really on, this will switch a '
+                                            'working scanner off. It never fires on "Unknown".',
+                                    'schema': {'type': 'boolean'}})
+
+param_pressWithoutReady = Parameter({'title': 'Press without waiting for readiness', 'order': 7,
                                      'desc': 'Commissioning escape hatch. Presses as soon as the boot duration has '
                                              'elapsed, without requiring the scanner PC or ScanSnap software to '
                                              'report ready. Leave off in normal operation.',
@@ -117,12 +156,25 @@ local_event_ReadyDetail = LocalEvent({'title': 'Ready detail', 'group': 'Readine
                                       'desc': 'What readiness is waiting on, when it is not ready.',
                                       'schema': {'type': 'string'}})
 
+local_event_ScannerPower = LocalEvent({'title': 'Scanner Power', 'group': 'Scanner', 'order': next_seq(),
+                                       'desc': 'What the ScanSnap monitor makes of the scanner itself, as opposed '
+                                               'to its outlet. "Unknown" means it cannot see it -- not that it is off.',
+                                       'schema': {'type': 'string', 'enum': ['On', 'Off', 'Unknown']}})
+
+local_event_PressConfirmed = LocalEvent({'title': 'Press confirmed', 'group': 'Scanner', 'order': next_seq(),
+                                         'desc': 'True once the scanner has been seen to come on after a press.',
+                                         'schema': {'type': 'boolean'}})
+
 
 ### Remote bindings
 
 remote_action_OutletPower = RemoteAction({'title': 'Outlet Power', 'group': 'Power'})
 
 remote_action_SwitchBotPress = RemoteAction({'title': 'SwitchBot Press', 'group': 'Power'})
+
+remote_action_ScannerPoll = RemoteAction({'title': 'Scanner Poll', 'group': 'Scanner',
+                                          'desc': 'The ScanSnap monitor\'s "Fast Poll", so a press is confirmed in '
+                                                  'seconds rather than at the monitor\'s next scheduled poll.'})
 
 
 ### State
@@ -146,6 +198,16 @@ def main():
     console.warn('"Press without waiting for readiness" is on -- the press will not wait for the scanner PC '
                  'or the ScanSnap software. This is a commissioning setting.')
 
+  if confirmPress():
+    console.info('The press will be confirmed against "Scanner Power", within %ss.' % confirmTimeout())
+
+  if repressOnFailure() and not confirmPress():
+    console.warn('"Press again if it did not come on" does nothing while "Confirm the press" is off.')
+
+  elif repressOnFailure():
+    console.warn('"Press again if it did not come on" is on -- if the monitor ever reports Off while the '
+                 'scanner is really on, this will switch a working scanner off.')
+
 @after_main
 def initialise():
   local_event_Busy.emit(False)
@@ -156,11 +218,18 @@ def initialise():
   if hasattr(previous, 'get') and previous.get('level') != BUSY_LEVEL:
     globals()['pduStatus'] = previous
 
-  refreshReadiness()
+  local_event_PressConfirmed.emit(False)
+
+  refreshAtRest()
   refreshStatus()
 
-# keeps 'Ready' meaningful at rest, so an operator can see why a press would not happen
-timer_readiness = Timer(lambda: refreshReadiness(), READY_POLL_INTERVAL, READY_POLL_INTERVAL)
+# keeps 'Ready' and 'Scanner Power' meaningful at rest, so an operator can see why a press
+# would not happen, and so the scanner reads 'Unknown' once the monitor stops reporting
+timer_readiness = Timer(lambda: refreshAtRest(), READY_POLL_INTERVAL, READY_POLL_INTERVAL)
+
+def refreshAtRest():
+  refreshReadiness()
+  local_event_ScannerPower.emit(scannerPowerNow())
 
 
 ### Feedback from the PDU
@@ -208,6 +277,43 @@ def remote_event_ScannerPCStatus(arg=None):
 
 def remote_event_ScanSnapRunning(arg=None):
   refreshReadiness()
+
+
+### The scanner itself, as reported by the ScanSnap monitor
+
+def remote_event_ScannerPower(arg=None):
+  local_event_ScannerPower.emit(scannerPowerNow())
+
+def scannerPowerNow():
+  '''Returns 'On', 'Off' or 'Unknown'. Anything we cannot currently see reads as
+     'Unknown' and never as 'Off' -- the monitor runs on the scanner PC, so it goes away
+     with it, and Nodel keeps serving whatever it last said.'''
+  binding = lookup_remote_event('ScannerPower')
+
+  if binding == None or binding.getStatus() != BindingState.Wired:
+    return 'Unknown'
+
+  value = binding.getArg()
+
+  if value == None:
+    return 'Unknown'
+
+  if hasattr(value, 'get'):
+    value = value.get('state')
+
+  text = str(value).strip().lower()
+
+  if text in ('on', 'true', '1'):
+    return 'On'
+
+  if text in ('off', 'false', '0'):
+    return 'Off'
+
+  return 'Unknown'
+
+def canConfirm():
+  binding = lookup_remote_event('ScannerPower')
+  return binding != None and binding.getStatus() == BindingState.Wired
 
 def readiness():
   '''Returns (ready, reason). 'reason' names the first input that is not ready.'''
@@ -338,17 +444,85 @@ def awaitReady(attemptsLeft):
   schedule(lambda: awaitReady(attemptsLeft - 1), READY_POLL_INTERVAL)
 
 def pressPowerButton():
+  if confirmPress() and scannerPowerNow() == 'On':
+    # the button is a toggle: pressing a scanner that is already on switches it off
+    console.info('The scanner already reports On; skipping the press.')
+    local_event_PressConfirmed.emit(True)
+    return endSequence()
+
+  if not doPress():
+    return endSequence()
+
+  if not confirmPress():
+    console.info('Sequence complete.')
+    return endSequence()
+
+  if not canConfirm():
+    console.warn('"Confirm the press" is on, but nothing is reporting "Scanner Power", so the press '
+                 'cannot be confirmed. Bind it to a ScanSnap monitor.')
+    return endSequence()
+
+  local_event_PressConfirmed.emit(False)
+  setWaitingFor('the scanner to report On')
+  requestScannerPoll()
+
+  schedule(lambda: awaitScannerOn(confirmAttempts(), False), CONFIRM_POLL_INTERVAL)
+
+def doPress():
   # power is already back on at this point, so a failed press is reported but not rolled back
   try:
     remote_action_SwitchBotPress.call()
-    console.info('SwitchBot pressed; sequence complete.')
+    console.info('SwitchBot pressed.')
+    return True
   except Exception, e:
     console.error('The SwitchBot press failed; the scanner has power but may still be off: %s' % e)
+    return False
+
+def requestScannerPoll():
+  '''Asks the monitor to poll quickly for a while, so confirmation takes seconds rather
+     than waiting for its slow scheduled poll.'''
+  try:
+    remote_action_ScannerPoll.call(confirmTimeout() + CONFIRM_POLL_INTERVAL)
+  except Exception, e:
+    console.warn('Could not ask the ScanSnap monitor to poll; confirmation will be as slow as its '
+                 'own polling: %s' % e)
+
+def awaitScannerOn(attemptsLeft, pressedAgain):
+  state = scannerPowerNow()
+
+  if state == 'On':
+    local_event_PressConfirmed.emit(True)
+    console.info('The scanner is reporting On; sequence complete.')
+    return endSequence()
+
+  if attemptsLeft > 0:
+    return schedule(lambda: awaitScannerOn(attemptsLeft - 1, pressedAgain), CONFIRM_POLL_INTERVAL)
+
+  # only ever on a definite 'Off'. 'Unknown' means the monitor cannot see the scanner --
+  # pressing then would switch off a scanner somebody is in the middle of using
+  if state == 'Off' and repressOnFailure() and not pressedAgain:
+    console.warn('The scanner still reports Off after %ss; pressing once more.' % confirmTimeout())
+
+    if doPress():
+      requestScannerPoll()
+      return schedule(lambda: awaitScannerOn(confirmAttempts(), True), CONFIRM_POLL_INTERVAL)
 
   endSequence()
 
+  if state == 'Off':
+    setBlocked('The scanner still reported Off %ss after its power button was pressed. It has power '
+               'but is probably still off.' % confirmTimeout())
+  else:
+    setBlocked('Could not confirm the scanner came on -- nothing is reporting its state. It has power, '
+               'and the button was pressed.')
+
+  console.warn('Could not confirm the scanner came on; it reports %s.' % state)
+
 def readyAttempts():
   return max(1, readyTimeout() / READY_POLL_INTERVAL)
+
+def confirmAttempts():
+  return max(1, confirmTimeout() / CONFIRM_POLL_INTERVAL)
 
 
 ### Sequencing
@@ -443,5 +617,14 @@ def bootDuration():
 def readyTimeout():
   return asSeconds(param_readyTimeout, DEFAULT_READY_TIMEOUT)
 
+def confirmTimeout():
+  return asSeconds(param_confirmTimeout, DEFAULT_CONFIRM_TIMEOUT)
+
 def pressWithoutReady():
   return param_pressWithoutReady == True
+
+def confirmPress():
+  return param_confirmPress == True
+
+def repressOnFailure():
+  return param_repressOnFailure == True
