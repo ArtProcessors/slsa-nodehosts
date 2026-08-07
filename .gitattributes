@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Preserve imported live-node source verbatim, including legacy whitespace.
+nodes/LTL-PLAY-BOT01/** -whitespace
+nodes/LTL-PLAY-INT/** -whitespace
+nodes/LTL-PLAY-SCAN01/** -whitespace
+nodes/LTL-PLAY-SNAP01/** -whitespace
+nodes/LTL-PLAY-UNITY/** -whitespace
+nodes/LTL-SING-PC/** -whitespace

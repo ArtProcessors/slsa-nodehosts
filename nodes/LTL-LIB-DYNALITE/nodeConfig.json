@@ -5,12 +5,50 @@
     },
     "paramValues": {
         "address": "10.242.25.230:50001",
-        "labelling": [{
-            "label": "All on",
-            "area": 101,
-            "preset": 5,
-            "channel": 0
-        }],
+        "labelling": [
+            {
+                "label": "All on",
+                "area": 101,
+                "preset": 5,
+                "channel": 0
+            },
+            {
+                "label": "Gallery On",
+                "area": 2,
+                "preset": 11,
+                "channel": 0
+            },
+            {
+                "label": "All Off",
+                "area": 2,
+                "preset": 4,
+                "channel": 0
+            },
+            {
+                "label": "Cleaning On",
+                "area": 2,
+                "preset": 1,
+                "channel": 0
+            },
+            {
+                "label": "Multipurpose - Normal",
+                "area": 101,
+                "preset": 11,
+                "channel": 0
+            },
+            {
+                "label": "Multipurpose - Low",
+                "area": 101,
+                "preset": 12,
+                "channel": 0
+            },
+            {
+                "label": "Multipurpose - Off",
+                "area": 101,
+                "preset": 13,
+                "channel": 0
+            }
+        ],
         "customMessages": [
             {
                 "message": {

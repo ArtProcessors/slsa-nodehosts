@@ -25,10 +25,7 @@
                 "node": "LTL-PLAY-SCANNER01",
                 "action": "Power"
             },
-            "MemberScanner02Power": {
-                "node": "LTL-PLAY-SCANNER02",
-                "action": "Power"
-            }
+            "MemberScanner02Power": {}
         },
         "events": {
             "MemberInteractivePCPower": {

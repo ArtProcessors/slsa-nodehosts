@@ -5,7 +5,10 @@
             "action": "PowerOff"
         }},
         "events": {
-            "ComputerStatus": {},
+            "ComputerStatus": {
+                "node": "LTL-SING-PC",
+                "event": "Status"
+            },
             "MACAddress": {},
             "Power": {}
         }

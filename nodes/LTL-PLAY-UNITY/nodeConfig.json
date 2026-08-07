@@ -1,0 +1,13 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "AppPath": "C:\\Windows\\System32\\cmd.exe",
+        "AppArgs": "/d /s /c start-server.bat",
+        "AppWorkingDir": "C:\\nodel\\nodes\\LTL-PLAY-UNITY",
+        "PowerStateOnStart": "On",
+        "Mode": "Production"
+    }
+}

@@ -19,7 +19,7 @@
             },
             "PlayBlockHeadPCPower": {
                 "node": "LTL-PLAY-INT-WOL",
-                "action": "PowerOn"
+                "action": "Power"
             },
             "PlayBlockHeadPCRestart": {
                 "node": "LTL-PLAY-INT",
@@ -27,7 +27,7 @@
             },
             "PlayScannerPC01Power": {
                 "node": "LTL-PLAY-SCAN01-WOL",
-                "action": "PowerOn"
+                "action": "Power"
             },
             "PlayScannerPC01Restart": {
                 "node": "LTL-PLAY-SCAN01",
@@ -35,7 +35,7 @@
             },
             "PlayScannerPC02Power": {
                 "node": "LTL-PLAY-SCAN02-WOL",
-                "action": "PowerOn"
+                "action": "Power"
             },
             "PlayScannerPC02Restart": {
                 "node": "LTL-PLAY-SCAN02",
@@ -177,14 +177,8 @@
                 "node": "LTL-PLAY-SCANNER01",
                 "action": "Restart"
             },
-            "PlayScanner02Power": {
-                "node": "LTL-PLAY-SCANNER02",
-                "action": "Power"
-            },
-            "PlayScanner02Restart": {
-                "node": "LTL-PLAY-SCANNER02",
-                "action": "Restart"
-            },
+            "PlayScanner02Power": {},
+            "PlayScanner02Restart": {},
             "PlaySwitchBot01Press": {
                 "node": "LTL-PLAY-BOT01",
                 "action": "Press"
@@ -377,9 +371,10 @@
                 "node": "LTL-SING-AMP",
                 "event": "AuxInputEnabled"
             },
-            "MultipurposeLightingNormal": {},
-            "MultipurposeLightingLower": {},
-            "MultipurposeLightingOff": {},
+            "Multipurpose Lighting Area 101 Preset": {
+                "node": "LTL-LIB-DYNALITE",
+                "event": "Area:101 Preset"
+            },
             "MultipurposeProjectorStatus": {
                 "node": "LTL-SING-PJ",
                 "event": "Status"
@@ -408,9 +403,10 @@
                 "node": "LTL-LIB-AUDIO",
                 "event": "Sing Audio Takeover"
             },
-            "Lighting Gallery On": {},
-            "Lighting All Off": {},
-            "Lighting Cleaning On": {},
+            "Lighting Area 2 Preset": {
+                "node": "LTL-LIB-DYNALITE",
+                "event": "Area:2 Preset"
+            },
             "Play Level": {},
             "Play BlockHead Screenshot": {},
             "Multipurpose Volume": {

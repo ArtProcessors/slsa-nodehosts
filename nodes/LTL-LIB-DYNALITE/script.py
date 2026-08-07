@@ -277,9 +277,36 @@ def initCustomMessage(customMessage):
   label = customMessage['label']
   group = customMessage.get('group')
   message = customMessage['message']
-  
-  customAction = Action('%s' % label, lambda arg: sendDynaliteMessageAction.call(message), {'title': label, 'group': '%s (Custom)' % group, 'order': next_seq()})
-    
+  area = message.get('area')
+
+  # Stock behaviour is an Action and nothing else, which leaves every custom scene with no state
+  # at all -- dashboard buttons can never latch and LTL-LIB-LIGHTING-POWER's SceneState never
+  # resolves. Normally that state would come from the receive path (lookupOrCreateSignal ->
+  # presetSignal.emit), but the gateway on this site never reports bus activity: it answers a
+  # connect with a 20-byte non-DyNet1 frame and echoes nothing, so 'Area:N Preset' is never even
+  # created. Sends do work -- the lights respond -- so we emit the scene ourselves on the way out.
+  #
+  # This is ASSUMED state: it reflects what we last sent, not what the bus did, so a wall-panel
+  # press will not be seen. If the gateway is ever made to report, the receive path emits the same
+  # signal with the same label (via the 'labelling' param) and simply overrides this -- the two are
+  # designed to agree, so this can stay in place.
+  presetSignal = None
+  if area != None:
+    presetKey = 'Area:%s Preset' % area
+    presetSignal = lookup_local_event(presetKey)
+    if presetSignal == None:
+      # created at init, not on first press, so remote bindings resolve at startup
+      presetSignal = Event(presetKey, {'group': 'Area Presets', 'schema': {'type': 'string'}})
+
+  # message/label/presetSignal bound as defaults: this runs once per customMessages entry and
+  # Jython closures are late-bound, so a bare closure would hand every action the last entry's data
+  def handler(arg, message=message, label=label, presetSignal=presetSignal):
+    sendDynaliteMessageAction.call(message)
+    if presetSignal != None:
+      presetSignal.emit(label)
+
+  customAction = Action('%s' % label, handler, {'title': label, 'group': '%s (Custom)' % group, 'order': next_seq()})
+
 def two_c(v):
     return (~v + 1) & 0xff
 
