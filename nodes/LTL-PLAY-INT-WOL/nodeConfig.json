@@ -1,7 +1,17 @@
 {
     "remoteBindingValues": {
-        "actions": {},
-        "events": {}
+        "actions": {"PowerOff": {
+            "node": "LTL-PLAY-INT",
+            "action": "PowerOff"
+        }},
+        "events": {
+            "ComputerStatus": {
+                "node": "LTL-PLAY-INT",
+                "event": "Status"
+            },
+            "MACAddress": {},
+            "Power": {}
+        }
     },
-    "paramValues": {}
+    "paramValues": {"macAddress": "30-C5-99-AF-8A-D4"}
 }

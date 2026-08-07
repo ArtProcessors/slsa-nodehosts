@@ -1,0 +1,12 @@
+{
+    "remoteBindingValues": {
+        "actions": {},
+        "events": {}
+    },
+    "paramValues": {
+        "Python": "C:\\Python312\\python.exe",
+        "BleScript": "C:\\Nodel\\nodes\\LTL-PLAY-BOT01\\switchbot_ble.py",
+        "BleAddr": "F2:B2:05:C6:40:8E",
+        "Mode": "BLE"
+    }
+}

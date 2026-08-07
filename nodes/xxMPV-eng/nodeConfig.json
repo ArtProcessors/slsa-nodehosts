@@ -1,11 +1,16 @@
 {
     "remoteBindingValues": {
         "actions": {},
-        "events": {}
+        "events": {"Sing Power": {
+            "node": "LTL-LIB-SING",
+            "event": "Desired Power"
+        }}
     },
     "paramValues": {
-        "mpvArgs": "--fullscreen --idle --no-osc",
+        "mpvArgs": "--fullscreen --idle --no-osc --ontop --focus-on=all",
         "folder": "C:\\Content",
-        "mpvPath": "C:\\ProgramData\\chocolatey\\lib\\mpvio.install\\tools\\mpv.exe"
+        "mpvPath": "C:\\ProgramData\\chocolatey\\lib\\mpvio.install\\tools\\mpv.exe",
+        "autoStart": true,
+        "startDelaySeconds": 10
     }
 }
