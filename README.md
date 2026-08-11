@@ -28,8 +28,8 @@ All four hosts currently report Nodel 2.2.1 on Java 11 and Windows 11, using the
 default node root and an include-all hosting rule. The top-level `nodel.jar` and
 `.version` belong to `LTL-NODEHOST`; exhibit-PC binaries are not merged here.
 
-Snapshots preserve existing tracked `.nodel` JSON state but exclude newly
-generated `.nodel` trees, compiled classes, executable process binaries, logs,
-caches, virtual environments, session transcripts, new backup files, host
-deployments, recipe checkouts, and machine-access credentials. Existing tracked
-backup files are retained to avoid unrelated cleanup.
+Snapshots exclude generated `.nodel` event state and newly generated `.nodel`
+trees, compiled classes, executable process binaries, logs, caches, virtual
+environments, session transcripts, new backup files, host deployments, recipe
+checkouts, and machine-access credentials. Existing tracked backup files are
+retained to avoid unrelated cleanup.

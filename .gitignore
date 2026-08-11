@@ -1,0 +1,3 @@
+# Nodel runtime event state
+nodes/**/.nodel/*.event.json
+nodes/**/.nodel/*.remoteevent.json
