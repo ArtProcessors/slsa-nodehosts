@@ -23,9 +23,23 @@
             </row>
             <subtitle>Lighting Controls</subtitle>
             <row>
-              <column sm='4'><button join='Lighting Gallery On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Gallery On</button></column>
-              <column sm='4'><button join='Lighting All Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn" confirm='true'>All Off</button></column>
-              <column sm='4'><button join='Lighting Cleaning On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Cleaning On</button></column>
+              <!-- These cannot use join=. The Dynalite scenes are 'custom messages', which the
+                   recipe creates as an Action with no matching Event (LTL-LIB-DYNALITE script.py
+                   ~281), so a join'd event half has nothing to bind to and never latches. State
+                   comes instead from the single per-area signal 'Area:2 Preset', which the recipe
+                   emits when a DyNet message for that area is *received* - so the highlight
+                   follows the bus, including wall panels, rather than what we last sent.
+
+                   arg= MUST be the scene's label from LTL-LIB-DYNALITE's 'labelling' param, and
+                   MUST NOT be the bare preset number. nodel.js matches with $.inArray, which is
+                   strict ===, against jQuery's .data('arg') - and .data() coerces a numeric-looking
+                   attribute to a Number. So arg='11' becomes 11, the signal emits the string '11',
+                   11 === '11' is false, and the button never lights. A non-numeric label stays a
+                   string and compares correctly. The same labels are what LTL-LIB-LIGHTING-POWER
+                   matches in its onStates/offStates, so the two must stay in step. -->
+              <column sm='4'><button action='Lighting Gallery On' event='Lighting Area 2 Preset' arg='Gallery On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Gallery On</button></column>
+              <column sm='4'><button action='Lighting All Off' event='Lighting Area 2 Preset' arg='All Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn" confirm='true'>All Off</button></column>
+              <column sm='4'><button action='Lighting Cleaning On' event='Lighting Area 2 Preset' arg='Cleaning On' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Cleaning On</button></column>
             </row>
             <subtitle>Exhibits</subtitle>
             <status page="Play" event='Play Status'>Play<partialswitch join='Play Power' class='btn-light'></partialswitch></status>
@@ -75,7 +89,7 @@
               <row>
                 <column sm="12">
                   <title>Volume</title>
-                  <range event='Play Volume' action='Play Volume' min='-60' max='-13'></range>
+                  <range event='Play Volume' action='Play Volume' min='-53' max='-6'></range>
                 </column>
                 <column sm="12">
                   <meter event='Play Level' type='horizontal' range='db'/>
@@ -130,7 +144,7 @@
               <row>
                 <column sm="12">
                   <title>Program audio</title>
-                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-30' max='10'></range>
+                  <range event='Multipurpose Volume' action='Multipurpose Volume' min='-53' max='10'></range>
                 </column>
                 <column sm="9">
                   <meter event='Multipurpose Level' type='horizontal' range='db'/>
@@ -213,13 +227,18 @@
                    with the Overview lighting buttons. -->
               <title>Lighting Controls</title>
               <row>
-                <column sm='4'><button join='Multipurpose Lighting Normal' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Normal</button></column>
-                <column sm='4'><button join='Multipurpose Lighting Lower' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Lower</button></column>
+                <!-- action=/event=/arg= rather than join=, for the same reason as the Overview
+                     lighting buttons above, including the must-not-be-numeric rule for arg=.
+                     These are area 101, so they latch off 'Area:101 Preset' - a different signal
+                     to the Overview trio, which is what the note above means by nothing being
+                     shared between the two sets. -->
+                <column sm='4'><button action='Multipurpose Lighting Normal' event='Multipurpose Lighting Area 101 Preset' arg='Multipurpose - Normal' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Normal</button></column>
+                <column sm='4'><button action='Multipurpose Lighting Lower' event='Multipurpose Lighting Area 101 Preset' arg='Multipurpose - Low' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Lower</button></column>
                 <!-- No confirm= here: this only darkens the Multipurpose room, so
                      the prompt was friction in the middle of an event. The Overview
                      tab's 'All Off' keeps its confirm - that one kills the whole
                      Little Library. -->
-                <column sm='4'><button join='Multipurpose Lighting Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Off</button></column>
+                <column sm='4'><button action='Multipurpose Lighting Off' event='Multipurpose Lighting Area 101 Preset' arg='Multipurpose - Off' class-on='btn-primary' class="btn-default btn-block btn-lg routing-btn">Off</button></column>
               </row>
             </column>
             <!-- Equipment: the third column. Same status-block idiom as the Play tab -

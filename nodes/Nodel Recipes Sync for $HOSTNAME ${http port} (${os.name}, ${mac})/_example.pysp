@@ -1,5 +1,5 @@
 <%
-# Nodel auto-generated example PySp (server-side script) that applies to Nodel 2.2.1-cron-scheduling_r552 or compatible versions.
+# Nodel auto-generated example PySp (server-side script) that applies to Nodel 2.2.1-release_r508 or compatible versions.
 %><html>
 <head>
 <title><%! _node.getName() %> Python server page</title>

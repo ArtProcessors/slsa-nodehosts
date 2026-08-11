@@ -32,9 +32,18 @@ Two different "off"s, deliberately kept apart:
                  display can be used for something else. Power On / Play brings
                  it back. The Power / Status events exist so a dashboard tile
                  can bind to this the same way it binds to a PC or projector.
+
+Coming up with the gallery: a gallery "All On" (or "Sing On") wakes this PC via
+LTL-SING-PC-WOL and must leave mpv up and idle. Remote calls sent at that moment
+are lost -- this host is not on the network yet -- so the cold path hangs off
+this node's OWN start (the "Start mpv idle when this node starts" parameter),
+which only happens when the PC boots. The warm path, an On arriving while the PC
+is already awake, comes in on the "Sing Power" remote event. Both call StartMPV,
+which is a no-op when mpv is already up.
 '''
 
 import os
+import base64
 import tempfile
 
 # OS detection: Jython's os.name reports 'java', so ask the JVM instead.
@@ -70,6 +79,17 @@ param_ipcSocket = Parameter({'title': 'IPC socket / pipe path', 'order': 6,
 param_ipcSender = Parameter({'title': 'IPC send command (POSIX only)', 'order': 7,
                              'schema': {'type': 'string',
                                         'hint': 'nc -U {socket}   (or: socat - UNIX-CONNECT:{socket})'}})
+
+# This node only starts when its host starts, i.e. when this PC boots -- and the
+# PC is only ever booted by a gallery "All On" / "Sing On" waking it (WOL, from
+# LTL-SING-PC-WOL). So bringing mpv up here is what turns "the PC booted" into
+# "mpv is up and idle, ready to Play". Left unset it is treated as ON, since a
+# media PC with no mpv on it is not a useful resting state.
+param_autoStart = Parameter({'title': 'Start mpv idle when this node starts', 'order': 8,
+                             'schema': {'type': 'boolean', 'hint': 'unset = yes'}})
+
+param_startDelaySeconds = Parameter({'title': 'Auto-start delay (seconds)', 'order': 9,
+                                     'schema': {'type': 'integer', 'hint': '10'}})
 
 # --- Runtime state ----------------------------------------------------------
 
@@ -363,10 +383,83 @@ def isLoopEnabled():
     except:
         return False
 
+# --- Forcing the mpv window to the front (Windows) --------------------------
+# mpv is launched by the Nodel host, which is not the foreground process, so
+# Windows' focus-stealing prevention leaves the mpv window BEHIND the taskbar --
+# even fullscreen, and even with --ontop --focus-on=all in the mpv arguments.
+# Measured on site 2026-08-06: 24s after a node-driven launch the taskbar was
+# still drawn over mpv.
+#
+# WScript.Shell's AppActivate does not fix it either. It returns True and
+# changes nothing (also measured) -- SetForegroundWindow is simply ignored for a
+# process with no foreground rights. Attaching to the CURRENT foreground
+# window's input queue first is what makes the change legal, so that is what
+# this does, then pins the window topmost so the taskbar cannot come back over
+# it. Add-Type is used because Jython cannot P/Invoke user32 directly.
+#
+# The script waits for mpv's window itself rather than being called on a delay:
+# the window does not exist the instant the process does, and how long it takes
+# varies with what the GPU is doing.
+#
+# -EncodedCommand (base64 of UTF-16LE) is deliberate and not decoration. Passing
+# PowerShell source as an ordinary argument gets its quotes eaten when Windows
+# re-joins the argument vector into a command line -- the first attempt at this
+# died with "The term 'activated=$r' is not recognized".
+
+FOCUS_PS = r'''
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public class Fg {
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int n);
+  [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr h);
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint p);
+  [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a, uint b, bool f);
+  [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr a, int x, int y, int cx, int cy, uint f);
+  [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
+}
+'@
+$deadline = (Get-Date).AddSeconds(20)
+do {
+  $p = Get-Process mpv -EA SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+  if ($p) { break }
+  Start-Sleep -Milliseconds 500
+} while ((Get-Date) -lt $deadline)
+if (-not $p) { Write-Output 'no mpv window'; return }
+$h = $p.MainWindowHandle
+$fg = [Fg]::GetForegroundWindow()
+$op = 0
+$tFg = [Fg]::GetWindowThreadProcessId($fg, [ref]$op)
+$tMe = [Fg]::GetCurrentThreadId()
+[void][Fg]::AttachThreadInput($tFg, $tMe, $true)
+[void][Fg]::ShowWindow($h, 9)
+[void][Fg]::BringWindowToTop($h)
+$r = [Fg]::SetForegroundWindow($h)
+[void][Fg]::AttachThreadInput($tFg, $tMe, $false)
+[void][Fg]::SetWindowPos($h, [IntPtr]-1, 0, 0, 0, 0, 0x0003)   # HWND_TOPMOST, no move/resize
+Write-Output ('setfg=' + $r + ' hwnd=' + $h)
+'''
+
+def focusMpvWindow():
+    '''Bring the mpv window to the front. No-op off Windows, and harmless if the
+       window never appears -- the PowerShell gives up on its own deadline.'''
+    if not IS_WINDOWS:
+        return
+    try:
+        encoded = base64.b64encode(unicode(FOCUS_PS).encode('utf-16-le'))
+        quick_process(['powershell', '-NoProfile', '-EncodedCommand', encoded],
+                      timeoutInSeconds=40,
+                      finished=lambda r: console.info('focus: %s' % (r.stdout or '').strip()))
+    except:
+        console.warn('Could not force the mpv window to the front')
+
 def onMpvStarted():
     mpvRunning[0] = True
     local_event_MPVRunning.emit(True)
     console.info('mpv started')
+    focusMpvWindow()
 
 def setPaused(state):
     local_event_Paused.emit(bool(state))
@@ -557,10 +650,12 @@ def StartMPV(arg=None):
     if mpvRunning[0]:
         derivePower()
         return
-    # startMpv() passes --playlist=<file>; on a fresh machine that file may not
-    # exist yet and mpv would log an error before settling into idle.
-    if not os.path.exists(playlistFilePath()):
-        writePlaylistFile([])
+    # startMpv() ALWAYS passes --playlist=<file>, so a playlist left on disk by
+    # an earlier Play would start playing right here -- the opposite of idle,
+    # and on a boot that means the exhibit starts itself. Blank it first, every
+    # time: Play rewrites this file anyway, so nothing is lost.
+    writePlaylistFile([])
+    setNowPlaying('', '', [])
     startMpv()
 
 @local_action({'group': 'Power', 'order': 12, 'title': 'Power',
@@ -611,6 +706,60 @@ def bindPowerSignals():
     # never changes, so the tile would sit on its previous value indefinitely.
     # Re-derive on a timer so "asked for On, still not running" surfaces.
     Timer(derivePower, 30, 5)
+
+# --- Coming up with the gallery ---------------------------------------------
+# "All On" (or "Sing On") has to leave mpv up and idle on this PC. That happens
+# two ways, because the PC may be off OR already awake when the On arrives:
+#
+#   cold  -- the PC is asleep. LTL-SING-PC-WOL wakes it; every remote call aimed
+#            at this node in that moment is dropped, because this host is not on
+#            the network yet. The node's own start is the only reliable hook, so
+#            autoStartMpv() below does the work. See main().
+#   warm  -- the PC is already up and mpv was quit from the dashboard's
+#            Multipurpose tile. Nothing reboots, so there is no node start to
+#            hook: the "Sing Power" remote event catches it instead.
+#
+# Both land on StartMPV, which is a no-op when mpv is already running, so the
+# two paths overlapping is harmless.
+
+def autoStartEnabled():
+    '''Unset means yes. Parameters do not always arrive as native Python types,
+       so accept the string forms a hand-edited config can produce too.'''
+    if param_autoStart is None:
+        return True
+    if isinstance(param_autoStart, basestring):
+        return param_autoStart.strip().lower() not in ('', 'false', 'no', 'off', '0')
+    return bool(param_autoStart)
+
+def autoStartDelay():
+    try:
+        return max(0, int(param_startDelaySeconds))
+    except:
+        return 10                    # unset, blank or nonsense -> the default
+
+def autoStartMpv():
+    if mpvRunning[0]:
+        return                       # already up (someone hit Play in the meantime)
+    console.info('Auto-start: bringing mpv up idle')
+    StartMPV.call()
+
+def onSingPower(arg=None):
+    '''The Sing group announced a power intent. Only "On" means anything here --
+       "Off" powers the whole PC down anyway, so quitting mpv first would add a
+       race and change nothing on screen.'''
+    # Arrives as a plain string, but be tolerant of the Group recipe's
+    # {'state': 'On'} shape, the same way the Power action above is.
+    if not isinstance(arg, basestring) and hasattr(arg, 'get'):
+        try:
+            arg = arg.get('state') or arg.get('value')
+        except:
+            pass
+
+    if str(arg).strip().lower() != 'on':
+        return
+
+    console.info('Sing power On - ensuring mpv is up')
+    StartMPV.call()
 
 # --- Presets (saved playlists) ----------------------------------------------
 # A preset = {name, files:[filenames in play order]}, stored in the persisted
@@ -858,3 +1007,18 @@ def main():
     restoreSelectionState()
     interval = max(2, param_pollSeconds or 5)
     Timer(scanFolder, interval, 1)   # poll the folder; first run after 1s
+
+    # The warm path: an On that arrives while this PC is already awake.
+    create_remote_event('Sing Power', onSingPower,
+                        {'title': 'Sing Power', 'group': 'Power', 'order': 20,
+                         'schema': {'type': 'string'}},
+                        suggestedNode='LTL-LIB-SING', suggestedEvent='Desired Power')
+
+    # The cold path: this node starting IS the PC having booted.
+    if not autoStartEnabled():
+        console.info('Auto-start is disabled - mpv will not be launched on node start')
+        return
+
+    delay = autoStartDelay()
+    console.info('Auto-start: mpv will be brought up idle in %ss' % delay)
+    call_safe(autoStartMpv, delay)

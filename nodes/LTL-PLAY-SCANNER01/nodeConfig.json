@@ -8,6 +8,10 @@
             "SwitchBotPress": {
                 "node": "LTL-PLAY-BOT01",
                 "action": "Press"
+            },
+            "ScannerPoll": {
+                "node": "LTL-PLAY-SCANMON01",
+                "action": "FastPoll"
             }
         },
         "events": {
@@ -19,8 +23,18 @@
                 "node": "LTL-PLAY-TABLEPDU01",
                 "event": "Status"
             },
-            "ScanSnapRunning": {},
-            "ScannerPCStatus": {}
+            "ScanSnapRunning": {
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScanSnapRunning"
+            },
+            "ScannerPCStatus": {
+                "node": "LTL-PLAY-SCAN01-WOL",
+                "event": "Status"
+            },
+            "ScannerPower": {
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScannerPower"
+            }
         }
     },
     "paramValues": {

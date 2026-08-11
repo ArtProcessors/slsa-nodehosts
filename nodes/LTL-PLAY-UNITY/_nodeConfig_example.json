@@ -1,0 +1,17 @@
+{
+    "dependencies": [
+        "script.py",
+        "custom.py"
+    ],
+    "remoteBindingValues": {
+        "actions": {"projectorOn": {
+            "node": "Projector1",
+            "action": "Turn on"
+        }},
+        "events": {"sensorTriggered": {
+            "node": "Sensor1",
+            "event": "Triggered"
+        }}
+    },
+    "paramValues": {"ipAddress": "192.168.100.22"}
+}

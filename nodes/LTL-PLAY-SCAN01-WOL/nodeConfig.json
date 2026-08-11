@@ -5,7 +5,10 @@
             "action": "PowerOff"
         }},
         "events": {
-            "ComputerStatus": {},
+            "ComputerStatus": {
+                "node": "LTL-PLAY-SCAN01",
+                "event": "Status"
+            },
             "MACAddress": {},
             "Power": {}
         }
