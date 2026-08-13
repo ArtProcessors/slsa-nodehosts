@@ -1,7 +1,17 @@
 {
     "remoteBindingValues": {
-        "actions": {},
-        "events": {}
+        "actions": {"PowerOff": {
+            "node": "LTL-PLAY-SCAN02",
+            "action": "PowerOff"
+        }},
+        "events": {
+            "ComputerStatus": {
+                "node": "LTL-PLAY-SCAN02",
+                "event": "Status"
+            },
+            "MACAddress": {},
+            "Power": {}
+        }
     },
-    "paramValues": {}
+    "paramValues": {"macAddress": "88-AE-DD-6A-9E-F6"}
 }
