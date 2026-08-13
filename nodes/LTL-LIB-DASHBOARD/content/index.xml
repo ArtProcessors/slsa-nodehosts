@@ -106,8 +106,34 @@
                   <status event='Play BlockHead PC Status'>PC&#10;(Tea Room Comms Rack)<partialswitch join='Play BlockHead PC Power'/><button action='Play BlockHead PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
                   <status event='Play Unity App Status'>Software&#10;(Unity)<partialswitch join='Play Unity App Power'/><button action='Play Unity App Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
                   <status event='Play Projector Status'>Projector&#10;(EPSON EB-PU1007W / ELPLX01 lens)<partialswitch join='Play Projector Power'/></status>
-                  <title size='6'>Screenshot (updated every 60 seconds)</title>
-                  <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Screenshot'></image>
+                  <title size='6'>Screenshots (updated every 60 seconds)</title>
+                  <!-- Two of the interactive PC's three displays, side by side.
+
+                       LTL-PLAY-INT runs the stock Computer Controller recipe, which emits
+                       one 'ScreenshotN' signal per attached display - each a complete
+                       'data:image/jpeg;base64,...' string, 400px wide, with a burnt-in
+                       timestamp - and nodel.js writes that value straight into the img
+                       src. So 'source' here is only what shows before the first signal
+                       lands (a 1x1 transparent GIF); remove it and the img renders broken
+                       until the next 60s tick.
+
+                       Screenshot3 is the BlockHeads content itself; Screenshot1 is the
+                       Windows desktop, which is how you spot Unity having dropped out
+                       behind it. Screenshot2 is the third (idle) display - not shown.
+
+                       The nested <row> is required, not decorative: templates.xsl's row
+                       template does <xsl:apply-templates select="column"/>, so an <image>
+                       not wrapped in a <column> is silently dropped. -->
+                  <row class='shot-row'>
+                    <column sm='6'>
+                      <title size='6'>Interactive</title>
+                      <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Screenshot'></image>
+                    </column>
+                    <column sm='6'>
+                      <title size='6'>Desktop</title>
+                      <image source='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' event='Play BlockHead Desktop'></image>
+                    </column>
+                  </row>
                 </column>
               </row>
             </column>
@@ -210,14 +236,18 @@
                    is mutually exclusive for free, and self-corrects if the input is
                    changed from the panel or another browser.
 
-                   This is why these are no longer four separate joins: a bare join
+                   This is why these are no longer separate joins: a bare join
                    with no arg only latches on a boolean signal, which is what left
-                   them inert. The arg is what makes a numeric signal work. -->
+                   them inert. The arg is what makes a numeric signal work.
+
+                   An 'HDMI Wall Plate' button (input 3) sat between Apple TV and
+                   HDMI Lead; removed 2026-08-13 at the operator's request, and
+                   HDMI Lead moved off input 4 onto the freed input 3. Input 4 is
+                   now unpresented - nothing on this page routes to it. -->
               <title>Projector Input</title>
               <button join='Multipurpose Projector Input' arg='1' class-on='btn-primary' class="btn-default btn-block btn-lg">Sing PC</button>
               <button join='Multipurpose Projector Input' arg='2' class-on='btn-primary' class="btn-default btn-block btn-lg">Apple TV</button>
-              <button join='Multipurpose Projector Input' arg='3' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Wall Plate</button>
-              <button join='Multipurpose Projector Input' arg='4' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Lead</button>
+              <button join='Multipurpose Projector Input' arg='3' class-on='btn-primary' class="btn-default btn-block btn-lg">HDMI Lead</button>
 
               <!-- Lighting: sits directly under Projector Input in normal flow.
                    Same three-across treatment as Audio Routing, and the
@@ -247,8 +277,8 @@
                  templates.xsl emits the label via <xsl:value-of select="text()"/>,
                  which drops element children; css/custom.css puts status labels in
                  white-space: pre-line so the newline renders as a break.
-                 Apple TV carries no status event - it is a passive, switched device
-                 with no feedback, so it sits last.
+                 An Apple TV block sat last here (status-less, outlet-switched via
+                 LTL-SING-RACKPDU01); removed 2026-08-13 at the operator's request.
                  This was a two-column list of its own when it ran full-width below;
                  in a third of the page the blocks stack in one column instead. -->
             <column sm='4'>
@@ -256,7 +286,6 @@
               <status event='Multipurpose Projector Status'>Projector&#10;(EPSON EB-690SE)<partialswitch join='Multipurpose Projector Power'/></status>
               <status event='Multipurpose Sing PC Status'>Sing PC&#10;(Cupboard Mini Rack)<partialswitch join='Multipurpose Sing PC Power'/><button action='Multipurpose Sing PC Restart' confirm='true' class='btn-light loop-btn'>&#8634;</button></status>
               <status event='Multipurpose Media Player Status'>Media Player Software<partialswitch join='Multipurpose Media Player Power'/></status>
-              <status>Apple TV&#10;(Cupboard Mini Rack - Outlet power)<partialswitch join='Multipurpose Apple TV Power'/></status>
             </column>
           </row>
         </column>

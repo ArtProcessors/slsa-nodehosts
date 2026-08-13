@@ -8,7 +8,7 @@
             {
                 "enabled": false,
                 "name": "Little Library open",
-                "cron": "0 9 * * *",
+                "cron": "0 9 * * MON,TUE,WED,THU,FRI",
                 "event": "Power",
                 "argument": "On",
                 "timezone": "Australia/Adelaide",
@@ -16,9 +16,9 @@
                 "notes": "Opens at 10:00 Tuesday to Sunday, except Christmas Day."
             },
             {
-                "enabled": false,
+                "enabled": true,
                 "name": "Little Library close",
-                "cron": "0 18 * * *",
+                "cron": "0 18 * * MON,TUE,WED,THU,FRI",
                 "event": "Power",
                 "argument": "Off",
                 "timezone": "Australia/Adelaide",
@@ -26,9 +26,9 @@
                 "notes": "Closes at 17:00 Tuesday to Sunday."
             },
             {
-                "enabled": true,
+                "enabled": false,
                 "name": "Song Book start",
-                "cron": "45 13 * * FRI",
+                "cron": "17 16 * * FRI",
                 "event": "PlayPlaylist",
                 "argument": "Kuarna Song Book",
                 "timezone": "Australia/Adelaide",
@@ -36,7 +36,7 @@
                 "notes": "START TIME NOT CONFIRMED - placeholder set to match Museum open (10:00). Confirm the real time before ticking Enabled. Plays the 'Kuarna Song Book' playlist saved in the dashboard's Media Player tab. The argument IS the playlist name - rename the playlist in the Media Player tab and this must be updated to match. Reaches the mpv engine via LTL-LIB-MEDIA-SCHEDULE. Enable 'Song Book stop' at the same time as this one."
             },
             {
-                "enabled": true,
+                "enabled": false,
                 "name": "Song Book stop",
                 "cron": "47 13 * * FRI",
                 "event": "StopPlayback",

@@ -508,3 +508,30 @@
 .statusgroup .panel-body strong {
   white-space: pre-line;
 }
+
+/* ====================================================================
+   Play tab - BlockHeads screenshots
+   ==================================================================== */
+
+/* The two screenshots sit in a nested row inside an already-narrow sm-4
+   column, so the h6 captions shed their default heading margins - left alone
+   they add ~40px of whitespace and push the BlockHeads block taller than the
+   two scanner columns beside it.
+
+   Bootstrap's float grid is deliberately NOT flexed here. The two frames are
+   different shapes (the interactive display captures 400x250, the desktop
+   400x225), and floating lets each keep its own height; forcing the row to
+   equal heights would letterbox one of them for no gain. They stack on xs
+   for the same reason - col-sm-6 has no width below 768px. */
+.shot-row h6 {
+  margin: 6px 0 3px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #888;
+}
+/* The frames are dark-edged screen captures on a light page; without a border
+   the black letterboxing reads as a hole in the layout. */
+.shot-row img {
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+}
