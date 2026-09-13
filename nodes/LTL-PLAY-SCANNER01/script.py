@@ -25,6 +25,8 @@ Bind the remote actions and events below:
   | `Scanner PC Status` | the scanner PC node's `Status` (event)        |
   | `ScanSnap Running`  | `LTL-PLAY-SCANMON0x` `ScanSnap Running` (event) |
   | `Scanner Power`     | `LTL-PLAY-SCANMON0x` `Scanner Power` (event)  |
+  | `Scanner USB`       | `LTL-PLAY-SCANMON0x` `Scanner USB` (event)    |
+  | `ScanSnap Busy`     | `LTL-PLAY-SCANMON0x` `ScanSnap Busy` (event)  |
   | `Scanner Poll`      | `LTL-PLAY-SCANMON0x` `Fast Poll` (action)     |
 
 **The press is gated.** There is no point pressing the scanner's power button while the
@@ -59,6 +61,27 @@ means it cannot see the scanner, not that the scanner is off -- ScanSnap Home re
 answer mid-scan. So `Unknown` is never acted on: _Press again if it did not come on_
 fires only on a definite `Off`. Pressing on an `Unknown` would switch off a scanner
 somebody was using.
+
+**Confirmation has two stages when `Scanner USB` is bound.** After the press the scanner
+should appear on USB within seconds (~12s measured) -- if it does not within the _USB
+timeout_, the press did not land, the scanner has no mains, or the cable is out. Once it
+is on USB, ScanSnap Home takes up to ~2.5 minutes to pick it up, which is the
+_ScanSnap Home timeout_. `Status` stays busy (blue) through both, and a failure at either
+stage names that stage. The re-press never fires while the scanner is on USB: it is
+powered, so pressing would switch it off.
+
+**`Status` also reports the scanner at rest, not just the outlet.** With the outlet on:
+
+  * not on USB -- a fault straight away. The monitor already requires two readings in
+    a row, so this is ~5-15s after the scanner drops, not a flap;
+  * on USB (or USB not reported) but ScanSnap Home says no scanner -- a fault only after
+    the _Not-seen grace_, because ScanSnap Home briefly loses a scanner that never left
+    USB whenever it restarts;
+  * the monitor cannot tell (`Unknown`: mid-scan, or the PC is not reporting) -- never a
+    fault. The scanner PC's own tile covers a PC that has gone away.
+
+A failure left by a sequence clears itself as soon as the scanner reports `On`, or when the
+outlet is switched off -- it describes the scanner, not the last command.
 '''
 
 from org.nodel.core import BindingState
@@ -73,7 +96,17 @@ READY_POLL_INTERVAL = 5
 # how often the scanner is re-checked while waiting for a press to be confirmed
 CONFIRM_POLL_INTERVAL = 5
 
-DEFAULT_CONFIRM_TIMEOUT = 45
+# from the scanner appearing on USB to ScanSnap Home seeing it (~2 min 20s measured), or from
+# the press when USB is not reported
+DEFAULT_CONFIRM_TIMEOUT = 180
+
+# from the press to the scanner appearing on USB (~12s measured, including the BLE press)
+DEFAULT_USB_TIMEOUT = 60
+
+# how long ScanSnap Home may report no scanner, while it is on USB, before that is a fault
+DEFAULT_UNSEEN_GRACE = 180
+
+NOT_ON_USB = 'Scanner not on USB: switched off, no power, or cable disconnected'
 
 # status 'level' reserved for "we are deliberately interfering with this thing"
 BUSY_LEVEL = 5
@@ -118,12 +151,22 @@ param_confirmPress = Parameter({'title': 'Confirm the press', 'order': 4,
                                         'would switch the scanner off. Needs the "Scanner Power" binding.',
                                 'schema': {'type': 'boolean'}})
 
-param_confirmTimeout = Parameter({'title': 'Confirm timeout (sec)', 'order': 5,
-                                  'desc': 'How long to wait for the scanner to report On after the press before '
-                                          'giving up on it.',
+param_usbTimeout = Parameter({'title': 'USB timeout (sec)', 'order': 5,
+                              'desc': 'With "Scanner USB" bound: how long after the press the scanner has to appear '
+                                      'on USB. If it does not, the press did not land or the scanner has no power.',
+                              'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_USB_TIMEOUT}})
+
+param_confirmTimeout = Parameter({'title': 'ScanSnap Home timeout (sec)', 'order': 6,
+                                  'desc': 'How long ScanSnap Home is given to see the scanner once it is on USB '
+                                          '(or, without "Scanner USB", after the press) before giving up on it.',
                                   'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_CONFIRM_TIMEOUT}})
 
-param_repressOnFailure = Parameter({'title': 'Press again if it did not come on', 'order': 6,
+param_unseenGrace = Parameter({'title': 'Not-seen grace (sec)', 'order': 7,
+                               'desc': 'At rest, how long ScanSnap Home may report no scanner while the scanner is on '
+                                       'USB before the status becomes a fault. Covers ScanSnap Home restarting.',
+                               'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_UNSEEN_GRACE}})
+
+param_repressOnFailure = Parameter({'title': 'Press again if it did not come on', 'order': 8,
                                     'desc': 'If the scanner still definitely reports Off once the confirm timeout '
                                             'has elapsed, press once more. Leave this off until the monitor has been '
                                             'watched on site through a full day, including someone scanning: if it '
@@ -131,7 +174,7 @@ param_repressOnFailure = Parameter({'title': 'Press again if it did not come on'
                                             'working scanner off. It never fires on "Unknown".',
                                     'schema': {'type': 'boolean'}})
 
-param_pressWithoutReady = Parameter({'title': 'Press without waiting for readiness', 'order': 7,
+param_pressWithoutReady = Parameter({'title': 'Press without waiting for readiness', 'order': 9,
                                      'desc': 'Commissioning escape hatch. Presses as soon as the boot duration has '
                                              'elapsed, without requiring the scanner PC or ScanSnap software to '
                                              'report ready. Leave off in normal operation.',
@@ -161,6 +204,11 @@ local_event_ScannerPower = LocalEvent({'title': 'Scanner Power', 'group': 'Scann
                                                'to its outlet. "Unknown" means it cannot see it -- not that it is off.',
                                        'schema': {'type': 'string', 'enum': ['On', 'Off', 'Unknown']}})
 
+local_event_ScannerUSB = LocalEvent({'title': 'Scanner USB', 'group': 'Scanner', 'order': next_seq(),
+                                     'desc': 'Whether the scanner PC can see the scanner on USB. "Unknown" when the '
+                                             'monitor is not reporting it.',
+                                     'schema': {'type': 'string', 'enum': ['Connected', 'Not connected', 'Unknown']}})
+
 local_event_PressConfirmed = LocalEvent({'title': 'Press confirmed', 'group': 'Scanner', 'order': next_seq(),
                                          'desc': 'True once the scanner has been seen to come on after a press.',
                                          'schema': {'type': 'boolean'}})
@@ -184,7 +232,11 @@ generation = 0    # bumped by every new command; a scheduled step whose generati
                   # stale has been superseded and quietly abandons itself
 pduStatus = None  # last status reported by the PDU
 waitingFor = None # what the running sequence is waiting on, if anything
-blocked = None    # why the last sequence gave up, until something supersedes it
+blocked = None    # {level, message}: why the last sequence gave up, until something supersedes it
+unseenSince = None  # system_clock() since ScanSnap Home has reported no scanner while it is on USB
+lastPressAt = 0     # system_clock() of the last press
+lastStatus = None   # what 'Status' last emitted, so the 5s refresh only emits changes
+graceChecked = False  # whether the last status refresh evaluated the not-seen grace
 
 
 ### Main
@@ -199,7 +251,8 @@ def main():
                  'or the ScanSnap software. This is a commissioning setting.')
 
   if confirmPress():
-    console.info('The press will be confirmed against "Scanner Power", within %ss.' % confirmTimeout())
+    console.info('The press will be confirmed: on USB within %ss (if "Scanner USB" is bound), then seen by '
+                 'ScanSnap Home within %ss.' % (usbTimeout(), confirmTimeout()))
 
   if repressOnFailure() and not confirmPress():
     console.warn('"Press again if it did not come on" does nothing while "Confirm the press" is off.')
@@ -213,10 +266,12 @@ def initialise():
   local_event_Busy.emit(False)
 
   # seed from the persisted value so a node restart does not raise a spurious alarm in the
-  # window before the PDU next reports (remote events do not replay when a binding is made)
+  # window before the PDU next reports (remote events do not replay when a binding is made).
+  # Only a healthy one: 'Status' now also carries scanner faults, and seeding one of those as
+  # the PDU's own status would hide the scanner checks until the PDU next reported
   previous = local_event_Status.getArg()
-  if hasattr(previous, 'get') and previous.get('level') != BUSY_LEVEL:
-    globals()['pduStatus'] = previous
+  if hasattr(previous, 'get') and previous.get('level') == 0:
+    globals()['pduStatus'] = {'level': 0, 'message': 'OK'}
 
   local_event_PressConfirmed.emit(False)
 
@@ -229,7 +284,13 @@ timer_readiness = Timer(lambda: refreshAtRest(), READY_POLL_INTERVAL, READY_POLL
 
 def refreshAtRest():
   refreshReadiness()
-  local_event_ScannerPower.emit(scannerPowerNow())
+  local_event_ScannerPower.emitIfDifferent(scannerPowerNow())
+  local_event_ScannerUSB.emitIfDifferent(scannerUsbNow())
+
+  # the grace period and a monitor that stops reporting both need re-evaluating over time,
+  # not just when something is emitted
+  clearBlockedIfScannerOn()
+  refreshStatus()
 
 
 ### Feedback from the PDU
@@ -241,23 +302,103 @@ def remote_event_OutletState(arg=None):
 
   local_event_Power.emit(state)
 
+  if state == 'Off' and sequence == None and blocked != None:
+    # a failure describes a scanner that was meant to be on; with the outlet off it is moot
+    globals()['blocked'] = None
+
+  refreshStatus()
+
 def remote_event_PDUStatus(arg=None):
   globals()['pduStatus'] = arg
   refreshStatus()
 
 def refreshStatus():
+  globals()['graceChecked'] = False
+  status = currentStatus()
+
+  if not graceChecked:
+    # the grace clock only means something while it is being checked continuously; a stale
+    # start time from before the outlet went off must not make a later check fail at once
+    globals()['unseenSince'] = None
+
+  # Java maps from the PDU binding do not compare equal to dicts, so normalise first
+  status = {'level': status.get('level'), 'message': status.get('message')}
+
+  if status != lastStatus:
+    globals()['lastStatus'] = status
+    local_event_Status.emit(status)
+
+def currentStatus():
   if sequence != None:
     # a deliberate outage; do not let the PDU's view of it reach the dashboard
-    local_event_Status.emit(busyStatus())
+    return busyStatus()
 
-  elif blocked != None:
-    local_event_Status.emit({'level': 2, 'message': blocked})
+  if blocked != None and blocked['level'] >= 2:
+    return blocked
 
-  elif pduStatus == None:
-    local_event_Status.emit(NEVER_SEEN_STATUS)
+  if pduStatus == None:
+    return NEVER_SEEN_STATUS
 
-  else:
-    local_event_Status.emit(pduStatus)
+  if not hasattr(pduStatus, 'get') or pduStatus.get('level') != 0:
+    return pduStatus
+
+  outletOn = local_event_Power.getArg() == 'On'
+
+  if outletOn:
+    fault = connectionFault()
+    if fault != None:
+      return fault
+
+  if blocked != None:
+    return blocked
+
+  if outletOn and scannerPowerNow() == 'On':
+    return {'level': 0, 'message': 'Scanner connected'}
+
+  if local_event_Power.getArg() == 'Off':
+    # the PDU's "OK" beside an Off switch reads as "the scanner is OK"
+    return {'level': 0, 'message': 'Off'}
+
+  return pduStatus
+
+def connectionFault():
+  '''With the outlet on and nothing running: why the scanner cannot be used, or None.'''
+  globals()['graceChecked'] = True
+  usb = scannerUsbNow()
+  power = scannerPowerNow()
+  now = system_clock()
+
+  if power != 'Off' or usb == 'Not connected':
+    globals()['unseenSince'] = None
+
+  if power == 'On':
+    return None
+
+  if usb == 'Not connected':
+    if now - lastPressAt < usbTimeout() * 1000:
+      return None  # just pressed; it takes a few seconds to reach USB
+
+    return {'level': 2, 'message': NOT_ON_USB}
+
+  if power != 'Off':
+    return None  # 'Unknown': mid-scan, or the monitor is not reporting -- never a fault
+
+  # ScanSnap Home says no scanner, but it is on USB (or USB is not reported)
+  if unseenSince == None:
+    globals()['unseenSince'] = now
+
+  if now - unseenSince < unseenGrace() * 1000:
+    return None
+
+  if usb == 'Connected':
+    return {'level': 2, 'message': 'Scanner is on USB, but ScanSnap Home does not see it'}
+
+  return {'level': 2, 'message': 'Scanner not connected to the scanner PC'}
+
+def clearBlockedIfScannerOn():
+  if blocked != None and sequence == None and scannerPowerNow() == 'On':
+    console.info('The scanner is reporting On; clearing "%s"' % blocked['message'])
+    globals()['blocked'] = None
 
 def busyStatus():
   action = 'Scanner restarting.' if sequence == 'Restart' else 'Scanner starting up.'
@@ -282,7 +423,38 @@ def remote_event_ScanSnapRunning(arg=None):
 ### The scanner itself, as reported by the ScanSnap monitor
 
 def remote_event_ScannerPower(arg=None):
-  local_event_ScannerPower.emit(scannerPowerNow())
+  local_event_ScannerPower.emitIfDifferent(scannerPowerNow())
+  clearBlockedIfScannerOn()
+  refreshStatus()
+
+def remote_event_ScannerUSB(arg=None):
+  local_event_ScannerUSB.emitIfDifferent(scannerUsbNow())
+  refreshStatus()
+
+def remote_event_ScanSnapBusy(arg=None):
+  pass  # read directly when a confirmation gives up
+
+def scannerUsbNow():
+  '''Returns 'Connected', 'Not connected' or 'Unknown'. Stale values from a monitor that has
+     gone away read as 'Unknown', as for "Scanner Power".'''
+  binding = lookup_remote_event('ScannerUSB')
+
+  if binding == None or binding.getStatus() != BindingState.Wired:
+    return 'Unknown'
+
+  value = binding.getArg()
+
+  if value in ('Connected', 'Not connected'):
+    return value
+
+  return 'Unknown'
+
+def canSeeUsb():
+  return scannerUsbNow() != 'Unknown'
+
+def scanSnapBusy():
+  binding = lookup_remote_event('ScanSnapBusy')
+  return binding != None and binding.getStatus() == BindingState.Wired and binding.getArg() == True
 
 def scannerPowerNow():
   '''Returns 'On', 'Off' or 'Unknown'. Anything we cannot currently see reads as
@@ -433,8 +605,8 @@ def awaitReady(attemptsLeft):
 
   if attemptsLeft <= 0:
     endSequence()
-    setBlocked('Waited %ss for %s. The SwitchBot was not pressed, so the scanner is powered but probably off.'
-               % (readyTimeout(), reason))
+    setBlocked(2, 'Waited %ss for %s. The SwitchBot was not pressed, so the scanner is powered but probably off.'
+                  % (readyTimeout(), reason))
     return console.warn('Gave up waiting for %s; the SwitchBot was not pressed.' % reason)
 
   if reason != waitingFor:
@@ -463,15 +635,62 @@ def pressPowerButton():
     return endSequence()
 
   local_event_PressConfirmed.emit(False)
-  setWaitingFor('the scanner to report On')
+
+  if canSeeUsb():
+    setWaitingFor('the scanner to appear on USB')
+    return schedule(lambda: awaitUsb(usbAttempts(), False), CONFIRM_POLL_INTERVAL)
+
+  awaitScanSnap(False)
+
+def awaitUsb(attemptsLeft, pressedAgain):
+  '''Stage one: the scanner should reach USB within seconds of a press that landed.'''
+  if scannerPowerNow() == 'On':
+    return pressConfirmed()
+
+  usb = scannerUsbNow()
+
+  if usb == 'Connected':
+    console.info('The scanner is on USB; giving ScanSnap Home up to %ss to see it.' % confirmTimeout())
+    return awaitScanSnap(pressedAgain)
+
+  if attemptsLeft > 0:
+    return schedule(lambda: awaitUsb(attemptsLeft - 1, pressedAgain), CONFIRM_POLL_INTERVAL)
+
+  # not on USB means not powered, so a second press cannot switch a working scanner off
+  if usb == 'Not connected' and repressOnFailure() and not pressedAgain:
+    console.warn('The scanner is still not on USB after %ss; pressing once more.' % usbTimeout())
+
+    if doPress():
+      return schedule(lambda: awaitUsb(usbAttempts(), True), CONFIRM_POLL_INTERVAL)
+
+  endSequence()
+
+  if usb == 'Not connected':
+    setBlocked(2, 'Scanner did not power on: not on USB %ss after its button was pressed. Check the SwitchBot, '
+                  'the scanner\'s power and its USB cable.' % usbTimeout())
+  else:
+    setBlocked(1, 'Could not confirm the scanner came on: the scanner PC stopped reporting USB. Its button was '
+                  'pressed.')
+
+  console.warn('The scanner did not appear on USB; it reports %s.' % usb)
+
+def awaitScanSnap(pressedAgain):
+  '''Stage two, or the only stage when USB is not reported: ScanSnap Home sees the scanner.'''
+  setWaitingFor('ScanSnap Home to see the scanner')
   requestScannerPoll()
 
-  schedule(lambda: awaitScannerOn(confirmAttempts(), False), CONFIRM_POLL_INTERVAL)
+  schedule(lambda: awaitScannerOn(confirmAttempts(), pressedAgain), CONFIRM_POLL_INTERVAL)
+
+def pressConfirmed():
+  local_event_PressConfirmed.emit(True)
+  console.info('The scanner is reporting On; sequence complete.')
+  endSequence()
 
 def doPress():
   # power is already back on at this point, so a failed press is reported but not rolled back
   try:
     remote_action_SwitchBotPress.call()
+    globals()['lastPressAt'] = system_clock()
     console.info('SwitchBot pressed.')
     return True
   except Exception, e:
@@ -491,38 +710,58 @@ def awaitScannerOn(attemptsLeft, pressedAgain):
   state = scannerPowerNow()
 
   if state == 'On':
-    local_event_PressConfirmed.emit(True)
-    console.info('The scanner is reporting On; sequence complete.')
-    return endSequence()
+    return pressConfirmed()
 
   if attemptsLeft > 0:
     return schedule(lambda: awaitScannerOn(attemptsLeft - 1, pressedAgain), CONFIRM_POLL_INTERVAL)
 
+  usb = scannerUsbNow()
+
   # only ever on a definite 'Off'. 'Unknown' means the monitor cannot see the scanner --
-  # pressing then would switch off a scanner somebody is in the middle of using
-  if state == 'Off' and repressOnFailure() and not pressedAgain:
+  # pressing then would switch off a scanner somebody is in the middle of using. And never
+  # while it is on USB: it is powered, so a press would switch it off
+  if state == 'Off' and usb != 'Connected' and repressOnFailure() and not pressedAgain:
     console.warn('The scanner still reports Off after %ss; pressing once more.' % confirmTimeout())
 
     if doPress():
-      requestScannerPoll()
-      return schedule(lambda: awaitScannerOn(confirmAttempts(), True), CONFIRM_POLL_INTERVAL)
+      if canSeeUsb():
+        setWaitingFor('the scanner to appear on USB')
+        return schedule(lambda: awaitUsb(usbAttempts(), True), CONFIRM_POLL_INTERVAL)
+
+      return awaitScanSnap(True)
 
   endSequence()
 
-  if state == 'Off':
-    setBlocked('The scanner still reported Off %ss after its power button was pressed. It has power '
-               'but is probably still off.' % confirmTimeout())
-  else:
-    setBlocked('Could not confirm the scanner came on -- nothing is reporting its state. It has power, '
-               'and the button was pressed.')
+  if usb == 'Not connected':
+    setBlocked(2, '%s. It dropped off USB while ScanSnap Home was picking it up.' % NOT_ON_USB)
 
-  console.warn('Could not confirm the scanner came on; it reports %s.' % state)
+  elif usb == 'Connected' and scanSnapBusy():
+    # ScanSnap Home refuses to answer while its window is open or a scan is running, and the
+    # monitor holds its last answer meanwhile -- so 'Off' here is not evidence of a fault
+    setBlocked(1, 'Scanner is on USB, but ScanSnap Home is busy, so it could not be confirmed')
+
+  elif usb == 'Connected' and state == 'Off':
+    setBlocked(2, 'Scanner is on USB, but ScanSnap Home had not seen it %ss later. Try restarting ScanSnap Home.'
+                  % confirmTimeout())
+
+  elif state == 'Off':
+    setBlocked(2, 'The scanner still reported Off %ss after its power button was pressed. It has power '
+                  'but is probably still off.' % confirmTimeout())
+
+  else:
+    setBlocked(1, 'Could not confirm the scanner came on: nothing is reporting its state. It has power, '
+                  'and the button was pressed.')
+
+  console.warn('Could not confirm the scanner came on; it reports %s, USB %s.' % (state, usb))
 
 def readyAttempts():
   return max(1, readyTimeout() / READY_POLL_INTERVAL)
 
 def confirmAttempts():
   return max(1, confirmTimeout() / CONFIRM_POLL_INTERVAL)
+
+def usbAttempts():
+  return max(1, usbTimeout() / CONFIRM_POLL_INTERVAL)
 
 
 ### Sequencing
@@ -546,8 +785,8 @@ def setWaitingFor(reason):
   globals()['waitingFor'] = reason
   refreshStatus()
 
-def setBlocked(message):
-  globals()['blocked'] = message
+def setBlocked(level, message):
+  globals()['blocked'] = {'level': level, 'message': message}
   refreshStatus()
 
 def schedule(func, delay):
@@ -619,6 +858,12 @@ def readyTimeout():
 
 def confirmTimeout():
   return asSeconds(param_confirmTimeout, DEFAULT_CONFIRM_TIMEOUT)
+
+def usbTimeout():
+  return asSeconds(param_usbTimeout, DEFAULT_USB_TIMEOUT)
+
+def unseenGrace():
+  return asSeconds(param_unseenGrace, DEFAULT_UNSEEN_GRACE)
 
 def pressWithoutReady():
   return param_pressWithoutReady == True

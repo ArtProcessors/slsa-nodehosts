@@ -34,12 +34,21 @@
             "ScannerPower": {
                 "node": "LTL-PLAY-SCANMON01",
                 "event": "ScannerPower"
+            },
+            "ScanSnapBusy": {
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScanSnapBusy"
+            },
+            "ScannerUSB": {
+                "node": "LTL-PLAY-SCANMON01",
+                "event": "ScannerUSB"
             }
         }
     },
     "paramValues": {
         "offDuration": 10,
         "bootDuration": 30,
-        "readyTimeout": 180
+        "readyTimeout": 180,
+        "confirmPress": true
     }
 }
