@@ -39,6 +39,22 @@ known state for the _Hold duration_, and only then falls back to `Unknown`. Neve
 `ScanSnap Running` is a straight process check on `PfuSsMon.exe`. It is more trustworthy
 than an app launcher's idea of whether it is running, because it does not depend on this
 host having been the thing that started it.
+
+**`Scanner USB` is Windows' own view, independent of ScanSnap Home.** The SDK reports "no
+scanner" for a scanner that is switched off, has no mains, has a bad cable, or is on USB
+but not picked up by ScanSnap Home -- the USB check is what separates the first three
+from the last, and it is what `Status` names when there is no scanner. It also settles
+the polls the SDK refuses: nothing on USB means there is definitely no scanner to use, so
+`Scanner Power` reads `Off` rather than holding. USB presence is *not* taken to mean `On`:
+whether an SV600 switched off at its button stays on USB is not yet known. Mains removal
+does take it off USB (seen 2026-09-12, 7s after the outlet was cut).
+
+**USB is checked every few seconds, separately from the ScanSnap Home poll.** The USB check
+only reads Windows' device list and never touches ScanSnap Home or the scanner, so unlike
+the SDK poll it is safe to run often, mid-scan. A scanner that was on USB is reported gone
+only after two readings in a row, so one glitch does not raise an alarm -- about 5-10s
+after it drops. When it comes back onto USB, ScanSnap Home is fast-polled until it picks
+the scanner up, which takes up to ~2.5 minutes.
 '''
 
 import os
@@ -49,6 +65,16 @@ DEFAULT_FAST_POLL_DURATION = 60
 DEFAULT_HOLD_DURATION = 600
 DEFAULT_RESTART_WAIT = 10
 DEFAULT_RELAUNCH_AFTER = 2
+DEFAULT_USB_ID = 'VID_04C5&PID_13BA'  # ScanSnap SV600
+DEFAULT_USB_POLL_INTERVAL = 5
+
+USB_ONLY = 'usb-only'                 # helper argument: the USB check and nothing else
+USB_PROCESS_TIMEOUT = 15
+USB_ABSENT_CONFIRMATIONS = 2          # readings in a row before a scanner that was on USB is called gone
+USB_ARRIVAL_POLL_DURATION = 180       # ScanSnap Home takes up to ~2.5 min to pick up a scanner
+
+COMPILE_ATTEMPTS = 3                  # the old binary can be briefly in use when the node reloads
+COMPILE_RETRY_DELAY = 5
 
 # how long ScanSnap Home is given to close politely before it is forced
 GRACEFUL_KILL_WAIT = 8
@@ -134,6 +160,16 @@ param_holdDuration = Parameter({'title': 'Hold duration (sec)', 'order': 4,
                                         'rather than going on claiming something it can no longer see.',
                                 'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_HOLD_DURATION}})
 
+param_usbId = Parameter({'title': 'Scanner USB ID', 'order': 9,
+                         'desc': 'The vendor and product ID the scanner shows up as in Windows. Only needed for a '
+                                 'scanner other than an SV600.',
+                         'schema': {'type': 'string', 'hint': DEFAULT_USB_ID}})
+
+param_usbPollInterval = Parameter({'title': 'USB check interval (sec)', 'order': 10,
+                                   'desc': 'How often Windows is asked whether the scanner is on USB. Cheap and '
+                                           'safe mid-scan, unlike the ScanSnap Home poll.',
+                                   'schema': {'type': 'integer', 'hint': '%s' % DEFAULT_USB_POLL_INTERVAL}})
+
 
 ### Local signals
 
@@ -148,6 +184,17 @@ local_event_ScannerConnected = LocalEvent({'title': 'Scanner Connected', 'group'
 
 local_event_ScannerCount = LocalEvent({'title': 'Scanner Count', 'group': 'Scanner', 'order': next_seq(),
                                        'schema': {'type': 'integer'}})
+
+local_event_ScannerUSB = LocalEvent({'title': 'Scanner USB', 'group': 'Scanner', 'order': next_seq(),
+                                     'desc': 'Whether Windows can see the scanner on USB right now, whatever '
+                                             'ScanSnap Home thinks. "Unknown" means the check could not run.',
+                                     'schema': {'type': 'string', 'enum': ['Connected', 'Not connected', 'Unknown']}})
+
+local_event_ScannerUSBArrived = LocalEvent({'title': 'Scanner USB last arrived', 'group': 'Scanner', 'order': next_seq(),
+                                            'schema': {'type': 'string'}})
+
+local_event_ScannerUSBRemoved = LocalEvent({'title': 'Scanner USB last removed', 'group': 'Scanner', 'order': next_seq(),
+                                            'schema': {'type': 'string'}})
 
 local_event_ScanSnapRunning = LocalEvent({'title': 'ScanSnap Running', 'group': 'ScanSnap Home', 'order': next_seq(),
                                           'desc': 'True while the PfuSsMon.exe process is present.',
@@ -205,13 +252,17 @@ status = {'level': 3, 'message': 'Starting up'}
 notRunningPolls = 0       # consecutive polls that found ScanSnap Home down
 afterPoll = []            # callbacks waiting on the result of the poll in flight
 launching = False         # a start or restart is under way
+usbPolling = False        # a USB-only check is in flight
+usbConfirmed = None       # True / False once a USB reading has been accepted, None before
+usbAbsentReadings = 0     # consecutive USB readings that did not find the scanner
+compileAttempts = 0
 
 
 ### Main
 
 def main():
-  console.info('Started. Polling every %ss; "Fast Poll" polls every %ss for %ss.'
-               % (pollInterval(), fastPollInterval(), fastPollDuration()))
+  console.info('Started. Polling every %ss; "Fast Poll" polls every %ss for %ss; USB checked every %ss.'
+               % (pollInterval(), fastPollInterval(), fastPollDuration(), usbPollInterval()))
 
   if relaunch():
     console.info('The watchdog will start ScanSnap Home after %s polls report it down.' % relaunchAfter())
@@ -220,6 +271,7 @@ def main():
 def initialise():
   local_event_ScannerPower.emit(scannerState)
   local_event_ScannerConnected.emit(False)
+  local_event_ScannerUSB.emit('Unknown')
   local_event_ScanSnapBusy.emit(False)
   local_event_ScanSnapStatus.emit({'level': 3, 'message': 'Not checked yet'})
   setStatus(3, 'Starting up')
@@ -227,6 +279,8 @@ def initialise():
   prepareHelper()
 
 timer_poll = Timer(lambda: poll('scheduled'), DEFAULT_POLL_INTERVAL, DEFAULT_POLL_INTERVAL, stopped=True)
+
+timer_usbPoll = Timer(lambda: usbPoll(), DEFAULT_USB_POLL_INTERVAL, DEFAULT_USB_POLL_INTERVAL, stopped=True)
 
 
 ### Polling
@@ -243,9 +297,14 @@ def PollNow(arg=None):
                'schema': {'type': 'integer'}})
 def FastPoll(arg=None):
   seconds = asSeconds(arg, fastPollDuration())
+  until = system_clock() + (seconds * 1000)
+
+  if until <= fastUntil:
+    # never cut a longer burst short -- a press confirmation and a USB arrival can overlap
+    return log(1, 'Fast poll for %ss: already polling fast for longer' % seconds)
 
   globals()['fastGeneration'] = fastGeneration + 1
-  globals()['fastUntil'] = system_clock() + (seconds * 1000)
+  globals()['fastUntil'] = until
 
   console.info('Fast polling for %ss.' % seconds)
   fastStep(fastGeneration)
@@ -272,11 +331,43 @@ def poll(reason):
   log(2, 'Polling (%s)' % reason)
 
   try:
-    quick_process([binaryPath()], working=nodeRoot(), timeoutInSeconds=PROCESS_TIMEOUT,
+    quick_process([binaryPath(), usbId()], working=nodeRoot(), timeoutInSeconds=PROCESS_TIMEOUT,
                   finished=pollFinished)
   except Exception, e:
     globals()['polling'] = False
     setStatus(2, 'Could not run %s: %s' % (BINARY_NAME, e))
+
+def usbPoll():
+  if not usable or usbPolling or polling:
+    return  # a full poll checks USB as well
+
+  globals()['usbPolling'] = True
+
+  try:
+    quick_process([binaryPath(), usbId(), USB_ONLY], working=nodeRoot(), timeoutInSeconds=USB_PROCESS_TIMEOUT,
+                  finished=usbPollFinished)
+  except Exception, e:
+    globals()['usbPolling'] = False
+    log(1, 'USB check could not run: %s' % e)
+
+def usbPollFinished(result):
+  globals()['usbPolling'] = False
+
+  if result.code != 0:
+    return log(1, 'USB check failed (code %s)' % result.code)
+
+  values = parseOutput(result.stdout)
+
+  if values.get('Result') != 'USB_ONLY':
+    return log(1, 'USB check produced no result (%s)' % summarise(result.stdout))
+
+  usb, previous = noteUsb(values)
+
+  if usb == False and previous != False:
+    usbLost(values)
+
+  elif usb == True and previous == False and scannerState != 'On':
+    usbArrived()
 
 def pollFinished(result):
   globals()['polling'] = False
@@ -324,6 +415,8 @@ def handlePollResult(result):
 def failedPoll(message):
   '''The helper itself did not work -- this says nothing about the scanner, so hold.'''
   local_event_LastResult.emit('HELPER_FAILED')
+  globals()['usbConfirmed'] = None
+  local_event_ScannerUSB.emit('Unknown')
   applyScanner(None)
   setStatus(2, message)
   console.warn(message)
@@ -374,6 +467,8 @@ def applyResult(code, values):
     if name in values:
       globals()['local_event_%s' % name].emit(values[name])
 
+  usb, previousUsb = noteUsb(values, True)
+
   known = RESULTS.get(code)
 
   if known == None:
@@ -388,18 +483,135 @@ def applyResult(code, values):
     local_event_ScannerCount.emit(count)
     scanner = count > 0
 
-    if scanner:
-      setStatus(0, known['message'])
+    if not scanner:
+      setStatus(0, noScannerMessage(usb, values))
+
+    elif usb == False:
+      # the SDK is the authority on whether it can scan; this is most likely the wrong ID
+      setStatus(1, '%s, but not found on USB as %s -- check "Scanner USB ID"' % (known['message'], usbId()))
+
     else:
-      setStatus(0, 'No scanner connected')
+      setStatus(0, known['message'])
+
+  elif scanner == False:
+    local_event_ScannerCount.emit(0)
+    setStatus(known['level'], noScannerMessage(usb, values))
+
+  elif usb == False:
+    # the SDK would not answer, but nothing is on USB, so there is definitely no scanner to
+    # use -- no need to hold a state that cannot be true
+    scanner = False
+    local_event_ScannerCount.emit(0)
+    setStatus(known['level'], '%s. %s' % (known['message'], noScannerMessage(usb, values)))
 
   else:
-    if scanner == False:
-      local_event_ScannerCount.emit(0)
-
     setStatus(known['level'], known['message'])
 
   applyScanner(scanner)
+
+  if usb == True and previousUsb == False and scannerState != 'On':
+    usbArrived()
+
+def noteUsb(values, refresh=False):
+  '''Takes in a USB reading from either kind of poll. Returns (usb, previous): True / False for
+     on USB or not, None when nothing is known yet; previous is what it was before this reading.
+
+     A scanner that was on USB is only reported gone after USB_ABSENT_CONFIRMATIONS readings in
+     a row, so a single glitch does not raise an alarm. Until then the previous state stands.
+
+     The 5s checks only emit a change. 'refresh' (the full poll) emits regardless, like every
+     other event it publishes: Nodel does not replay a value when a binding is made, so a
+     consumer that restarts would otherwise never learn the current state until it changed.'''
+  previous = usbConfirmed
+
+  def publish(usb):
+    if usb == None:
+      return
+
+    text = 'Connected' if usb else 'Not connected'
+
+    if refresh:
+      local_event_ScannerUSB.emit(text)
+    else:
+      local_event_ScannerUSB.emitIfDifferent(text)
+
+  if 'UsbArrived' in values:
+    local_event_ScannerUSBArrived.emitIfDifferent(values['UsbArrived'])
+
+  if 'UsbRemoved' in values:
+    local_event_ScannerUSBRemoved.emitIfDifferent(values['UsbRemoved'])
+
+  flag = values.get('Usb')
+
+  if flag == '1':
+    globals()['usbAbsentReadings'] = 0
+    usb = True
+
+  elif flag == '0':
+    globals()['usbAbsentReadings'] = usbAbsentReadings + 1
+
+    if previous == True and usbAbsentReadings < USB_ABSENT_CONFIRMATIONS:
+      log(1, 'USB: scanner not seen (%s of %s readings before it is called gone)'
+             % (usbAbsentReadings, USB_ABSENT_CONFIRMATIONS))
+      publish(previous)
+      return previous, previous
+
+    usb = False
+
+  else:
+    # '?' (the check failed) or nothing (an older helper binary): nothing learnt
+    publish(previous)
+    return previous, previous
+
+  globals()['usbConfirmed'] = usb
+  publish(usb)
+
+  return usb, previous
+
+def usbLost(values):
+  '''The scanner has gone from USB between ScanSnap Home polls. Nothing can scan without it,
+     so say so now rather than at the next poll.'''
+  console.warn('The scanner is no longer on USB.')
+
+  local_event_ScannerCount.emit(0)
+  message = noScannerMessage(False, values)
+  last = RESULTS.get(local_event_LastResult.getArg())
+
+  if last != None and last['scanner'] == None:
+    # keep what ScanSnap Home last said when it could not answer, as the full poll does
+    setStatus(last['level'], '%s. %s' % (last['message'], message))
+  else:
+    setStatus(0, message)
+
+  applyScanner(False)
+
+def usbArrived():
+  console.info('The scanner is on USB; checking ScanSnap Home every %ss for up to %ss until it sees it.'
+               % (fastPollInterval(), USB_ARRIVAL_POLL_DURATION))
+
+  if status['message'].startswith('Scanner not on USB'):
+    setStatus(0, 'Scanner is on USB; waiting for ScanSnap Home to see it')
+
+  FastPoll.call(USB_ARRIVAL_POLL_DURATION)
+
+def noScannerMessage(usb, values):
+  if usb == False:
+    message = 'Scanner not on USB: switched off, no power, or cable disconnected'
+
+    if 'UsbRemoved' in values:
+      message = '%s (last removed %s)' % (message, values['UsbRemoved'])
+
+    return message
+
+  if usb == True:
+    message = 'Scanner is on USB, but ScanSnap Home does not see it'
+
+    if 'UsbProblem' in values:
+      message = '%s (Windows reports device problem code %s)' % (message, values['UsbProblem'])
+
+    return message
+
+  return 'No scanner connected'
 
 def applyScanSnapHome(installed, running):
   '''The ScanSnap Home half: its own tile, and the watchdog.'''
@@ -645,8 +857,30 @@ def prepareHelper():
   if compiler == None:
     return setStatus(2, 'No .NET Framework 4 C# compiler found; expected csc.exe under %s' % windir)
 
+  compileHelper(compiler)
+
+def compileHelper(compiler):
+  globals()['compileAttempts'] = compileAttempts + 1
+
   console.info('Compiling %s using %s' % (SOURCE_NAME, compiler))
   setStatus(1, 'Compiling the ScanSnap helper')
+
+  def compileFinished(result):
+    if result.code == 0:
+      console.info('Compiled %s' % BINARY_NAME)
+      return helperReady()
+
+    console.error('Compilation failed (code %s)' % result.code)
+    console.error(summarise(result.stdout))
+
+    if compileAttempts < COMPILE_ATTEMPTS:
+      # typically CS0016: the old binary is still in use by a helper the previous
+      # interpreter started just before the reload
+      console.info('Trying again in %ss (attempt %s of %s).' % (COMPILE_RETRY_DELAY, compileAttempts + 1,
+                                                                 COMPILE_ATTEMPTS))
+      return call_safe(lambda: compileHelper(compiler), COMPILE_RETRY_DELAY)
+
+    setStatus(2, 'The ScanSnap helper failed to compile')
 
   try:
     quick_process([compiler, '/nologo', '/out:%s' % binaryPath(), sourcePath()],
@@ -675,21 +909,17 @@ def findCompiler(windir):
 
   return None
 
-def compileFinished(result):
-  if result.code != 0:
-    console.error('Compilation failed (code %s)' % result.code)
-    console.error(summarise(result.stdout))
-    return setStatus(2, 'The ScanSnap helper failed to compile')
-
-  console.info('Compiled %s' % BINARY_NAME)
-  helperReady()
-
 def helperReady():
   globals()['usable'] = True
   setStatus(1, 'Waiting for the first poll')
 
   timer_poll.setDelayAndInterval(STARTUP_DELAY, pollInterval())
   timer_poll.start()
+
+  # after the first full poll, so the USB checks start from a fresh ScanSnap Home result and
+  # not whatever 'Last Result' was persisted from before the node restarted
+  timer_usbPoll.setDelayAndInterval(STARTUP_DELAY + usbPollInterval(), usbPollInterval())
+  timer_usbPoll.start()
 
 
 ### Convenience
@@ -768,6 +998,16 @@ def holdDuration():
 
 def restartWait():
   return asSeconds(param_restartWait, DEFAULT_RESTART_WAIT)
+
+def usbPollInterval():
+  return asSeconds(param_usbPollInterval, DEFAULT_USB_POLL_INTERVAL)
+
+def usbId():
+  if param_usbId == None or len(str(param_usbId).strip()) == 0:
+    return DEFAULT_USB_ID
+
+  # passed as a single argument with no shell in between, so it must not contain spaces
+  return str(param_usbId).strip().replace(' ', '')
 
 def relaunch():
   return param_relaunch == True

@@ -8,6 +8,10 @@
             "SwitchBotPress": {
                 "node": "LTL-PLAY-BOT02",
                 "action": "Press"
+            },
+            "ScannerPoll": {
+                "node": "LTL-PLAY-SCANMON02",
+                "action": "FastPoll"
             }
         },
         "events": {
@@ -19,13 +23,32 @@
                 "node": "LTL-PLAY-TABLEPDU02",
                 "event": "Status"
             },
-            "ScannerPCStatus": {},
-            "ScanSnapRunning": {}
+            "ScannerPCStatus": {
+                "node": "LTL-PLAY-SCAN02-WOL",
+                "event": "Status"
+            },
+            "ScanSnapRunning": {
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScanSnapRunning"
+            },
+            "ScannerPower": {
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScannerPower"
+            },
+            "ScanSnapBusy": {
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScanSnapBusy"
+            },
+            "ScannerUSB": {
+                "node": "LTL-PLAY-SCANMON02",
+                "event": "ScannerUSB"
+            }
         }
     },
     "paramValues": {
         "offDuration": 10,
         "bootDuration": 30,
-        "readyTimeout": 180
+        "readyTimeout": 180,
+        "confirmPress": true
     }
 }
